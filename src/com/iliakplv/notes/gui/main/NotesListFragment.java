@@ -19,7 +19,7 @@ public class NotesListFragment extends ListFragment {
 	private static final String TITLE = "title";
 	private static final String SUBTITLE = "subtitle";
 
-	private String titlesData[] = new String[] { "One", "Two", "Three", "Four" };
+	private String titlesData[] = new String[] { "First", "Second", "One more", "Yet anoter" };
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
