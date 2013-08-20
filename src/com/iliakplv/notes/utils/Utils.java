@@ -1,7 +1,7 @@
 package com.iliakplv.notes.utils;
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
 public class Utils {

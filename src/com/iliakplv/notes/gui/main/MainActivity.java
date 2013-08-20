@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import com.iliakplv.notes.R;
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
 public class MainActivity extends FragmentActivity {

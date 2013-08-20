@@ -9,7 +9,7 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
 public class NotesDatabaseAdapter {

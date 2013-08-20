@@ -5,7 +5,7 @@ import android.app.Application;
 import android.content.Context;
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
 public class NotesApplication extends Application {

@@ -7,7 +7,7 @@ import android.util.Log;
 import com.iliakplv.notes.utils.Utils;
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
 public class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
