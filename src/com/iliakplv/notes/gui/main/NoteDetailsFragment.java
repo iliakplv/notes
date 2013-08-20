@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.iliakplv.notes.R;
 
+/**
+ * Autor: Ilya Kopylov
+ * Date:  16.08.2013
+ */
 public class NoteDetailsFragment extends Fragment {
 
 	private String text;

@@ -1,11 +1,14 @@
 package com.iliakplv.notes.gui.main;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import com.iliakplv.notes.R;
 
+/**
+ * Autor: Ilya Kopylov
+ * Date:  16.08.2013
+ */
 public class MainActivity extends FragmentActivity {
 
 	@Override

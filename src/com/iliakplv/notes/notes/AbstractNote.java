@@ -3,6 +3,10 @@ package com.iliakplv.notes.notes;
 
 import org.joda.time.DateTime;
 
+/**
+ * Autor: Ilya Kopylov
+ * Date:  20.08.2013
+ */
 public abstract class AbstractNote {
 
 	private String title;

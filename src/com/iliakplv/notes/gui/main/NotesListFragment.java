@@ -12,7 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Autor: Ilya Kopylov
+ * Date:  16.08.2013
+ */
 public class NotesListFragment extends ListFragment {
 
 
