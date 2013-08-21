@@ -27,13 +27,14 @@ public abstract class AbstractNote {
 	}
 
 
+	// Text
+
 	public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-		updateChangeTime();
 	}
 
 	public String getBody() {
@@ -42,18 +43,28 @@ public abstract class AbstractNote {
 
 	public void setBody(String body) {
 		this.body = body;
-		updateChangeTime();
 	}
+
+
+	// Timestamps
 
 	public DateTime getCreateTime() {
 		return createTime;
+	}
+
+	public void setCreateTime(DateTime time) {
+		createTime = time;
 	}
 
 	public DateTime getChangeTime() {
 		return changeTime;
 	}
 
+	public void setChangeTime(DateTime time) {
+		changeTime = time;
+	}
+
 	public void updateChangeTime() {
-		this.changeTime = new DateTime();
+		changeTime = new DateTime();
 	}
 }
