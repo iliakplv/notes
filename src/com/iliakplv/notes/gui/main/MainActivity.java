@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.AbstractNote;
 import org.joda.time.DateTime;
 
 /**
@@ -25,12 +26,12 @@ public class MainActivity extends FragmentActivity {
 		ft.commit();
 	}
 
-	public void showDetailsFragment(String body, long create, long change) {
-		DateTime createDate = new DateTime(create);
-		DateTime changeDate = new DateTime(change);
-
+	public void showDetailsFragment(AbstractNote note) {
 		NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
-		noteDetailsFragment.setText(body + "\n\n" + createDate.toString() + "\n\n" + changeDate.toString());
+		noteDetailsFragment.setText(note.getBody() + "\n\n" +
+				note.getCreateTime().toDate().toLocaleString() + "\n\n" +
+				note.getChangeTime().toDate().toLocaleString() + "\n\n" +
+				"id = " + note.getId());
 
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.details, noteDetailsFragment);
