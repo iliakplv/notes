@@ -14,7 +14,7 @@ public abstract class AbstractNote {
 	private DateTime createTime;
 	private DateTime changeTime;
 
-	private int id = -1;
+	private int id = 0;
 
 
 	public AbstractNote(String title, String body) {
@@ -55,6 +55,9 @@ public abstract class AbstractNote {
 	}
 
 	public void setCreateTime(DateTime time) {
+		if (time == null) {
+			throw new NullPointerException("Note's create time can not be null");
+		}
 		createTime = time;
 	}
 
@@ -63,6 +66,9 @@ public abstract class AbstractNote {
 	}
 
 	public void setChangeTime(DateTime time) {
+		if (time == null) {
+			throw new NullPointerException("Note's change time can not be null");
+		}
 		changeTime = time;
 	}
 
@@ -78,6 +84,9 @@ public abstract class AbstractNote {
 	}
 
 	public void setId(int id) {
+		if (id < 1) {
+			throw new IllegalArgumentException("Note's id can not be less than 1");
+		}
 		this.id = id;
 	}
 }
