@@ -2,10 +2,10 @@ package com.iliakplv.notes.notes.db;
 
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 
 /**
@@ -16,22 +16,22 @@ public class NotesDatabaseAdapter {
 
 	// Database
 	private static final String DATABASE_NAME	= "notes.db";
-	private static final int DATABASE_VERSION	= 1;
+	public static final int DATABASE_VERSION	= 1;
 
 	// Common keys
-	private static final String KEY_ID = "_id";
+	public static final String KEY_ID = "_id";
 
 	// Tables
 	// Table: Notes
-	static final String TABLE_NOTES							= "notes";
-	private static final int NOTES_KEY_NAME_COLUMN			= 1;
-	private static final String NOTES_KEY_NAME				= "name";
-	private static final int NOTES_KEY_BODY_COLUMN			= 2;
-	private static final String NOTES_KEY_BODY				= "body";
-	private static final int NOTES_KEY_CREATE_DATE_COLUMN	= 3;
-	private static final String NOTES_KEY_CREATE_DATE		= "create_date";
-	private static final int NOTES_KEY_CHANGE_DATE_COLUMN	= 4;
-	private static final String NOTES_KEY_CHANGE_DATE		= "change_date";
+	public static final String TABLE_NOTES					= "notes";
+	public static final int NOTES_KEY_NAME_COLUMN			= 1;
+	public static final String NOTES_KEY_NAME				= "name";
+	public static final int NOTES_KEY_BODY_COLUMN			= 2;
+	public static final String NOTES_KEY_BODY				= "body";
+	public static final int NOTES_KEY_CREATE_DATE_COLUMN	= 3;
+	public static final String NOTES_KEY_CREATE_DATE		= "create_date";
+	public static final int NOTES_KEY_CHANGE_DATE_COLUMN	= 4;
+	public static final String NOTES_KEY_CHANGE_DATE		= "change_date";
 
 	// Scheme creation
 	static final String CREATE_SCHEME_COMMAND =
@@ -42,15 +42,14 @@ public class NotesDatabaseAdapter {
 					NOTES_KEY_CREATE_DATE + " LONG, " +
 					NOTES_KEY_CHANGE_DATE + " LONG);";
 
-
 	private SQLiteDatabase db;
 	private NotesDatabaseOpenHelper dbHelper;
 
 
 	// Constructors
 
-	public NotesDatabaseAdapter() {
-		dbHelper = new NotesDatabaseOpenHelper(NotesApplication.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
+	public NotesDatabaseAdapter(Context context) {
+		dbHelper = new NotesDatabaseOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 
@@ -105,7 +104,9 @@ public class NotesDatabaseAdapter {
 	}
 
 	public void close() {
-		db.close();
+		if (db != null) {
+			db.close();
+		}
 	}
 
 }

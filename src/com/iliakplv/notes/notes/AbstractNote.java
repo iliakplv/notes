@@ -19,6 +19,7 @@ public abstract class AbstractNote {
 		this.title = title;
 		this.body = body;
 		createTime = new DateTime();
+		changeTime = new DateTime();
 	}
 
 	public AbstractNote(String body) {
@@ -32,6 +33,7 @@ public abstract class AbstractNote {
 
 	public void setTitle(String title) {
 		this.title = title;
+		updateChangeTime();
 	}
 
 	public String getBody() {
@@ -40,6 +42,7 @@ public abstract class AbstractNote {
 
 	public void setBody(String body) {
 		this.body = body;
+		updateChangeTime();
 	}
 
 	public DateTime getCreateTime() {
