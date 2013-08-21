@@ -32,8 +32,7 @@ public class NotesListFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		fillListData();
-		SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(), listData, R.layout.note_list_item, new String[]{TITLE, SUBTITLE}, new int[] {R.id.title, R.id.subtitle});
-		setListAdapter(simpleAdapter);
+		setListAdapter(getSimpleAdapter());
 		getListView().setOnItemLongClickListener(new NoteLongClickListener());
 	}
 
@@ -52,10 +51,17 @@ public class NotesListFragment extends ListFragment {
 		}
 	}
 
+	private SimpleAdapter getSimpleAdapter() {
+		return new SimpleAdapter(getActivity(), listData, R.layout.note_list_item, new String[]{TITLE, SUBTITLE}, new int[] {R.id.title, R.id.subtitle});
+	}
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		((MainActivity) getActivity()).showDetailsFragment(notes.get(position));
 	}
+
+
+	/********** Inner classes **********/
 
 	private class NoteLongClickListener implements AdapterView.OnItemLongClickListener {
 
@@ -68,7 +74,7 @@ public class NotesListFragment extends ListFragment {
 			dbAdapter.close();
 
 			fillListData();
-			((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
+			setListAdapter(getSimpleAdapter());
 
 			return true;
 		}
