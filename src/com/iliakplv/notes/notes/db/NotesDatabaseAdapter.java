@@ -61,12 +61,12 @@ public class NotesDatabaseAdapter {
 
 	// Queries
 
-	public List<DatabaseEntry> getAllNotes() {
+	public List<NotesDatabaseEntry> getAllNotes() {
 		Cursor cursor = db.query(TABLE_NOTES,
 				new String[] {KEY_ID, NOTES_KEY_NAME, NOTES_KEY_BODY, NOTES_KEY_CREATE_DATE, NOTES_KEY_CHANGE_DATE},
 				null, null, null, null, null);
 
-		List<DatabaseEntry> result = new ArrayList<DatabaseEntry>();
+		List<NotesDatabaseEntry> result = new ArrayList<NotesDatabaseEntry>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -74,7 +74,7 @@ public class NotesDatabaseAdapter {
 						cursor.getString(NOTES_KEY_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_KEY_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_KEY_CHANGE_DATE_COLUMN)));
-				DatabaseEntry entry = new DatabaseEntry(note, cursor.getInt(KEY_ID_COLUMN));
+				NotesDatabaseEntry entry = new NotesDatabaseEntry(note, cursor.getInt(KEY_ID_COLUMN));
 				result.add(entry);
 			} while (cursor.moveToNext());
 		}

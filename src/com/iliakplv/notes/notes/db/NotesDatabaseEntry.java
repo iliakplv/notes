@@ -6,13 +6,13 @@ import com.iliakplv.notes.notes.AbstractNote;
  * Autor: Ilya Kopylov
  * Date:  22.08.2013
  */
-public class DatabaseEntry {
+public class NotesDatabaseEntry {
 
 	private AbstractNote note;
 	private int id;
 
 
-	public DatabaseEntry(AbstractNote note, int id) {
+	public NotesDatabaseEntry(AbstractNote note, int id) {
 		setNote(note);
 		setId(id);
 	}
