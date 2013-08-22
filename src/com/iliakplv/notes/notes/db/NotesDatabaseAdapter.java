@@ -61,12 +61,12 @@ public class NotesDatabaseAdapter {
 
 	// Queries
 
-	public List<AbstractNote> getAllNotes() {
+	public List<DatabaseEntry> getAllNotes() {
 		Cursor cursor = db.query(TABLE_NOTES,
 				new String[] {KEY_ID, NOTES_KEY_NAME, NOTES_KEY_BODY, NOTES_KEY_CREATE_DATE, NOTES_KEY_CHANGE_DATE},
 				null, null, null, null, null);
 
-		List<AbstractNote> result = new ArrayList<AbstractNote>();
+		List<DatabaseEntry> result = new ArrayList<DatabaseEntry>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -74,8 +74,8 @@ public class NotesDatabaseAdapter {
 						cursor.getString(NOTES_KEY_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_KEY_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_KEY_CHANGE_DATE_COLUMN)));
-				note.setId(cursor.getInt(KEY_ID_COLUMN));
-				result.add(note);
+				DatabaseEntry entry = new DatabaseEntry(note, cursor.getInt(KEY_ID_COLUMN));
+				result.add(entry);
 			} while (cursor.moveToNext());
 		}
 
@@ -89,11 +89,11 @@ public class NotesDatabaseAdapter {
 		return db.insert(TABLE_NOTES, null, contentValuesForNote(note));
 	}
 
-	public boolean updateNote(long id, AbstractNote note) {
+	public boolean updateNote(int id, AbstractNote note) {
 		return db.update(TABLE_NOTES, contentValuesForNote(note), whereClauseForId(id), null) > 0;
 	}
 
-	public boolean deleteNote(long id) {
+	public boolean deleteNote(int id) {
 		return db.delete(TABLE_NOTES, whereClauseForId(id), null) > 0;
 	}
 
@@ -109,7 +109,7 @@ public class NotesDatabaseAdapter {
 		return cv;
 	}
 
-	private static String whereClauseForId(long id) {
+	private static String whereClauseForId(int id) {
 		return KEY_ID + "=" + id;
 	}
 

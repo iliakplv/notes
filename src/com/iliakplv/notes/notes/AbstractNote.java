@@ -14,8 +14,6 @@ public abstract class AbstractNote {
 	private DateTime createTime;
 	private DateTime changeTime;
 
-	private int id = 0;
-
 
 	public AbstractNote(String title, String body) {
 		this.title = title;
@@ -76,17 +74,4 @@ public abstract class AbstractNote {
 		changeTime = new DateTime();
 	}
 
-
-	// Id
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		if (id < 1) {
-			throw new IllegalArgumentException("Note's id can not be less than 1");
-		}
-		this.id = id;
-	}
 }
