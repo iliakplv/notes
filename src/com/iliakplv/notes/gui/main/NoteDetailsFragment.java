@@ -19,8 +19,12 @@ public class NoteDetailsFragment extends Fragment {
 
 	private AbstractNote note;
 
+	public NoteDetailsFragment() {
+		// do nothing
+	}
+
 	public NoteDetailsFragment(AbstractNote note) {
-		setNote(note);
+		this.note = note;
 	}
 
 	public AbstractNote getNote() {
@@ -28,15 +32,15 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	public void setNote(AbstractNote note) {
-		if (note == null) {
-			throw new NullPointerException("Note is null");
-		}
 		this.note = note;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// TODO rework this bullshit (test)
+		if (note == null) {
+			return null;
+		}
 
 		final String LINE_SPACING = "\n";
 		final String DATE_SPACING = ".";
