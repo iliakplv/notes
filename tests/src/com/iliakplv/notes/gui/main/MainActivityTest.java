@@ -1,5 +1,6 @@
 package com.iliakplv.notes.gui.main;
 
+import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 
 /**
@@ -14,8 +15,19 @@ import android.test.ActivityInstrumentationTestCase2;
  */
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
+	MainActivity activity;
+
 	public MainActivityTest() {
-		super("com.iliakplv.notes", MainActivity.class);
+		super(MainActivity.class);
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		activity = getActivity();
+	}
+
+	public void testControlsCreated() {
+		assertNotNull(activity);
+	}
 }
