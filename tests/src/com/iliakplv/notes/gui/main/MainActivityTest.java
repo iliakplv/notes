@@ -1,6 +1,5 @@
 package com.iliakplv.notes.gui.main;
 
-import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 
 /**
@@ -27,7 +26,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		activity = getActivity();
 	}
 
-	public void testControlsCreated() {
+	public void testActivity() {
 		assertNotNull(activity);
 	}
 }
