@@ -10,7 +10,8 @@
 
     <application android:label="@string/app_name"
                  android:icon="@drawable/ic_launcher"
-                 android:name="com.iliakplv.notes.NotesApplication">
+                 android:name="com.iliakplv.notes.NotesApplication"
+                 android:theme="@style/Theme.AppCompat">
 
         <activity android:name=".gui.main.MainActivity"
                   android:label="@string/app_name">

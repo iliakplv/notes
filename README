@@ -1,1 +1,14 @@
 There are many notepad apps for Android. But this one is better.
+
+----------------------------------------------------------------
+
+Required libs and modules:
+
+Android Support v13 r18
+<ANDROID_SDK>/extras/android/support/v13/android-support-v13.jar
+
+Android Support v7 appcompat
+<ANDROID_SDK>/extras/android/support/v7/appcompat
+
+Joda-Time
+Provided in lib directory

@@ -1,8 +1,9 @@
 package com.iliakplv.notes.gui.main;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 
@@ -17,9 +18,9 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		NotesListFragment notesListFragment = new NotesListFragment();
+		Fragment notesListFragment = new NotesListFragment();
 
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.notes_list, notesListFragment);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
@@ -27,7 +28,7 @@ public class MainActivity extends FragmentActivity {
 
 	public void showDetailsFragment(AbstractNote note) {
 		NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment(note);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.details, noteDetailsFragment);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
