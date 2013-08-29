@@ -4,10 +4,11 @@ There are many notepad apps for Android. But this one is better.
 
 Required libs and modules:
 
-<type>			<name, version>					<location>
+[lib] Android Support (v13 r18)
+	<project>/libs
 
-[lib]			Android Support (v13 r18)		<project>/libs
+[lib project] Android Support v7 appcompat
+	<project>/appcompat
 
-[lib project]	Android Support v7 appcompat	<project>/appcompat
-
-[lib]			Joda-Time (v2.1)				<project>/libs
+[lib] Joda-Time (v2.1)
+	<project>/libs
