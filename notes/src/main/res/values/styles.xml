@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!--
+		Main Activity
+	-->
+
+	<style name="MainActivity">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">horizontal</item>
+	</style>
+
+	<style name="MainFragment">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">match_parent</item>
+	</style>
+
+	<style name="MainFragment.List">
+		<item name="android:layout_weight">3</item>
+	</style>
+
+	<style name="MainFragment.Details">
+		<item name="android:layout_weight">2</item>
+	</style>
+
+
+	<!--
+		Notes List
+	-->
+
+	<style name="NoteListItem">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+
+	<style name="NoteListItemText" parent="android:Widget.TextView">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="NoteListItemText.Title">
+		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
+	</style>
+
+	<style name="NoteListItemText.Subtitle">
+		<item name="android:textColor">@color/note_list_item_subtitle</item>
+		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
+	</style>
+
+	<!--
+		Note Details
+	-->
+
+	<style name="NoteDetails">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+
+
+</resources>
