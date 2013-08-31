@@ -7,7 +7,6 @@ import android.util.Log;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseAdapter;
-import com.iliakplv.notes.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class NotesApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		if (Utils.DEBUG) {
+		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "onCreate() call");
 		}
 		super.onCreate();
@@ -35,7 +34,7 @@ public class NotesApplication extends Application {
 
 	@Override
 	public void onTerminate() {
-		if (Utils.DEBUG) {
+		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "onTerminate() call");
 		}
 		super.onTerminate();

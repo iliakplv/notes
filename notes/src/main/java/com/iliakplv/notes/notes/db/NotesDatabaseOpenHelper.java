@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.iliakplv.notes.utils.Utils;
+
+import com.iliakplv.notes.BuildConfig;
 
 /**
  * Author: Ilya Kopylov
@@ -23,7 +24,7 @@ public class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(NotesDatabaseAdapter.CREATE_SCHEME_COMMAND);
-		if (Utils.DEBUG) {
+		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Database created with command: " + NotesDatabaseAdapter.CREATE_SCHEME_COMMAND);
 		}
 	}
@@ -31,7 +32,7 @@ public class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO implement
-		if (Utils.DEBUG) {
+		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Upgrading version " + oldVersion + " to " + newVersion);
 		}
 		db.execSQL(DROP_TABLE_IF_EXISTS + NotesDatabaseAdapter.TABLE_NOTES);
