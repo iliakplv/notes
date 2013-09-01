@@ -17,4 +17,4 @@ Required dependencies:
 	<project>/app/libs/joda-time-2.3.jar
 
 
-Or simply use Gradle build it!
+Or simply use Gradle to build it!
