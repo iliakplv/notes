@@ -17,6 +17,10 @@ android {
     compileSdkVersion 17
     buildToolsVersion "17.0.0"
 
+	dependencies {
+		compile project(":appcompat")
+	}
+
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 18
@@ -24,6 +28,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:18.0.+'
-	compile 'joda-time:joda-time:2.1'
+	compile files('../appcompat/libs/android-support-v4.jar')
+	compile files('libs/joda-time-2.3.jar')
 }

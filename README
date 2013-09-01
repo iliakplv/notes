@@ -2,12 +2,19 @@ There are many notepad apps for Android. But this one is better.
 
 ----------------------------------------------------------------
 
+Application core is under <project>/app directory
+
+
 Required dependencies:
 
 [lib project] Android Support v7 appcompat (r18)
-	Can be found at <android-sdk>/extras/android/support/v7/appcompat
+	<project>/appcompat
+
+[lib] Android Support v4 (r18)
+	<project>/appcompat/libs/android-support-v4.jar
 
 [lib] Joda-Time (v2.3)
+	<project>/app/libs/joda-time-2.3.jar
 
 
-Or simply use Gradle!
+Or simply use Gradle build it!

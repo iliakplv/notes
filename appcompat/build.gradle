@@ -1,0 +1,27 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.5.+'
+	}
+}
+
+apply plugin: 'android-library'
+
+android {
+	compileSdkVersion 17
+	buildToolsVersion "17.0.0"
+
+	defaultConfig {
+		minSdkVersion 7
+		targetSdkVersion 18
+	}
+	sourceSets {
+		main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ['src']
+			res.srcDirs = ['res']
+		}
+	}
+}
