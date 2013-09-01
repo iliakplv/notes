@@ -28,6 +28,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v13:13.0.0'
-	compile 'joda-time:joda-time:2.1'
+	compile files('../appcompat/libs/android-support-v4.jar')
+	compile files('libs/joda-time-2.3.jar')
 }
