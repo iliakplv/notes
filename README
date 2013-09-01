@@ -2,11 +2,12 @@ There are many notepad apps for Android. But this one is better.
 
 ----------------------------------------------------------------
 
-Required libs and modules:
+Required dependencies:
 
-[lib project] Android Support v7 appcompat
+[lib project] Android Support v7 appcompat (r18)
+	Can be found at <android-sdk>/extras/android/support/v7/appcompat
 
-[lib] Android Support (v13 r13)
+[lib] Joda-Time (v2.3)
 
-[lib] Joda-Time (v2.1)
 
+Or simply use Gradle!
