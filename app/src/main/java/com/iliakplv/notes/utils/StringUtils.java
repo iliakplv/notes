@@ -6,15 +6,16 @@ package com.iliakplv.notes.utils;
  */
 public final class StringUtils {
 
-	private static final String EMPTY = "";
-
-
 	public static String getNotNull(String s) {
-		return s != null ? s : EMPTY;
+		return s != null ? s : "";
 	}
 
-	public boolean isNullOrEmpty(String s) {
+	public static boolean isNullOrEmpty(String s) {
 		return s == null || s.length() == 0;
+	}
+
+	public static boolean isBlank(String s) {
+		return s == null || s.trim().length() == 0;
 	}
 
 }
