@@ -24,7 +24,14 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 18
+
+	    testPackageName "com.iliakplv.notes.tests"
+	    testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
+
+	testOptions {
+		resultsDir = "$project.buildDir/tests"
+	}
 }
 
 dependencies {
