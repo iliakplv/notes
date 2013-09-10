@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.iliakplv.notes.BuildConfig;
@@ -17,10 +18,21 @@ import com.iliakplv.notes.notes.AbstractNote;
  */
 public class MainActivity extends ActionBarActivity {
 
+	private static final String CURRENT_NOTE_KEY = "current_note";
+	private static final String CURRENT_UI_STATE_KEY = "current_iu_state";
+
+	private static final int MIN_DISPLAY_WIDTH = 600;
+
+	private int currentNoteId = 0;
+	private UiState currentUiState = UiState.NotesList;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		final Display display = getWindowManager().getDefaultDisplay();
+		final int width = display.getWidth();
 
 		Fragment notesListFragment = new NotesListFragment();
 
@@ -38,6 +50,22 @@ public class MainActivity extends ActionBarActivity {
 		ft.commit();
 	}
 
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(CURRENT_NOTE_KEY, currentNoteId);
+		outState.putSerializable(CURRENT_UI_STATE_KEY, currentUiState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		currentNoteId = savedInstanceState.getInt(CURRENT_NOTE_KEY);
+		currentUiState = (UiState) savedInstanceState.getSerializable(CURRENT_UI_STATE_KEY);
+	}
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -50,6 +78,19 @@ public class MainActivity extends ActionBarActivity {
 			Log.d("MENU", "Clicked MenuItem is " + item.getTitle());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+
+	/*********************************************
+	 *
+	 *            Inner classes
+	 *
+	 *********************************************/
+
+	private static enum UiState {
+		NotesList,
+		NoteDetails,
+		DualPane
 	}
 
 }
