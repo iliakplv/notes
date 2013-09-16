@@ -1,42 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content">
-
+              style="@style/NoteDialog">
 
 	<EditText
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:hint="@string/note_dialog_note_title"
-			android:id="@+id/editText"/>
+			style="@style/NoteDialogEditText.Title"
+			android:id="@+id/note_dialog_title"
+			android:hint="@string/note_dialog_title_hint"/>
+
 	<EditText
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:hint="@string/note_dialog_note_text"
-			android:minLines="3"
-			android:id="@+id/editText1"/>
+			style="@style/NoteDialogEditText.Body"
+			android:id="@+id/note_dialog_body"
+			android:hint="@string/note_dialog_body_hint"/>
 
 	<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:weightSum="2">
+			style="@style/NoteDialogButtonBar">
 
 		<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/note_dialog_cancel"
-				android:id="@+id/note_dialog_cancel"
-				android:layout_gravity="left|center_vertical"/>
+				style="@style/NoteDialogButton"
+		        android:id="@+id/note_dialog_cancel"
+		        android:text="@string/note_dialog_cancel"/>
+
 		<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/note_dialog_save"
+				style="@style/NoteDialogButton"
 				android:id="@+id/note_dialog_save"
-				android:layout_gravity="right|center_vertical"/>
+				android:text="@string/note_dialog_save"/>
 	</LinearLayout>
+
 </LinearLayout>

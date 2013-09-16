@@ -15,18 +15,18 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final Dialog dialog = super.onCreateDialog(savedInstanceState);
-		dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		dialog.setTitle(R.string.note_dialog_new_note);
 		return dialog;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.note_dialog, null);
+		final View view = inflater.inflate(R.layout.note_dialog, container, false);
 		return view;
 	}
 
 	@Override
 	public void onClick(View v) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		// TODO
 	}
 }
