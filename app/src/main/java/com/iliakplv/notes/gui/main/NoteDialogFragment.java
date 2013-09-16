@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import com.iliakplv.notes.R;
 
-
+/**
+ * Author: Ilya Kopylov
+ * Date:  16.09.2013
+ */
 public class NoteDialogFragment extends DialogFragment implements View.OnClickListener {
 
 	@Override
