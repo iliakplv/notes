@@ -77,6 +77,7 @@ public class MainActivity extends ActionBarActivity {
 		if (BuildConfig.DEBUG) {
 			Log.d("MENU", "Clicked MenuItem is " + item.getTitle());
 		}
+		(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
 		return super.onOptionsItemSelected(item);
 	}
 
