@@ -18,8 +18,7 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 
 	private EditText title;
 	private EditText body;
-	private Button save;
-	private Button cancel;
+	private Button saveButton;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,11 +37,10 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	private void initControls(View view) {
 		title = (EditText) view.findViewById(R.id.note_dialog_title);
 		body = (EditText) view.findViewById(R.id.note_dialog_body);
-		cancel = (Button) view.findViewById(R.id.note_dialog_cancel);
-		cancel.setOnClickListener(this);
-		save = (Button) view.findViewById(R.id.note_dialog_save);
-		save.setOnClickListener(this);
-		save.setEnabled(false);
+		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
+		saveButton = (Button) view.findViewById(R.id.note_dialog_save);
+		saveButton.setOnClickListener(this);
+		saveButton.setEnabled(false);
 	}
 
 	@Override
