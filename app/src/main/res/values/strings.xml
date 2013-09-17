@@ -3,8 +3,15 @@
 
 	<string name="app_name">Notes</string>
 
-	<string name="note_dialog_note_title">Note title</string>
-	<string name="note_dialog_note_text">Note text</string>
+	<!--
+		Note Dialog
+	-->
+
+	<string name="note_dialog_new_note">New note</string>
+	<string name="note_dialog_edit_note">Edit note</string>
+
+	<string name="note_dialog_title_hint">Title</string>
+	<string name="note_dialog_body_hint">Text</string>
 
 	<string name="note_dialog_cancel">Cancel</string>
 	<string name="note_dialog_save">Save</string>

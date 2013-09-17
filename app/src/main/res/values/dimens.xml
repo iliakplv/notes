@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<!--
+		Main Activity
+	-->
+
 	<dimen name="note_list_item_title_text_size">16sp</dimen>
 	<dimen name="note_list_item_subtitle_text_size">14sp</dimen>
+
+	<!--
+		Note Dialog
+	-->
+
+	<dimen name="note_dialog_margin_common">4dp</dimen>
+
+	<dimen name="note_dialog_title_text_size">20sp</dimen>
+	<dimen name="note_dialog_body_text_size">18sp</dimen>
 
 </resources>
