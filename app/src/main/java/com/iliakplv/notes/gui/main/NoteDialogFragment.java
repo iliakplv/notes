@@ -6,7 +6,8 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import com.iliakplv.notes.R;
 
 /**
@@ -14,6 +15,11 @@ import com.iliakplv.notes.R;
  * Date:  16.09.2013
  */
 public class NoteDialogFragment extends DialogFragment implements View.OnClickListener {
+
+	private EditText title;
+	private EditText body;
+	private Button save;
+	private Button cancel;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,11 +31,26 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_dialog, container, false);
+		initControls(view);
 		return view;
 	}
 
+	private void initControls(View view) {
+		title = (EditText) view.findViewById(R.id.note_dialog_title);
+		body = (EditText) view.findViewById(R.id.note_dialog_body);
+		cancel = (Button) view.findViewById(R.id.note_dialog_cancel);
+		cancel.setOnClickListener(this);
+		save = (Button) view.findViewById(R.id.note_dialog_save);
+		save.setOnClickListener(this);
+		save.setEnabled(false);
+	}
+
 	@Override
-	public void onClick(View v) {
-		// TODO
+	public void onClick(View button) {
+		switch (button.getId()) {
+			case R.id.note_dialog_cancel:
+				dismiss();
+				break;
+		}
 	}
 }
