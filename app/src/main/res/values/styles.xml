@@ -84,7 +84,7 @@
 
 	<style name="NoteDialogEditText.Body">
 		<item name="android:textSize">@dimen/note_dialog_body_text_size</item>
-		<item name="android:minLines">4</item>
+		<item name="android:minLines">3</item>
 	</style>
 
 	<style name="NoteDialogButtonBar">
