@@ -31,12 +31,16 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		final Display display = getWindowManager().getDefaultDisplay();
-		final int width = display.getWidth();
+//		final Display display = getWindowManager().getDefaultDisplay();
+//		final int width = display.getWidth();
+	}
 
-		Fragment notesListFragment = new NotesListFragment();
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();    //To change body of overridden methods use File | Settings | File Templates.
 
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final Fragment notesListFragment = new NotesListFragment();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.notes_list, notesListFragment);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
@@ -55,14 +59,12 @@ public class MainActivity extends ActionBarActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(CURRENT_NOTE_KEY, currentNoteId);
-		outState.putSerializable(CURRENT_UI_STATE_KEY, currentUiState);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		currentNoteId = savedInstanceState.getInt(CURRENT_NOTE_KEY);
-		currentUiState = (UiState) savedInstanceState.getSerializable(CURRENT_UI_STATE_KEY);
 	}
 
 
