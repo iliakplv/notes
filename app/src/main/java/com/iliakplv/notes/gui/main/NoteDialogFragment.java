@@ -3,14 +3,27 @@ package com.iliakplv.notes.gui.main;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.TextNote;
+import com.iliakplv.notes.notes.db.NotesDatabaseAdapter;
+import com.iliakplv.notes.utils.StringUtils;
 
-
+/**
+ * Author: Ilya Kopylov
+ * Date:  16.09.2013
+ */
 public class NoteDialogFragment extends DialogFragment implements View.OnClickListener {
+
+	private EditText title;
+	private EditText body;
+	private Button saveButton;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -22,11 +35,61 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_dialog, container, false);
+		initControls(view);
 		return view;
 	}
 
+	private void initControls(View view) {
+		final NoteTextWatcher watcher = new NoteTextWatcher();
+		title = (EditText) view.findViewById(R.id.note_dialog_title);
+		title.addTextChangedListener(watcher);
+		body = (EditText) view.findViewById(R.id.note_dialog_body);
+		body.addTextChangedListener(watcher);
+		saveButton = (Button) view.findViewById(R.id.note_dialog_save);
+		saveButton.setOnClickListener(this);
+		saveButton.setEnabled(false);
+		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
+	}
+
 	@Override
-	public void onClick(View v) {
-		// TODO
+	public void onClick(View button) {
+		switch (button.getId()) {
+			case R.id.note_dialog_cancel:
+				dismiss();
+				break;
+			case R.id.note_dialog_save:
+				// TODO consider to move insertion to background thread
+				final TextNote newNote = new TextNote(title.getText().toString(), body.getText().toString());
+				final NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter(getActivity());
+				dbAdapter.open();
+				dbAdapter.insertNote(newNote);
+				dbAdapter.close();
+				dismiss();
+				break;
+		}
+	}
+
+
+	/*********************************************
+	 *
+	 *            Inner classes
+	 *
+	 *********************************************/
+
+	private class NoteTextWatcher implements TextWatcher {
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			final boolean ableToSaveNote =
+					!(StringUtils.isBlank(title.getText().toString()) &&
+							StringUtils.isBlank(body.getText().toString()));
+			saveButton.setEnabled(ableToSaveNote);
+		}
 	}
 }

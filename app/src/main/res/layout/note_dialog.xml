@@ -4,27 +4,28 @@
               style="@style/NoteDialog">
 
 	<EditText
-			style="@style/NoteDialogEditText.Title"
 			android:id="@+id/note_dialog_title"
+			style="@style/NoteDialogEditText.Title"
 			android:hint="@string/note_dialog_title_hint"/>
 
 	<EditText
-			style="@style/NoteDialogEditText.Body"
 			android:id="@+id/note_dialog_body"
+			style="@style/NoteDialogEditText.Body"
 			android:hint="@string/note_dialog_body_hint"/>
 
 	<LinearLayout
 			style="@style/NoteDialogButtonBar">
 
 		<Button
+				android:id="@+id/note_dialog_cancel"
 				style="@style/NoteDialogButton"
-		        android:id="@+id/note_dialog_cancel"
-		        android:text="@string/note_dialog_cancel"/>
+				android:text="@string/note_dialog_cancel"/>
 
 		<Button
-				style="@style/NoteDialogButton"
 				android:id="@+id/note_dialog_save"
+				style="@style/NoteDialogButton"
 				android:text="@string/note_dialog_save"/>
+
 	</LinearLayout>
 
 </LinearLayout>
