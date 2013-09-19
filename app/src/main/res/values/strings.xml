@@ -3,6 +3,14 @@
 
 	<string name="app_name">Notes</string>
 
+
+	<!--
+		Action Bar
+	-->
+
+	<string name="action_bar_add">New note</string>
+
+
 	<!--
 		Note Dialog
 	-->
