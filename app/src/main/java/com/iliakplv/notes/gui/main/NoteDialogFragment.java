@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseAdapter;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
 /**
@@ -58,12 +58,13 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 				dismiss();
 				break;
 			case R.id.note_dialog_save:
-				// TODO consider to move insertion to background thread
 				final TextNote newNote = new TextNote(title.getText().toString(), body.getText().toString());
-				final NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter(getActivity());
-				dbAdapter.open();
-				dbAdapter.insertNote(newNote);
-				dbAdapter.close();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						NotesDatabaseFacade.insertNote(newNote);
+					}
+				}).start();
 				dismiss();
 				break;
 		}

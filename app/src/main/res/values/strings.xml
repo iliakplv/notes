@@ -3,6 +3,14 @@
 
 	<string name="app_name">Notes</string>
 
+
+	<!--
+		Action Bar
+	-->
+
+	<string name="action_bar_add">New note</string>
+
+
 	<!--
 		Note Dialog
 	-->
@@ -16,5 +24,11 @@
 	<string name="note_dialog_cancel">Cancel</string>
 	<string name="note_dialog_save">Save</string>
 
+
+	<!--
+		Notes List
+	-->
+
+	<string name="notes_list_no_title">(no title)</string>
 
 </resources>

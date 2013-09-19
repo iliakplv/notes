@@ -2,7 +2,6 @@ package com.iliakplv.notes.notes.db;
 
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -54,8 +53,8 @@ public class NotesDatabaseAdapter {
 
 	// Constructors
 
-	public NotesDatabaseAdapter(Context context) {
-		dbHelper = new NotesDatabaseOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public NotesDatabaseAdapter() {
+		dbHelper = new NotesDatabaseOpenHelper(DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 
