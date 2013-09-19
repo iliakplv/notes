@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-import com.iliakplv.notes.notes.db.NotesDatabaseAdapter;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 import java.util.List;
 
@@ -36,10 +36,7 @@ public class NotesListFragment extends ListFragment {
 	}
 
 	private void fillListData() {
-		NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
-		dbAdapter.open();
-		notesEntries = dbAdapter.getAllNotes();
-		dbAdapter.close();
+		notesEntries = NotesDatabaseFacade.getAllNotes();
 	}
 
 	@Override
@@ -56,10 +53,7 @@ public class NotesListFragment extends ListFragment {
 		@Override
 		public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-			NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
-			dbAdapter.open();
-			dbAdapter.deleteNote(notesEntries.get(i).getId());
-			dbAdapter.close();
+			NotesDatabaseFacade.deleteNote(notesEntries.get(i).getId());
 
 			fillListData();
 			listAdapter.notifyDataSetChanged();

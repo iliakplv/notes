@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseAdapter;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
 /**
@@ -62,10 +62,7 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						final NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
-						dbAdapter.open();
-						dbAdapter.insertNote(newNote);
-						dbAdapter.close();
+						NotesDatabaseFacade.insertNote(newNote);
 					}
 				}).start();
 				dismiss();
