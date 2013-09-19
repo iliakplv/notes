@@ -25,4 +25,10 @@
 	<string name="note_dialog_save">Save</string>
 
 
+	<!--
+		Notes List
+	-->
+
+	<string name="notes_list_no_title">(no title)</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.iliakplv.notes.gui.main;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.List;
 
@@ -79,9 +81,17 @@ public class NotesListFragment extends ListFragment {
 			} else {
 				view = LayoutInflater.from(getContext()).inflate(LIST_ITEM_RESOURCE, parent, false);
 			}
+
 			final AbstractNote note = notesEntries.get(position).getNote();
-			((TextView) view.findViewById(R.id.title)).setText(note.getTitle());
+			final String noteOriginalTitle = note.getTitle();
+			final String noteTitleInList =  StringUtils.isNullOrEmpty(noteOriginalTitle) ?
+					getContext().getString(R.string.notes_list_no_title) :
+					noteOriginalTitle;
+			final TextView title = (TextView) view.findViewById(R.id.title);
+			title.setText(noteTitleInList);
+			// TODO first line or substring of note's body
 			((TextView) view.findViewById(R.id.subtitle)).setText(note.getBody());
+
 			return view;
 		}
 
