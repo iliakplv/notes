@@ -37,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	protected void onPostResume() {
-		super.onPostResume();    //To change body of overridden methods use File | Settings | File Templates.
+		super.onPostResume();
 
 		final Fragment notesListFragment = new NotesListFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
