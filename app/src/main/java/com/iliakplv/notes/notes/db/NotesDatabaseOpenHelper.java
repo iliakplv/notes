@@ -1,11 +1,11 @@
 package com.iliakplv.notes.notes.db;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.iliakplv.notes.BuildConfig;
+import com.iliakplv.notes.NotesApplication;
 
 /**
  * Author: Ilya Kopylov
@@ -17,8 +17,8 @@ public class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
-	public NotesDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-		super(context, name, factory, version);
+	public NotesDatabaseOpenHelper(String name, SQLiteDatabase.CursorFactory factory, int version) {
+		super(NotesApplication.getContext(), name, factory, version);
 	}
 
 	@Override

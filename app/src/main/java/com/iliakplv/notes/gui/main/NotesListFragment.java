@@ -36,7 +36,7 @@ public class NotesListFragment extends ListFragment {
 	}
 
 	private void fillListData() {
-		NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter(getActivity());
+		NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
 		dbAdapter.open();
 		notesEntries = dbAdapter.getAllNotes();
 		dbAdapter.close();
@@ -56,7 +56,7 @@ public class NotesListFragment extends ListFragment {
 		@Override
 		public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-			NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter(getActivity());
+			NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
 			dbAdapter.open();
 			dbAdapter.deleteNote(notesEntries.get(i).getId());
 			dbAdapter.close();

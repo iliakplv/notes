@@ -58,12 +58,16 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 				dismiss();
 				break;
 			case R.id.note_dialog_save:
-				// TODO consider to move insertion to background thread
 				final TextNote newNote = new TextNote(title.getText().toString(), body.getText().toString());
-				final NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter(getActivity());
-				dbAdapter.open();
-				dbAdapter.insertNote(newNote);
-				dbAdapter.close();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						final NotesDatabaseAdapter dbAdapter = new NotesDatabaseAdapter();
+						dbAdapter.open();
+						dbAdapter.insertNote(newNote);
+						dbAdapter.close();
+					}
+				}).start();
 				dismiss();
 				break;
 		}
