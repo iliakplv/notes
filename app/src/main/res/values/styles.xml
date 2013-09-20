@@ -33,6 +33,7 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:orientation">vertical</item>
+		<item name="android:padding">@dimen/note_list_item_padding</item>
 	</style>
 
 	<style name="NoteListItemText" parent="android:Widget.TextView">
@@ -43,6 +44,7 @@
 	<style name="NoteListItemText.Title">
 		<item name="android:textColor">@color/note_list_item_title</item>
 		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
+		<item name="android:layout_marginBottom">@dimen/note_list_item_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteListItemText.Subtitle">
@@ -57,8 +59,25 @@
 
 	<style name="NoteDetails">
 		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_margin">@dimen/note_details_margin</item>
 		<item name="android:orientation">vertical</item>
+	</style>
+
+	<style name="NoteDetailsText" parent="android:Widget.TextView">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="NoteDetailsText.Body">
+		<item name="android:textColor">@color/note_details_body</item>
+		<item name="android:textSize">@dimen/note_details_body_text_size</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_body_bottom_margin</item>
+	</style>
+
+	<style name="NoteDetailsText.Info">
+		<item name="android:textColor">@color/note_details_info</item>
+		<item name="android:textSize">@dimen/note_details_info_text_size</item>
 	</style>
 
 

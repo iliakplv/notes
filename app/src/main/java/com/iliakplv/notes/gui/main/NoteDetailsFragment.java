@@ -37,20 +37,20 @@ public class NoteDetailsFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// TODO rework this bullshit (test)
+		// TODO refactor
 		if (note == null) {
 			return null;
 		}
+		final View view = inflater.inflate(R.layout.note_details, container, false);
 
-		final String LINE_SPACING = "\n";
+		((TextView) view.findViewById(R.id.note_body)).setText(note.getBody());
+
 		final String DATE_SPACING = ".";
 		final String TIME_SPACING = ":";
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(note.getBody());
-		sb.append(LINE_SPACING);
-
 		DateTime timestamp = note.getCreateTime();
+
 		sb.append(timestamp.getHourOfDay());
 		sb.append(TIME_SPACING);
 		sb.append(timestamp.getMinuteOfHour());
@@ -62,9 +62,13 @@ public class NoteDetailsFragment extends Fragment {
 		sb.append(timestamp.getMonthOfYear());
 		sb.append(DATE_SPACING);
 		sb.append(timestamp.getYear());
-		sb.append(LINE_SPACING);
 
+		((TextView) view.findViewById(R.id.note_create_date)).setText(sb.toString());
+
+
+		sb = new StringBuilder();
 		timestamp = note.getChangeTime();
+
 		sb.append(timestamp.getHourOfDay());
 		sb.append(TIME_SPACING);
 		sb.append(timestamp.getMinuteOfHour());
@@ -76,10 +80,10 @@ public class NoteDetailsFragment extends Fragment {
 		sb.append(timestamp.getMonthOfYear());
 		sb.append(DATE_SPACING);
 		sb.append(timestamp.getYear());
-		sb.append(LINE_SPACING);
 
-		final View view = inflater.inflate(R.layout.note_details, container, false);
-		((TextView) view.findViewById(R.id.test_text)).setText(sb.toString());
+		((TextView) view.findViewById(R.id.note_modify_date)).setText(sb.toString());
+
+
 		return view;
 	}
 
