@@ -10,6 +10,11 @@ import java.util.List;
  */
 public class NotesDatabaseFacade {
 
+	private NotesDatabaseFacade() {
+		// only static usage allowed
+	}
+
+
 	public static List<NotesDatabaseEntry> getAllNotes() {
 		return (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
 	}
