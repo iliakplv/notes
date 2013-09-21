@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<!--
+		Notes List
+	-->
+
 	<color name="note_list_item_title">#ffffffff</color>
 	<color name="note_list_item_subtitle">#ffdadada</color>
+
+
+	<!--
+		Note Details
+	-->
+
+	<color name="note_details_body">#ffffffff</color>
+	<color name="note_details_info">#ffdadada</color>
 
 </resources>

@@ -4,11 +4,15 @@
               style="@style/NoteDetails">
 
 	<TextView
-		android:id="@+id/test_text"
-	    android:layout_height="match_parent"
-	    android:layout_width="match_parent"
-	    android:padding="20dp"
-	    android:textSize="16sp"
-	    android:textColor="#ffcccccc"/>
+		android:id="@+id/note_body"
+	    style="@style/NoteDetailsText.Body"/>
+
+	<TextView
+			android:id="@+id/note_create_date"
+			style="@style/NoteDetailsText.Info"/>
+
+	<TextView
+			android:id="@+id/note_modify_date"
+			style="@style/NoteDetailsText.Info"/>
 
 </LinearLayout>
