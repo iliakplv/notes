@@ -16,7 +16,7 @@ import java.util.List;
  * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
-public class NotesDatabaseAdapter {
+class NotesDatabaseAdapter {
 
 	// Database
 	private static final String DATABASE_NAME	= "notes.db";
@@ -28,7 +28,7 @@ public class NotesDatabaseAdapter {
 
 	// Tables
 	// Table: Notes
-	static final String TABLE_NOTES							= "notes"; // TODO make private
+	static final String TABLE_NOTES				= "notes"; // TODO make private
 	private static final int NOTES_KEY_NAME_COLUMN			= 1;
 	private static final String NOTES_KEY_NAME				= "name";
 	private static final int NOTES_KEY_BODY_COLUMN			= 2;
@@ -53,14 +53,14 @@ public class NotesDatabaseAdapter {
 
 	// Constructors
 
-	public NotesDatabaseAdapter() {
+	NotesDatabaseAdapter() {
 		dbHelper = new NotesDatabaseOpenHelper(DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 
 	// Queries
 
-	public List<NotesDatabaseEntry> getAllNotes() {
+	List<NotesDatabaseEntry> getAllNotes() {
 		Cursor cursor = db.query(TABLE_NOTES,
 				new String[] {KEY_ID, NOTES_KEY_NAME, NOTES_KEY_BODY, NOTES_KEY_CREATE_DATE, NOTES_KEY_CHANGE_DATE},
 				null, null, null, null, null);
@@ -84,15 +84,15 @@ public class NotesDatabaseAdapter {
 
 	// Data modification
 
-	public long insertNote(AbstractNote note) {
+	long insertNote(AbstractNote note) {
 		return db.insert(TABLE_NOTES, null, contentValuesForNote(note));
 	}
 
-	public boolean updateNote(int id, AbstractNote note) {
+	boolean updateNote(int id, AbstractNote note) {
 		return db.update(TABLE_NOTES, contentValuesForNote(note), whereClauseForId(id), null) > 0;
 	}
 
-	public boolean deleteNote(int id) {
+	boolean deleteNote(int id) {
 		return db.delete(TABLE_NOTES, whereClauseForId(id), null) > 0;
 	}
 
@@ -115,7 +115,7 @@ public class NotesDatabaseAdapter {
 
 	// Database open and close
 
-	public void open() {
+	void open() {
 		try {
 			db = dbHelper.getWritableDatabase();
 		} catch (SQLiteException e) {
@@ -123,7 +123,7 @@ public class NotesDatabaseAdapter {
 		}
 	}
 
-	public void close() {
+	void close() {
 		if (db != null) {
 			db.close();
 		}

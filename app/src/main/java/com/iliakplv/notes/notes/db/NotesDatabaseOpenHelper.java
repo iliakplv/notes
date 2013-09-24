@@ -11,13 +11,13 @@ import com.iliakplv.notes.NotesApplication;
  * Author: Ilya Kopylov
  * Date:  21.08.2013
  */
-public class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
+class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String LOG_TAG = NotesDatabaseOpenHelper.class.getSimpleName();
 
 	private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
-	public NotesDatabaseOpenHelper(String name, SQLiteDatabase.CursorFactory factory, int version) {
+	NotesDatabaseOpenHelper(String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(NotesApplication.getContext(), name, factory, version);
 	}
 
