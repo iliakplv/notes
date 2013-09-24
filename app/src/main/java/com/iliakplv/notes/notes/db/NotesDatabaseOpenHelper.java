@@ -35,7 +35,7 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Upgrading version " + oldVersion + " to " + newVersion);
 		}
-		db.execSQL(DROP_TABLE_IF_EXISTS + NotesDatabaseAdapter.TABLE_NOTES);
+		db.execSQL(DROP_TABLE_IF_EXISTS + NotesDatabaseAdapter.NOTES_TABLE);
 		onCreate(db);
 	}
 }
