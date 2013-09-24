@@ -1,16 +1,17 @@
 package com.iliakplv.notes.gui.main;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+
+import java.util.List;
 
 /**
  * Author: Ilya Kopylov
@@ -18,53 +19,48 @@ import com.iliakplv.notes.notes.AbstractNote;
  */
 public class MainActivity extends ActionBarActivity {
 
-	private static final String CURRENT_NOTE_KEY = "current_note";
-	private static final String CURRENT_UI_STATE_KEY = "current_iu_state";
+	private List<NotesDatabaseEntry> notesEntries;
 
-	private static final int MIN_DISPLAY_WIDTH = 600;
-
-	private int currentNoteId = 0;
-	private UiState currentUiState = UiState.NotesList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-//		final Display display = getWindowManager().getDefaultDisplay();
-//		final int width = display.getWidth();
+		if (findViewById(R.id.fragment_container) != null) { // One pane layout
+			if (savedInstanceState != null) {
+				// If we're being restored from a previous state,
+				// then we don't need to do anything and should return or else
+				// we could end up with overlapping fragments.
+				return;
+			}
+
+			final NotesListFragment noteListFragment = new NotesListFragment();
+			noteListFragment.setArguments(getIntent().getExtras());
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.add(R.id.fragment_container, noteListFragment);
+			ft.commit();
+		}
 	}
 
-	@Override
-	protected void onPostResume() {
-		super.onPostResume();
+	public void onNoteSelected(int position) {
+		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
+				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
 
-		final Fragment notesListFragment = new NotesListFragment();
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.notes_list, notesListFragment);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.commit();
-	}
+		if (noteDetailsFragment != null) { // Dual pane layout
+			noteDetailsFragment.updateNoteDetailsView(position);
+		} else { // One pane layout
+			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
+			final Bundle args = new Bundle();
+			args.putInt(NoteDetailsFragment.ARG_POSITION, position);
+			newNoteDetailsFragment.setArguments(args);
 
-	public void showDetailsFragment(AbstractNote note) {
-		NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment(note);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.details, noteDetailsFragment);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.commit();
-	}
-
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt(CURRENT_NOTE_KEY, currentNoteId);
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		currentNoteId = savedInstanceState.getInt(CURRENT_NOTE_KEY);
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.fragment_container, newNoteDetailsFragment);
+			ft.addToBackStack(null);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
+		}
 	}
 
 
@@ -84,16 +80,16 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 
-	/*********************************************
-	 *
-	 *            Inner classes
-	 *
-	 *********************************************/
+	public List<NotesDatabaseEntry> getUpdatedNotesEntriesList() {
+		notesEntries = NotesDatabaseFacade.getAllNotes();
+		return notesEntries;
+	}
 
-	private static enum UiState {
-		NotesList,
-		NoteDetails,
-		DualPane
+	public List<NotesDatabaseEntry> getNotesEntriesList() {
+		if (notesEntries == null) {
+			return getUpdatedNotesEntriesList();
+		}
+		return notesEntries;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.iliakplv.notes.gui.main;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,33 +18,47 @@ import org.joda.time.DateTime;
  */
 public class NoteDetailsFragment extends Fragment {
 
-	private AbstractNote note;
+	final static String ARG_POSITION = "position";
 
-	public NoteDetailsFragment() {
-		// do nothing
-	}
+	private MainActivity mainActivity;
+	private int currentPosition = -1;
 
-	public NoteDetailsFragment(AbstractNote note) {
-		this.note = note;
-	}
 
-	public AbstractNote getNote() {
-		return note;
-	}
-
-	public void setNote(AbstractNote note) {
-		this.note = note;
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mainActivity = (MainActivity) activity;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// TODO refactor
-		if (note == null) {
-			return null;
+		if (savedInstanceState != null) {
+			currentPosition = savedInstanceState.getInt(ARG_POSITION);
 		}
-		final View view = inflater.inflate(R.layout.note_details, container, false);
+		return inflater.inflate(R.layout.note_details, container, false);
+	}
 
-		((TextView) view.findViewById(R.id.note_body)).setText(note.getBody());
+	@Override
+	public void onStart() {
+		super.onStart();
+		final Bundle args = getArguments();
+		if (args != null) {
+			updateNoteDetailsView(args.getInt(ARG_POSITION));
+		} else if (currentPosition != -1) {
+			updateNoteDetailsView(currentPosition);
+		}
+	}
+
+	public void updateNoteDetailsView(int position) {
+		// TODO refactor this piece of code
+
+		if (position >= mainActivity.getNotesEntriesList().size()){
+			return;
+		}
+
+		final AbstractNote note = mainActivity.getNotesEntriesList().get(position).getNote();
+		((TextView) getActivity().findViewById(R.id.note_body)).setText(note.getBody());
+
 
 		final String DATE_SPACING = ".";
 		final String TIME_SPACING = ":";
@@ -63,7 +78,7 @@ public class NoteDetailsFragment extends Fragment {
 		sb.append(DATE_SPACING);
 		sb.append(timestamp.getYear());
 
-		((TextView) view.findViewById(R.id.note_create_date)).setText(sb.toString());
+		((TextView) getActivity().findViewById(R.id.note_create_date)).setText(sb.toString());
 
 
 		sb = new StringBuilder();
@@ -81,11 +96,13 @@ public class NoteDetailsFragment extends Fragment {
 		sb.append(DATE_SPACING);
 		sb.append(timestamp.getYear());
 
-		((TextView) view.findViewById(R.id.note_modify_date)).setText(sb.toString());
-
-
-		return view;
+		((TextView) getActivity().findViewById(R.id.note_modify_date)).setText(sb.toString());
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(ARG_POSITION, currentPosition);
+	}
 
 }

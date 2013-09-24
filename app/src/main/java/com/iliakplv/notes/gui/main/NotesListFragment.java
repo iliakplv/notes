@@ -1,6 +1,6 @@
 package com.iliakplv.notes.gui.main;
 
-import android.graphics.Typeface;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -16,61 +16,64 @@ import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
-import java.util.List;
-
 /**
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class NotesListFragment extends ListFragment {
+public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
 
-	List<NotesDatabaseEntry> notesEntries;
-	NotesListAdapter listAdapter;
+	private MainActivity mainActivity;
+	private NotesListAdapter listAdapter;
+
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mainActivity = (MainActivity) activity;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		fillListData();
 		listAdapter = new NotesListAdapter();
 		setListAdapter(listAdapter);
-		getListView().setOnItemLongClickListener(new NoteLongClickListener());
-	}
-
-	private void fillListData() {
-		notesEntries = NotesDatabaseFacade.getAllNotes();
+		getListView().setOnItemLongClickListener(this);
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		final AbstractNote note = notesEntries.get(position).getNote();
-		((MainActivity) getActivity()).showDetailsFragment(note);
-	}
-
-
-	/********** Inner classes **********/
-
-	private class NoteLongClickListener implements AdapterView.OnItemLongClickListener {
-
-		@Override
-		public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-			NotesDatabaseFacade.deleteNote(notesEntries.get(i).getId());
-
-			fillListData();
-			listAdapter.notifyDataSetChanged();
-
-			return true;
+	public void onStart() {
+		// TODO lifecycle!
+		super.onStart();
+		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
+			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		}
 	}
 
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		mainActivity.onNoteSelected(position);
+		getListView().setItemChecked(position, true);
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+		NotesDatabaseFacade.deleteNote(mainActivity.getNotesEntriesList().get(i).getId());
+		listAdapter.notifyDataSetChanged();
+		return true;
+	}
+
+
+	/*********************************************
+	 *
+	 *            Inner classes
+	 *
+	 *********************************************/
+
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
-		private static final int LIST_RESOURCE = R.id.notes_list;
-		private static final int LIST_ITEM_RESOURCE = R.layout.note_list_item;
-
 		public NotesListAdapter() {
-			super(NotesListFragment.this.getActivity(), LIST_RESOURCE, notesEntries);
+			super(NotesListFragment.this.getActivity(), 0, mainActivity.getNotesEntriesList());
 		}
 
 		@Override
@@ -79,10 +82,10 @@ public class NotesListFragment extends ListFragment {
 			if (convertView != null) {
 				view = convertView;
 			} else {
-				view = LayoutInflater.from(getContext()).inflate(LIST_ITEM_RESOURCE, parent, false);
+				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final AbstractNote note = notesEntries.get(position).getNote();
+			final AbstractNote note = mainActivity.getNotesEntriesList().get(position).getNote();
 			final String noteOriginalTitle = note.getTitle();
 			final String noteTitleInList =  StringUtils.isNullOrEmpty(noteOriginalTitle) ?
 					getContext().getString(R.string.notes_list_no_title) :
@@ -97,9 +100,14 @@ public class NotesListFragment extends ListFragment {
 
 		@Override
 		public int getCount() {
-			return notesEntries.size();
+			return mainActivity.getNotesEntriesList().size();
+		}
+
+		@Override
+		public void notifyDataSetChanged() {
+			mainActivity.getUpdatedNotesEntriesList();
+			super.notifyDataSetChanged();
 		}
 	}
-
 
 }
