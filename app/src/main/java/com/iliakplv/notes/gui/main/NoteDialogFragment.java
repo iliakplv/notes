@@ -47,7 +47,6 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 		body.addTextChangedListener(watcher);
 		saveButton = (Button) view.findViewById(R.id.note_dialog_save);
 		saveButton.setOnClickListener(this);
-		saveButton.setEnabled(false);
 		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
 	}
 
