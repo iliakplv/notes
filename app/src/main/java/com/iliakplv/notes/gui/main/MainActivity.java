@@ -3,10 +3,8 @@ package com.iliakplv.notes.gui.main;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 
 /**
@@ -80,6 +78,7 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
+				// TODO exit from app (?)
 				onBackPressed();
 				break;
 			case R.id.action_add:
