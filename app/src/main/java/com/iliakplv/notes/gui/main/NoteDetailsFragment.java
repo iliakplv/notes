@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import org.joda.time.DateTime;
 
 /**
@@ -20,15 +21,8 @@ public class NoteDetailsFragment extends Fragment {
 
 	final static String ARG_POSITION = "position";
 
-	private MainActivity mainActivity;
 	private int currentPosition = -1;
 
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mainActivity = (MainActivity) activity;
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,11 +46,11 @@ public class NoteDetailsFragment extends Fragment {
 	public void updateNoteDetailsView(int position) {
 		// TODO refactor this piece of code
 
-		if (position >= mainActivity.getNotesEntriesList().size()){
+		if (position >= NotesDatabaseFacade.getAllNotes().size()){
 			return;
 		}
 
-		final AbstractNote note = mainActivity.getNotesEntriesList().get(position).getNote();
+		final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
 		((TextView) getActivity().findViewById(R.id.note_body)).setText(note.getBody());
 
 

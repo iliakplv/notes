@@ -58,7 +58,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		NotesDatabaseFacade.deleteNote(mainActivity.getNotesEntriesList().get(i).getId());
+		final int noteIdToDelete = NotesDatabaseFacade.getAllNotes().get(i).getId();
+		NotesDatabaseFacade.deleteNote(noteIdToDelete);
 		listAdapter.notifyDataSetChanged();
 		return true;
 	}
@@ -73,7 +74,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
 		public NotesListAdapter() {
-			super(NotesListFragment.this.getActivity(), 0, mainActivity.getNotesEntriesList());
+			super(NotesListFragment.this.getActivity(), 0, NotesDatabaseFacade.getAllNotes());
 		}
 
 		@Override
@@ -85,7 +86,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final AbstractNote note = mainActivity.getNotesEntriesList().get(position).getNote();
+			final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
 			final String noteOriginalTitle = note.getTitle();
 			final String noteTitleInList =  StringUtils.isNullOrEmpty(noteOriginalTitle) ?
 					getContext().getString(R.string.notes_list_no_title) :
@@ -100,13 +101,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public int getCount() {
-			return mainActivity.getNotesEntriesList().size();
-		}
-
-		@Override
-		public void notifyDataSetChanged() {
-			mainActivity.getUpdatedNotesEntriesList();
-			super.notifyDataSetChanged();
+			return NotesDatabaseFacade.getAllNotes().size();
 		}
 	}
 

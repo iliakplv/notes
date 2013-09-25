@@ -10,33 +10,44 @@ import java.util.List;
  */
 public class NotesDatabaseFacade {
 
+	private static List<NotesDatabaseEntry> notesDatabaseEntries;
+	private static volatile boolean entriesListActual = false;
+
 	private NotesDatabaseFacade() {
 		// only static usage allowed
 	}
 
 
-	public static List<NotesDatabaseEntry> getAllNotes() {
-		return (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+	public static synchronized List<NotesDatabaseEntry> getAllNotes() {
+		if (!entriesListActual) {
+			 notesDatabaseEntries =
+					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+			entriesListActual = true;
+		}
+		return notesDatabaseEntries;
 	}
 
-	public static long insertNote(AbstractNote note) {
+	public static synchronized long insertNote(AbstractNote note) {
+		entriesListActual = false;
 		return (Long) performDatabaseTransaction(TransactionType.InsertNote, note);
 	}
 
-	public static boolean updateNote(int id, AbstractNote note) {
+	public static synchronized boolean updateNote(int id, AbstractNote note) {
+		entriesListActual = false;
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateNote, id, note);
 	}
 
-	public static boolean deleteNote(int id) {
+	public static synchronized boolean deleteNote(int id) {
+		entriesListActual = false;
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteNote, id);
 	}
 
 
-	private static Object performDatabaseTransaction(TransactionType type, Object... args) {
+	private static Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
 		Object result = null;
-		switch (type) {
+		switch (transactionType) {
 			case GetAllNotes:
 				result = adapter.getAllNotes();
 				break;

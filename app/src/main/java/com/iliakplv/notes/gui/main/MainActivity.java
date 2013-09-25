@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 import java.util.List;
 
@@ -77,19 +76,6 @@ public class MainActivity extends ActionBarActivity {
 		}
 		(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
 		return super.onOptionsItemSelected(item);
-	}
-
-
-	public List<NotesDatabaseEntry> getUpdatedNotesEntriesList() {
-		notesEntries = NotesDatabaseFacade.getAllNotes();
-		return notesEntries;
-	}
-
-	public List<NotesDatabaseEntry> getNotesEntriesList() {
-		if (notesEntries == null) {
-			return getUpdatedNotesEntriesList();
-		}
-		return notesEntries;
 	}
 
 }
