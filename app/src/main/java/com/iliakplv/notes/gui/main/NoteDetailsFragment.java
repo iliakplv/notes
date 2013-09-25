@@ -44,6 +44,7 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	public void updateNoteDetailsView(int position) {
+		// TODO store note id, use it to refresh
 		// TODO refactor this piece of code
 
 		final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
