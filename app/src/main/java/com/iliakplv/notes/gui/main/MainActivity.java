@@ -18,9 +18,6 @@ import java.util.List;
  */
 public class MainActivity extends ActionBarActivity {
 
-	private List<NotesDatabaseEntry> notesEntries;
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
