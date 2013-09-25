@@ -42,7 +42,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onStart() {
-		// TODO lifecycle!
 		super.onStart();
 		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
