@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Notes</string>
+
+
+	<!--
+		Action Bar
+	-->
+
+	<string name="action_bar_add">Новая заметка</string>
+
+
+	<!--
+		Note Dialog
+	-->
+
+	<string name="note_dialog_new_note">Новая заметка</string>
+	<string name="note_dialog_edit_note">Редактировать заметку</string>
+
+	<string name="note_dialog_title_hint">Название</string>
+	<string name="note_dialog_body_hint">Текст</string>
+
+	<string name="note_dialog_cancel">Отмена</string>
+	<string name="note_dialog_save">Сохранить</string>
+
+
+	<!--
+		Note Actions
+	-->
+
+	<string name="note_actions_toast">Удерживайте заметку, чтобы увидеть доступные действия</string>
+	<string name="note_action_edit">Редактировать</string>
+	<string name="note_action_delete">Удалить</string>
+	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
+	<string name="note_action_delete_confirm_dialog_yes">Да</string>
+	<string name="note_action_delete_confirm_dialog_no">Нет</string>
+	<string name="note_title_placeholder">(без названия)</string>
+
+
+	<!--
+		Notes Details
+	-->
+
+	<string name="note_details_created">Создана: </string>
+	<string name="note_details_modified">Изменена: </string>
+
+</resources>

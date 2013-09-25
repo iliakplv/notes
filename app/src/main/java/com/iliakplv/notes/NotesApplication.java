@@ -39,7 +39,6 @@ public class NotesApplication extends Application {
 
 
 	public static void onFirstNoteCreated() {
-		// TODO call this, store
 		Toast.makeText(context, R.string.note_actions_toast, Toast.LENGTH_LONG).show();
 	}
 
