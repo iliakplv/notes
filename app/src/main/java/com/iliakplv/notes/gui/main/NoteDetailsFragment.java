@@ -76,8 +76,6 @@ public class NoteDetailsFragment extends Fragment {
 			body.setText(noteTitle);
 		}
 
-		((TextView) getActivity().findViewById(R.id.note_body)).setText(noteBody);
-
 
 		final String DATE_SPACING = ".";
 		final String TIME_SPACING = ":";
