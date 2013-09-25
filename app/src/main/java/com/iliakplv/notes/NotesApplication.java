@@ -3,6 +3,7 @@ package com.iliakplv.notes;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Author: Ilya Kopylov
@@ -31,8 +32,15 @@ public class NotesApplication extends Application {
 		super.onTerminate();
 	}
 
+
 	public static Context getContext() {
 		return context;
+	}
+
+
+	public static void onFirstNoteCreated() {
+		// TODO call this, store
+		Toast.makeText(context, R.string.note_actions_toast, Toast.LENGTH_LONG).show();
 	}
 
 }

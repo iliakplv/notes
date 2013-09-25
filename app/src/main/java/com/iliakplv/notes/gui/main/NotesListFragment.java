@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
@@ -147,13 +148,24 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					(new NoteDialogFragment(noteEntry)).show(getFragmentManager(), "dialog");
 					break;
 				case DELETE_INDEX:
-					// TODO confirm dialog
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
-						}
-					}).start();
+					// Show delete confirmation dialog
+					new AlertDialog.Builder(getActivity()).
+							setTitle(noteEntry.getNote().getTitleOrPlaceholder()).
+							setMessage(R.string.note_action_delete_confirm_dialog_text).
+							setNegativeButton(R.string.note_action_delete_confirm_dialog_no, null).
+							setPositiveButton(R.string.note_action_delete_confirm_dialog_yes, new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialogInterface, int i) {
+									new Thread(new Runnable() {
+										@Override
+										public void run() {
+											NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
+										}
+									}).start();
+								}
+
+							}).create().show();
 					break;
 			}
 		}

@@ -29,8 +29,12 @@
 		Note Actions
 	-->
 
+	<string name="note_actions_toast">Hold the note to see available actions</string>
 	<string name="note_action_edit">Edit</string>
 	<string name="note_action_delete">Delete</string>
+	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
+	<string name="note_action_delete_confirm_dialog_yes">Yes</string>
+	<string name="note_action_delete_confirm_dialog_no">No</string>
 	<string name="note_title_placeholder">(no title)</string>
 
 

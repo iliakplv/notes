@@ -2,6 +2,7 @@ package com.iliakplv.notes.notes.db;
 
 import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 
 import java.util.LinkedList;
@@ -38,8 +39,12 @@ public class NotesDatabaseFacade {
 			Log.d(LOG_TAG, "Notes entries fetching. Entries list " + (entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
-			 notesDatabaseEntries =
+			final boolean emptyBeforeUpdate = notesDatabaseEntries == null || notesDatabaseEntries.isEmpty();
+			notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+			if (emptyBeforeUpdate && !notesDatabaseEntries.isEmpty()) {
+				NotesApplication.onFirstNoteCreated();
+			}
 		}
 		return notesDatabaseEntries;
 	}
