@@ -26,10 +26,12 @@
 
 
 	<!--
-		Notes List
+		Note Actions
 	-->
 
-	<string name="notes_list_no_title">(no title)</string>
+	<string name="note_action_edit">Edit</string>
+	<string name="note_action_delete">Delete</string>
+	<string name="note_title_placeholder">(no title)</string>
 
 
 	<!--

@@ -1,6 +1,8 @@
 package com.iliakplv.notes.notes;
 
 
+import com.iliakplv.notes.R;
+import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -31,6 +33,10 @@ public abstract class AbstractNote {
 
 	public String getTitle() {
 		return title;
+	}
+
+	public String getTitleOrPlaceholder() {
+		return StringUtils.getNonEmpty(title, R.string.note_title_placeholder);
 	}
 
 	public void setTitle(String title) {

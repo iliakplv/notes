@@ -1,8 +1,11 @@
 package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +60,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		final int noteIdToDelete = NotesDatabaseFacade.getAllNotes().get(i).getId();
-		NotesDatabaseFacade.deleteNote(noteIdToDelete);
-		listAdapter.notifyDataSetChanged();
+		final NotesDatabaseEntry selectedNoteEntry = NotesDatabaseFacade.getAllNotes().get(i);
+
+		new AlertDialog.Builder(getActivity()).
+				setTitle(selectedNoteEntry.getNote().getTitleOrPlaceholder()).
+				setItems(R.array.note_actions, new NoteActionClickListener(selectedNoteEntry)).
+				setNegativeButton(R.string.note_dialog_cancel, null).
+				create().show();
+
 		return true;
 	}
 
@@ -86,14 +94,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
-			final String noteOriginalTitle = note.getTitle();
-			final String noteTitleInList =  StringUtils.isNullOrEmpty(noteOriginalTitle) ?
-					getContext().getString(R.string.notes_list_no_title) :
-					noteOriginalTitle;
-			final TextView title = (TextView) view.findViewById(R.id.title);
-			title.setText(noteTitleInList);
-			// TODO first line or substring of note's body
+			((TextView) view.findViewById(R.id.title)).setText(note.getTitleOrPlaceholder());
 			((TextView) view.findViewById(R.id.subtitle)).setText(note.getBody());
+
+			// TODO first line or substring of note's body
 
 			return view;
 		}
@@ -101,6 +105,24 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		@Override
 		public int getCount() {
 			return NotesDatabaseFacade.getAllNotes().size();
+		}
+	}
+
+	private class NoteActionClickListener implements DialogInterface.OnClickListener {
+
+		private NotesDatabaseEntry noteEntry;
+
+		public NoteActionClickListener(NotesDatabaseEntry noteEntry) {
+			if (noteEntry == null) {
+				throw new NullPointerException("Note entry is null");
+			}
+			this.noteEntry = noteEntry;
+		}
+
+		@Override
+		public void onClick(DialogInterface dialogInterface, int i) {
+			Log.d("Dialog", "i=" + i);
+			//		listAdapter.notifyDataSetChanged();
 		}
 	}
 
