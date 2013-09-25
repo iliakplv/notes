@@ -8,9 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-
-import java.util.List;
 
 /**
  * Author: Ilya Kopylov
@@ -18,16 +15,22 @@ import java.util.List;
  */
 public class MainActivity extends ActionBarActivity {
 
+	private static final String DETAILS_SHOWN = "note_details_shown";
+	private boolean detailsShown = false;
+
+
+	private boolean isSinglePaneLayout() {
+		return findViewById(R.id.fragment_container) != null;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		if (findViewById(R.id.fragment_container) != null) { // One pane layout
+		if (isSinglePaneLayout()) {
 			if (savedInstanceState != null) {
-				// If we're being restored from a previous state,
-				// then we don't need to do anything and should return or else
-				// we could end up with overlapping fragments.
+				onNoteListNavigate(savedInstanceState.getBoolean(DETAILS_SHOWN));
 				return;
 			}
 
@@ -45,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 
 		if (noteDetailsFragment != null) { // Dual pane layout
 			noteDetailsFragment.updateNoteDetailsView(position);
-		} else { // One pane layout
+		} else { // Single pane layout
 			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
 			final Bundle args = new Bundle();
 			args.putInt(NoteDetailsFragment.ARG_POSITION, position);
@@ -56,9 +59,16 @@ public class MainActivity extends ActionBarActivity {
 			ft.addToBackStack(null);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
+
+			onNoteListNavigate(true);
 		}
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(DETAILS_SHOWN, detailsShown);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,11 +78,26 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (BuildConfig.DEBUG) {
-			Log.d("MENU", "Clicked MenuItem is " + item.getTitle());
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				onBackPressed();
+				break;
+			case R.id.action_add:
+				(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
+				break;
 		}
-		(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
-		return super.onOptionsItemSelected(item);
+		return true;
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		onNoteListNavigate(false);
+	}
+
+	private void onNoteListNavigate(boolean showDetails) {
+		detailsShown = showDetails;
+		getActionBar().setDisplayHomeAsUpEnabled(detailsShown && isSinglePaneLayout());
 	}
 
 }
