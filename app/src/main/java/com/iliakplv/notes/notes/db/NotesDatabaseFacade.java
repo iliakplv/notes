@@ -1,5 +1,7 @@
 package com.iliakplv.notes.notes.db;
 
+import android.util.Log;
+import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.notes.AbstractNote;
 
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
  */
 public class NotesDatabaseFacade {
 
+	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
+
 	private static List<NotesDatabaseEntry> notesDatabaseEntries;
 	private static volatile boolean entriesListActual = false;
 
@@ -19,6 +23,9 @@ public class NotesDatabaseFacade {
 
 
 	public static synchronized List<NotesDatabaseEntry> getAllNotes() {
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "Notes entries fetching. Entries list " + (entriesListActual ? "" : "NOT ") + "actual");
+		}
 		if (!entriesListActual) {
 			 notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
@@ -64,6 +71,9 @@ public class NotesDatabaseFacade {
 				throw new IllegalArgumentException("Wrong DB transaction type");
 		}
 		adapter.close();
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
+		}
 		return result;
 	}
 
