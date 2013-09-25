@@ -46,11 +46,13 @@ public class NoteDetailsFragment extends Fragment {
 	public void updateNoteDetailsView(int position) {
 		// TODO refactor this piece of code
 
-		if (position >= NotesDatabaseFacade.getAllNotes().size()){
+		final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+
+		if (position >= dbFacade.getAllNotes().size()){
 			return;
 		}
 
-		final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
+		final AbstractNote note = dbFacade.getAllNotes().get(position).getNote();
 
 		final String noteTitle = note.getTitle();
 		final String noteBody = note.getBody();

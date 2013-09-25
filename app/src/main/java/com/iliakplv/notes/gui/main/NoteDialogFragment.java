@@ -75,10 +75,11 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
+						final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 						if (editMode) {
-							NotesDatabaseFacade.updateNote(noteEntry.getId(), newNote);
+							dbFacade.updateNote(noteEntry.getId(), newNote);
 						} else {
-							NotesDatabaseFacade.insertNote(newNote);
+							dbFacade.insertNote(newNote);
 						}
 					}
 				}).start();

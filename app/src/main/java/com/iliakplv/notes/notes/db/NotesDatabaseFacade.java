@@ -4,6 +4,7 @@ import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.notes.AbstractNote;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,44 +14,49 @@ import java.util.List;
 public class NotesDatabaseFacade {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
+	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
-	private static List<NotesDatabaseEntry> notesDatabaseEntries;
-	private static volatile boolean entriesListActual = false;
 
-	private NotesDatabaseFacade() {
-		// only static usage allowed
+	private List<NotesDatabaseEntry> notesDatabaseEntries;
+	private volatile boolean entriesListActual = false;
+	private List<DatabaseChangeListener> listeners;
+
+
+	// Instance
+
+	private NotesDatabaseFacade() {}
+
+	public static NotesDatabaseFacade getInstance() {
+		return instance;
 	}
 
 
-	public static synchronized List<NotesDatabaseEntry> getAllNotes() {
+	// Transactions
+
+	public synchronized List<NotesDatabaseEntry> getAllNotes() {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Notes entries fetching. Entries list " + (entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
 			 notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
-			entriesListActual = true;
 		}
 		return notesDatabaseEntries;
 	}
 
-	public static synchronized long insertNote(AbstractNote note) {
-		entriesListActual = false;
+	public synchronized long insertNote(AbstractNote note) {
 		return (Long) performDatabaseTransaction(TransactionType.InsertNote, note);
 	}
 
-	public static synchronized boolean updateNote(int id, AbstractNote note) {
-		entriesListActual = false;
+	public synchronized boolean updateNote(int id, AbstractNote note) {
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateNote, id, note);
 	}
 
-	public static synchronized boolean deleteNote(int id) {
-		entriesListActual = false;
+	public synchronized boolean deleteNote(int id) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteNote, id);
 	}
 
-
-	private static Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
+	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
 		Object result = null;
@@ -71,18 +77,70 @@ public class NotesDatabaseFacade {
 				throw new IllegalArgumentException("Wrong DB transaction type");
 		}
 		adapter.close();
+
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 		}
+
+		entriesListActual = !isTransactionModifiesDatabase(transactionType);
+		notifyListeners();
+
 		return result;
 	}
 
+
+	// Listeners
+
+	private void notifyListeners() {
+		if (listeners != null) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					for (DatabaseChangeListener listener : listeners) {
+						listener.onDatabaseChanged();
+					}
+				}
+			}).start();
+		}
+	}
+
+	public boolean addDatabaseChangeListener(DatabaseChangeListener listener) {
+		if (listeners == null) {
+			listeners = new LinkedList<DatabaseChangeListener>();
+		}
+		return listeners.add(listener);
+	}
+
+	public boolean removeDatabaseChangeListener(DatabaseChangeListener listener) {
+		if (listeners != null) {
+			return listeners.remove(listener);
+		}
+		return false;
+	}
+
+
+	// Other
+
+	private static boolean isTransactionModifiesDatabase(TransactionType transactionType) {
+		return transactionType != TransactionType.GetAllNotes;
+	}
+
+
+	/*********************************************
+	 *
+	 *            Inner classes
+	 *
+	 *********************************************/
 
 	private static enum TransactionType {
 		GetAllNotes,
 		InsertNote,
 		UpdateNote,
 		DeleteNote
+	}
+
+	public interface DatabaseChangeListener {
+		public void onDatabaseChanged();
 	}
 
 }

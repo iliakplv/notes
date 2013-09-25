@@ -21,11 +21,12 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
+public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
+		NotesDatabaseFacade.DatabaseChangeListener {
 
+	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
-
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -42,13 +43,19 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		}
+		dbFacade.addDatabaseChangeListener(this);
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		dbFacade.removeDatabaseChangeListener(this);
+	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -58,7 +65,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		final NotesDatabaseEntry selectedNoteEntry = NotesDatabaseFacade.getAllNotes().get(i);
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(i);
 
 		// Show available actions for note
 		new AlertDialog.Builder(getActivity()).
@@ -68,6 +75,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				create().show();
 
 		return true;
+	}
+
+	@Override
+	public void onDatabaseChanged() {
+		if (listAdapter != null) {
+			listAdapter.notifyDataSetChanged();
+		}
 	}
 
 
@@ -80,7 +94,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
 		public NotesListAdapter() {
-			super(NotesListFragment.this.getActivity(), 0, NotesDatabaseFacade.getAllNotes());
+			super(NotesListFragment.this.getActivity(), 0, dbFacade.getAllNotes());
 		}
 
 		@Override
@@ -92,7 +106,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
+			final AbstractNote note = dbFacade.getAllNotes().get(position).getNote();
 			((TextView) view.findViewById(R.id.title)).setText(note.getTitleOrPlaceholder());
 			((TextView) view.findViewById(R.id.subtitle)).setText(note.getBody());
 
@@ -103,7 +117,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public int getCount() {
-			return NotesDatabaseFacade.getAllNotes().size();
+			return dbFacade.getAllNotes().size();
 		}
 	}
 
@@ -132,7 +146,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							NotesDatabaseFacade.deleteNote(noteEntry.getId());
+							NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
 						}
 					}).start();
 					break;
