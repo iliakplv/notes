@@ -4,6 +4,10 @@
               style="@style/NoteDetails">
 
 	<TextView
+			android:id="@+id/note_title"
+			style="@style/NoteDetailsText.Title"/>
+
+	<TextView
 		android:id="@+id/note_body"
 	    style="@style/NoteDetailsText.Body"/>
 

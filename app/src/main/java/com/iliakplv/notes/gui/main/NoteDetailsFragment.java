@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -50,7 +51,32 @@ public class NoteDetailsFragment extends Fragment {
 		}
 
 		final AbstractNote note = NotesDatabaseFacade.getAllNotes().get(position).getNote();
-		((TextView) getActivity().findViewById(R.id.note_body)).setText(note.getBody());
+
+		final String noteTitle = note.getTitle();
+		final String noteBody = note.getBody();
+		final boolean hasTitle = !StringUtils.isNullOrEmpty(noteTitle);
+		final boolean hasBody = !StringUtils.isNullOrEmpty(noteBody);
+
+		final TextView title = (TextView) getActivity().findViewById(R.id.note_title);
+		final TextView body = (TextView) getActivity().findViewById(R.id.note_body);
+
+		// At least one of note's fields (title or body) will be not empty (empty note can't be stored)
+		if (hasTitle && hasBody) {
+			// show all
+			title.setVisibility(View.VISIBLE);
+			title.setText(noteTitle);
+			body.setText(noteBody);
+		} else if (!hasTitle && hasBody) {
+			// show only body
+			title.setVisibility(View.GONE);
+			body.setText(noteBody);
+		} else { // (hasTitle && !hasBody)
+			// show only title (like it's a body)
+			title.setVisibility(View.GONE);
+			body.setText(noteTitle);
+		}
+
+		((TextView) getActivity().findViewById(R.id.note_body)).setText(noteBody);
 
 
 		final String DATE_SPACING = ".";
@@ -59,6 +85,7 @@ public class NoteDetailsFragment extends Fragment {
 		StringBuilder sb = new StringBuilder();
 		DateTime timestamp = note.getCreateTime();
 
+		sb.append(getString(R.string.note_details_created));
 		sb.append(timestamp.getHourOfDay());
 		sb.append(TIME_SPACING);
 		sb.append(timestamp.getMinuteOfHour());
@@ -77,6 +104,7 @@ public class NoteDetailsFragment extends Fragment {
 		sb = new StringBuilder();
 		timestamp = note.getChangeTime();
 
+		sb.append(getString(R.string.note_details_modified));
 		sb.append(timestamp.getHourOfDay());
 		sb.append(TIME_SPACING);
 		sb.append(timestamp.getMinuteOfHour());

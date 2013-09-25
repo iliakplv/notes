@@ -78,8 +78,9 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				// TODO exit from app (?)
-				onBackPressed();
+				if (detailsShown) {
+					onBackPressed();
+				}
 				break;
 			case R.id.action_add:
 				(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
