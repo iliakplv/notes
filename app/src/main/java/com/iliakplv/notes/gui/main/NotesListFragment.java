@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
-import com.iliakplv.notes.utils.StringUtils;
 
 /**
  * Author: Ilya Kopylov
@@ -62,9 +60,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 		final NotesDatabaseEntry selectedNoteEntry = NotesDatabaseFacade.getAllNotes().get(i);
 
+		// Show available actions for note
 		new AlertDialog.Builder(getActivity()).
 				setTitle(selectedNoteEntry.getNote().getTitleOrPlaceholder()).
-				setItems(R.array.note_actions, new NoteActionClickListener(selectedNoteEntry)).
+				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.note_dialog_cancel, null).
 				create().show();
 
@@ -108,11 +107,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-	private class NoteActionClickListener implements DialogInterface.OnClickListener {
+	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
+
+		private final int EDIT_INDEX = 0;
+		private final int DELETE_INDEX = 1;
 
 		private NotesDatabaseEntry noteEntry;
 
-		public NoteActionClickListener(NotesDatabaseEntry noteEntry) {
+		public NoteActionDialogClickListener(NotesDatabaseEntry noteEntry) {
 			if (noteEntry == null) {
 				throw new NullPointerException("Note entry is null");
 			}
@@ -121,8 +123,20 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public void onClick(DialogInterface dialogInterface, int i) {
-			Log.d("Dialog", "i=" + i);
-			//		listAdapter.notifyDataSetChanged();
+			switch (i) {
+				case EDIT_INDEX:
+					(new NoteDialogFragment(noteEntry)).show(getFragmentManager(), "dialog");
+					break;
+				case DELETE_INDEX:
+					// TODO confirm dialog
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							NotesDatabaseFacade.deleteNote(noteEntry.getId());
+						}
+					}).start();
+					break;
+			}
 		}
 	}
 

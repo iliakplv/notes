@@ -83,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
 				}
 				break;
 			case R.id.action_add:
-				(new NoteDialogFragment()).show(getSupportFragmentManager(), "dialog");
+				(new NoteDialogFragment(null)).show(getSupportFragmentManager(), "dialog");
 				break;
 		}
 		return true;
