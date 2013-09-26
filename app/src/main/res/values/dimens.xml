@@ -2,7 +2,7 @@
 <resources>
 
 	<!--
-		Note List
+		Main
 	-->
 
 	<dimen name="main_side_padding">6dp</dimen>

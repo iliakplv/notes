@@ -8,11 +8,11 @@
 			style="@style/NoteDetailsText.Title"/>
 
 	<TextView
-		android:id="@+id/note_body"
-	    style="@style/NoteDetailsText.Body"/>
+			android:id="@+id/note_body"
+			style="@style/NoteDetailsText.Body"/>
 
 	<TextView
-		style="@style/NoteInfoSeparator"/>
+			style="@style/NoteInfoSeparator"/>
 
 	<TextView
 			android:id="@+id/note_create_date"
