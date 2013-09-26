@@ -79,6 +79,7 @@
 	<style name="NoteDetailsText.Info">
 		<item name="android:textColor">@color/note_details_info</item>
 		<item name="android:textSize">@dimen/note_details_info_text_size</item>
+		<item name="android:paddingLeft">@dimen/note_details_info_left_padding</item>
 	</style>
 
 	<style name="NoteInfoSeparator" parent="android:Widget.TextView">
