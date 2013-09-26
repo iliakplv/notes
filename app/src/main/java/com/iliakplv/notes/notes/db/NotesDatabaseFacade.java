@@ -88,7 +88,9 @@ public class NotesDatabaseFacade {
 		}
 
 		entriesListActual = !isTransactionModifiesDatabase(transactionType);
-		notifyListeners();
+		if (!entriesListActual) {
+			notifyListeners();
+		}
 
 		return result;
 	}
