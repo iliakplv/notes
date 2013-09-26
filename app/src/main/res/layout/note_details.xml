@@ -12,6 +12,9 @@
 	    style="@style/NoteDetailsText.Body"/>
 
 	<TextView
+		style="@style/NoteInfoSeparator"/>
+
+	<TextView
 			android:id="@+id/note_create_date"
 			style="@style/NoteDetailsText.Info"/>
 

@@ -29,6 +29,7 @@
 	<dimen name="note_details_info_text_size">16sp</dimen>
 	<dimen name="note_details_title_bottom_margin">6dp</dimen>
 	<dimen name="note_details_body_bottom_margin">10dp</dimen>
+	<dimen name="note_details_separator_bottom_margin">6dp</dimen>
 
 
 	<!--

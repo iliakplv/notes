@@ -81,6 +81,13 @@
 		<item name="android:textSize">@dimen/note_details_info_text_size</item>
 	</style>
 
+	<style name="NoteInfoSeparator" parent="android:Widget.TextView">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">1dp</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_separator_bottom_margin</item>
+		<item name="android:background">@color/note_details_info</item>
+	</style>
+
 
 	<!--
 		Note Dialog
