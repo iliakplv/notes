@@ -15,6 +15,6 @@
 
 	<color name="note_details_title">#ffdadada</color>
 	<color name="note_details_body">#ffffffff</color>
-	<color name="note_details_info">#ffdadada</color>
+	<color name="note_details_info">#ff33b0e0</color>
 
 </resources>
