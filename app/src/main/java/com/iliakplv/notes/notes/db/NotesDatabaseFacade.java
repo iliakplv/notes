@@ -87,7 +87,7 @@ public class NotesDatabaseFacade {
 			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 		}
 
-		entriesListActual = !isTransactionModifiesDatabase(transactionType);
+		entriesListActual = nonModificationTransaction(transactionType);
 		if (!entriesListActual) {
 			notifyListeners();
 		}
@@ -128,8 +128,9 @@ public class NotesDatabaseFacade {
 
 	// Other
 
-	private static boolean isTransactionModifiesDatabase(TransactionType transactionType) {
-		return transactionType != TransactionType.GetAllNotes;
+	private static boolean nonModificationTransaction(TransactionType transactionType) {
+		// Only GetAllNotes transaction does not modify database entries
+		return transactionType == TransactionType.GetAllNotes;
 	}
 
 
