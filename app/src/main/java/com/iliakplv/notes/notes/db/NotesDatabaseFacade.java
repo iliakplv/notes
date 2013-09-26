@@ -145,6 +145,12 @@ public class NotesDatabaseFacade {
 	}
 
 	public interface DatabaseChangeListener {
+
+		/**
+		 * Callback for notes database changing
+		 * Called after transaction that affects database entries (insert, update or delete) was performed
+		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
+		 */
 		public void onDatabaseChanged();
 	}
 
