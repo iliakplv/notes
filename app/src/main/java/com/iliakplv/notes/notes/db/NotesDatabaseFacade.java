@@ -40,10 +40,12 @@ public class NotesDatabaseFacade {
 	// Transactions
 
 	public synchronized NotesDatabaseEntry getNote(int id) {
+		final boolean needToRefresh = lastFetchedEntryId != id || !lastFetchedEntryActual;
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Note entry fetching (id=" + id + ")");
+			Log.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
+					(needToRefresh ? "NOT " : "") + "actual");
 		}
-		if (lastFetchedEntryId != id || !lastFetchedEntryActual) {
+		if (needToRefresh) {
 			lastFetchedEntry = (NotesDatabaseEntry) performDatabaseTransaction(TransactionType.GetNote, id);
 			lastFetchedEntryId = id;
 			lastFetchedEntryActual = true;
@@ -53,7 +55,8 @@ public class NotesDatabaseFacade {
 
 	public synchronized List<NotesDatabaseEntry> getAllNotes() {
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Notes entries fetching. Entries list " + (entriesListActual ? "" : "NOT ") + "actual");
+			Log.d(LOG_TAG, "Notes entries fetching. Cached entries list " +
+					(entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
 			final boolean emptyBeforeUpdate = notesDatabaseEntries != null && notesDatabaseEntries.isEmpty();
