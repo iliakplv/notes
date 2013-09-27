@@ -6,19 +6,25 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 /**
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
 
-	private static final String DETAILS_SHOWN = "note_details_shown";
-	private boolean detailsShown = false;
+	private static final String CURRENT_NOTE_ID = "current_note_id";
+	private static final int NO_DETAILS = 0;
+	private int currentNoteId = NO_DETAILS;
 
 
 	private boolean isSinglePaneLayout() {
 		return findViewById(R.id.fragment_container) != null;
+	}
+
+	private boolean isDetailsShown() {
+		return currentNoteId != NO_DETAILS;
 	}
 
 	@Override
@@ -27,16 +33,19 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.main);
 
 		if (isSinglePaneLayout()) {
-			if (savedInstanceState != null) {
-				onNoteListNavigate(savedInstanceState.getBoolean(DETAILS_SHOWN));
-				return;
+			if (savedInstanceState == null) {
+				final NotesListFragment noteListFragment = new NotesListFragment();
+				noteListFragment.setArguments(getIntent().getExtras());
+				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.add(R.id.fragment_container, noteListFragment);
+				ft.commit();
 			}
-
-			final NotesListFragment noteListFragment = new NotesListFragment();
-			noteListFragment.setArguments(getIntent().getExtras());
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.add(R.id.fragment_container, noteListFragment);
-			ft.commit();
+		} else {
+			if (savedInstanceState != null) {
+				onNoteSelected(savedInstanceState.getInt(CURRENT_NOTE_ID));
+			} else {
+				onNoteSelected(NO_DETAILS);
+			}
 		}
 	}
 
@@ -44,9 +53,10 @@ public class MainActivity extends ActionBarActivity {
 		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
 				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
 
-		if (noteDetailsFragment != null) { // Dual pane layout
+		if (noteDetailsFragment != null) {
+			// TODO update or hide (if noteId == NO_DETAILS) !!!
 			noteDetailsFragment.updateNoteDetailsView(noteId);
-		} else { // Single pane layout
+		} else {
 			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
 			final Bundle args = new Bundle();
 			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
@@ -58,14 +68,14 @@ public class MainActivity extends ActionBarActivity {
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
 
-			onNoteListNavigate(true);
+			onDetailsChanged(noteId);
 		}
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(DETAILS_SHOWN, detailsShown);
+		outState.putInt(CURRENT_NOTE_ID, currentNoteId);
 	}
 
 	@Override
@@ -78,7 +88,7 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (detailsShown) {
+				if (isDetailsShown()) {
 					onBackPressed();
 				}
 				break;
@@ -92,12 +102,35 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		onNoteListNavigate(false);
+		if (isDetailsShown()) {
+			onDetailsChanged(NO_DETAILS);
+		}
 	}
 
-	private void onNoteListNavigate(boolean showDetails) {
-		detailsShown = showDetails;
-		getActionBar().setDisplayHomeAsUpEnabled(detailsShown && isSinglePaneLayout());
+	private void onDetailsChanged(int newNoteId) {
+		final boolean detailsWasShown = isDetailsShown();
+		currentNoteId = newNoteId;
+		final boolean detailsShownNow = isDetailsShown();
+
+		getActionBar().setDisplayHomeAsUpEnabled(detailsShownNow && isSinglePaneLayout());
+
+		if (!detailsWasShown && detailsShownNow) {
+			NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
+		} else if (detailsWasShown && !detailsShownNow) {
+			NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
+		}
 	}
 
+
+	// listener implementation
+
+	@Override
+	public void onNoteChanged() {
+		onNoteSelected(getNoteId());
+	}
+
+	@Override
+	public int getNoteId() {
+		return currentNoteId;
+	}
 }
