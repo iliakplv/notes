@@ -122,7 +122,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public int getCount() {
-			return dbFacade.getAllNotes().size();
+			return dbFacade.getNotesCount();
 		}
 	}
 

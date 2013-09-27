@@ -20,6 +20,8 @@ public class NotesDatabaseFacade {
 
 	private List<NotesDatabaseEntry> notesDatabaseEntries;
 	private volatile boolean entriesListActual = false;
+	private volatile int entriesListSize = -1;
+
 	private NotesDatabaseEntry lastFetchedEntry;
 	private volatile int lastFetchedEntryId = 0;
 	private volatile boolean lastFetchedEntryActual = false;
@@ -39,7 +41,7 @@ public class NotesDatabaseFacade {
 
 	// Transactions
 
-	public synchronized NotesDatabaseEntry getNote(int id) {
+	public NotesDatabaseEntry getNote(int id) {
 		final boolean needToRefresh = lastFetchedEntryId != id || !lastFetchedEntryActual;
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
@@ -53,7 +55,7 @@ public class NotesDatabaseFacade {
 		return lastFetchedEntry;
 	}
 
-	public synchronized List<NotesDatabaseEntry> getAllNotes() {
+	public List<NotesDatabaseEntry> getAllNotes() {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Notes entries fetching. Cached entries list " +
 					(entriesListActual ? "" : "NOT ") + "actual");
@@ -63,6 +65,7 @@ public class NotesDatabaseFacade {
 
 			notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+			entriesListSize = notesDatabaseEntries.size();
 			entriesListActual = true;
 
 			if (emptyBeforeUpdate && !notesDatabaseEntries.isEmpty()) {
@@ -70,6 +73,13 @@ public class NotesDatabaseFacade {
 			}
 		}
 		return notesDatabaseEntries;
+	}
+
+	public int getNotesCount() {
+		if (entriesListSize < 0) {
+			getAllNotes();
+		}
+		return entriesListSize;
 	}
 
 	public synchronized long insertNote(AbstractNote note) {
@@ -99,6 +109,7 @@ public class NotesDatabaseFacade {
 				break;
 			case InsertNote:
 				result = adapter.insertNote((AbstractNote) args[0]);
+				entriesListSize++;
 				break;
 			case UpdateNote:
 				id = (Integer) args[0];
@@ -107,6 +118,7 @@ public class NotesDatabaseFacade {
 			case DeleteNote:
 				id = (Integer) args[0];
 				result = adapter.deleteNote(id);
+				entriesListSize--;
 				break;
 			default:
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
