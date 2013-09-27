@@ -88,9 +88,11 @@ public class NotesDatabaseFacade {
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
 		Object result = null;
+		int id = 0;
 		switch (transactionType) {
 			case GetNote:
-				result = adapter.getNote((Integer) args[0]);
+				id = (Integer) args[0];
+				result = adapter.getNote(id);
 				break;
 			case GetAllNotes:
 				result = adapter.getAllNotes();
@@ -99,16 +101,18 @@ public class NotesDatabaseFacade {
 				result = adapter.insertNote((AbstractNote) args[0]);
 				break;
 			case UpdateNote:
-				result = adapter.updateNote((Integer) args[0], (AbstractNote) args[1]);
+				id = (Integer) args[0];
+				result = adapter.updateNote(id, (AbstractNote) args[1]);
 				break;
 			case DeleteNote:
-				result = adapter.deleteNote((Integer) args[0]);
+				id = (Integer) args[0];
+				result = adapter.deleteNote(id);
 				break;
 			default:
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
-		onTransactionPerformed(transactionType, (Integer) (args.length != 0 ? args[0] : 0));
+		onTransactionPerformed(transactionType, id);
 		return result;
 	}
 
