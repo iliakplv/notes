@@ -15,8 +15,6 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String LOG_TAG = NotesDatabaseOpenHelper.class.getSimpleName();
 
-	private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
-
 	NotesDatabaseOpenHelper(String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(NotesApplication.getContext(), name, factory, version);
 	}
@@ -35,7 +33,7 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 			Log.d(LOG_TAG, "[empty] Upgrading version " + oldVersion + " to " + newVersion);
 		}
 //		TODO implement in case of schema changing
-//		db.execSQL(DROP_TABLE_IF_EXISTS + NotesDatabaseAdapter.NOTES_TABLE);
+//		db.execSQL("DROP TABLE IF EXISTS " + NotesDatabaseAdapter.NOTES_TABLE);
 //		onCreate(db);
 	}
 }
