@@ -114,7 +114,7 @@ public class NotesDatabaseFacade {
 
 	private void onTransactionPerformed(TransactionType transactionType, int changedNoteId) {
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() +") performed. Changed note id=" + changedNoteId);
+			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() +") performed");
 		}
 		if (existingNoteModificationTransaction(transactionType)) {
 			if (BuildConfig.DEBUG) {
