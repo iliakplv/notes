@@ -254,7 +254,7 @@ public class NotesDatabaseFacade {
 	public interface NoteChangeListener {
 
 		/**
-		 * Callback for current note changing
+		 * Callback for existing note changing
 		 * Called after changing note that this listener watching
 		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
 		 */
