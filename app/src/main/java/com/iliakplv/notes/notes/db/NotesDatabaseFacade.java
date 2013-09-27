@@ -20,7 +20,12 @@ public class NotesDatabaseFacade {
 
 	private List<NotesDatabaseEntry> notesDatabaseEntries;
 	private volatile boolean entriesListActual = false;
-	private List<DatabaseChangeListener> listeners;
+	private NotesDatabaseEntry lastFetchedEntry;
+	private volatile int lastFetchedEntryId = 0;
+	private volatile boolean lastFetchedEntryActual = false;
+
+	private List<DatabaseChangeListener> databaseListeners;
+	private List<NoteChangeListener> noteListeners;
 
 
 	// Instance
@@ -38,7 +43,12 @@ public class NotesDatabaseFacade {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Note entry fetching (id=" + id + ")");
 		}
-		return (NotesDatabaseEntry) performDatabaseTransaction(TransactionType.GetNote, id);
+		if (lastFetchedEntryId != id || !lastFetchedEntryActual) {
+			lastFetchedEntry = (NotesDatabaseEntry) performDatabaseTransaction(TransactionType.GetNote, id);
+			lastFetchedEntryId = id;
+			lastFetchedEntryActual = true;
+		}
+		return lastFetchedEntry;
 	}
 
 	public synchronized List<NotesDatabaseEntry> getAllNotes() {
@@ -47,8 +57,11 @@ public class NotesDatabaseFacade {
 		}
 		if (!entriesListActual) {
 			final boolean emptyBeforeUpdate = notesDatabaseEntries != null && notesDatabaseEntries.isEmpty();
+
 			notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+			entriesListActual = true;
+
 			if (emptyBeforeUpdate && !notesDatabaseEntries.isEmpty()) {
 				NotesApplication.onFirstNoteCreated();
 			}
@@ -92,28 +105,37 @@ public class NotesDatabaseFacade {
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
-
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
-		}
-
-		entriesListActual = nonModificationTransaction(transactionType);
-		if (!entriesListActual) {
-			notifyListeners();
-		}
-
+		onTransactionPerformed(transactionType, (Integer) (args.length != 0 ? args[0] : 0));
 		return result;
+	}
+
+	private void onTransactionPerformed(TransactionType transactionType, int changedNoteId) {
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() +") performed. Changed note id=" + changedNoteId);
+		}
+		if (existingNoteModificationTransaction(transactionType)) {
+			if (BuildConfig.DEBUG) {
+				Log.d(LOG_TAG, "Changed note id=" + changedNoteId);
+			}
+			lastFetchedEntryActual = lastFetchedEntryId != changedNoteId;
+			notifyNoteListeners(changedNoteId);
+		}
+		if (databaseModificationTransaction(transactionType)) {
+			entriesListActual = false;
+			notifyDatabaseListeners();
+		}
+
 	}
 
 
 	// Listeners
 
-	private void notifyListeners() {
-		if (listeners != null) {
+	private void notifyDatabaseListeners() {
+		if (databaseListeners != null) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					for (DatabaseChangeListener listener : listeners) {
+					for (DatabaseChangeListener listener : databaseListeners) {
 						listener.onDatabaseChanged();
 					}
 				}
@@ -121,16 +143,51 @@ public class NotesDatabaseFacade {
 		}
 	}
 
-	public boolean addDatabaseChangeListener(DatabaseChangeListener listener) {
-		if (listeners == null) {
-			listeners = new LinkedList<DatabaseChangeListener>();
+	private void notifyNoteListeners(final int changedNoteId) {
+		if (noteListeners != null) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					for (NoteChangeListener listener : noteListeners) {
+						if (listener.getNoteId() == changedNoteId) {
+							listener.onNoteChanged();
+						}
+					}
+				}
+			}).start();
 		}
-		return listeners.add(listener);
+	}
+
+	public boolean addDatabaseChangeListener(DatabaseChangeListener listener) {
+		if (listener == null) {
+			throw new NullPointerException();
+		}
+		if (databaseListeners == null) {
+			databaseListeners = new LinkedList<DatabaseChangeListener>();
+		}
+		return databaseListeners.add(listener);
+	}
+
+	public boolean addNoteChangeListener(NoteChangeListener listener) {
+		if (listener == null) {
+			throw new NullPointerException();
+		}
+		if (noteListeners == null) {
+			noteListeners = new LinkedList<NoteChangeListener>();
+		}
+		return noteListeners.add(listener);
 	}
 
 	public boolean removeDatabaseChangeListener(DatabaseChangeListener listener) {
-		if (listeners != null) {
-			return listeners.remove(listener);
+		if (databaseListeners != null) {
+			return databaseListeners.remove(listener);
+		}
+		return false;
+	}
+
+	public boolean removeNoteChangeListener(NoteChangeListener listener) {
+		if (noteListeners != null) {
+			return noteListeners.remove(listener);
 		}
 		return false;
 	}
@@ -138,16 +195,30 @@ public class NotesDatabaseFacade {
 
 	// Other
 
-	private static boolean nonModificationTransaction(TransactionType transactionType) {
+	private static boolean databaseModificationTransaction(TransactionType transactionType) {
 		switch (transactionType) {
 			case GetNote:
 			case GetAllNotes:
-				return true;
+				return false;
 
 			case InsertNote:
 			case UpdateNote:
 			case DeleteNote:
+				return true;
+		}
+		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
+	}
+
+	private static boolean existingNoteModificationTransaction(TransactionType transactionType) {
+		switch (transactionType) {
+			case GetNote:
+			case GetAllNotes:
+			case InsertNote:
 				return false;
+
+			case UpdateNote:
+			case DeleteNote:
+				return true;
 		}
 		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
 	}
@@ -175,6 +246,21 @@ public class NotesDatabaseFacade {
 		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
 		 */
 		public void onDatabaseChanged();
+	}
+
+	public interface NoteChangeListener {
+
+		/**
+		 * Callback for current note changing
+		 * Called after changing note that this listener watching
+		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
+		 */
+		public void onNoteChanged();
+
+		/**
+		 * @return id of note which this listener watching
+		 */
+		public int getNoteId();
 	}
 
 }
