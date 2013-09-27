@@ -114,10 +114,12 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 		getActionBar().setDisplayHomeAsUpEnabled(detailsShownNow && isSinglePaneLayout());
 
-		if (!detailsWasShown && detailsShownNow) {
-			NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
-		} else if (detailsWasShown && !detailsShownNow) {
-			NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
+		if (detailsShownNow != detailsWasShown) { // details view changed
+			if (detailsShownNow) {
+				NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
+			} else {
+				NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
+			}
 		}
 	}
 
