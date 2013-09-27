@@ -29,6 +29,8 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	private EditText body;
 	private Button saveButton;
 
+	// TODO create default constructor !!!
+
 	public NoteDialogFragment(NotesDatabaseEntry notesDatabaseEntry) {
 		noteEntry = notesDatabaseEntry;
 		editMode = noteEntry != null;
