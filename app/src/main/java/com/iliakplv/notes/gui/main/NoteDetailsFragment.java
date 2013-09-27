@@ -68,14 +68,17 @@ public class NoteDetailsFragment extends Fragment {
 			// show all
 			title.setVisibility(View.VISIBLE);
 			title.setText(noteTitle);
+			body.setVisibility(View.VISIBLE);
 			body.setText(noteBody);
 		} else if (!hasTitle && hasBody) {
 			// show only body
 			title.setVisibility(View.GONE);
+			body.setVisibility(View.VISIBLE);
 			body.setText(noteBody);
 		} else { // (hasTitle && !hasBody)
 			// show only title (like it's a body)
 			title.setVisibility(View.GONE);
+			body.setVisibility(View.VISIBLE);
 			body.setText(noteTitle);
 		}
 

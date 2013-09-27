@@ -5,10 +5,12 @@
 
 	<TextView
 			android:id="@+id/note_title"
+			android:visibility="gone"
 			style="@style/NoteDetailsText.Title"/>
 
 	<TextView
 			android:id="@+id/note_body"
+			android:visibility="gone"
 			style="@style/NoteDetailsText.Body"/>
 
 	<TextView
