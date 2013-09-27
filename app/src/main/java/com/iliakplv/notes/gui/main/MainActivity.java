@@ -33,42 +33,44 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		setContentView(R.layout.main);
 
 		if (isSinglePaneLayout()) {
-			if (savedInstanceState == null) {
+			if (savedInstanceState == null) { // show only list
 				final NotesListFragment noteListFragment = new NotesListFragment();
 				noteListFragment.setArguments(getIntent().getExtras());
 				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				ft.add(R.id.fragment_container, noteListFragment);
 				ft.commit();
 			}
-		} else {
-			if (savedInstanceState != null) {
-				onNoteSelected(savedInstanceState.getInt(CURRENT_NOTE_ID));
-			} else {
-				onNoteSelected(NO_DETAILS);
-			}
+		} else { // dual pane layout
+			final int id = savedInstanceState != null ?
+					savedInstanceState.getInt(CURRENT_NOTE_ID) :
+					NO_DETAILS;
+			onNoteSelected(id);
 		}
 	}
 
 	public void onNoteSelected(int noteId) {
+		onDetailsChanged(noteId);
+
 		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
 				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
 
-		if (noteDetailsFragment != null) {
-			// TODO update or hide (if noteId == NO_DETAILS) !!!
-			noteDetailsFragment.updateNoteDetailsView(noteId);
-		} else {
-			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
-			final Bundle args = new Bundle();
-			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-			newNoteDetailsFragment.setArguments(args);
+		if (isDetailsShown()) {
+			if (noteDetailsFragment != null) {
+				// TODO update or hide (if noteId == NO_DETAILS) !!!
+				noteDetailsFragment.updateNoteDetailsView(noteId);
+			} else {
+				final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
+				final Bundle args = new Bundle();
+				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+				newNoteDetailsFragment.setArguments(args);
 
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, newNoteDetailsFragment);
-			ft.addToBackStack(null);
-			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			ft.commit();
+				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.replace(R.id.fragment_container, newNoteDetailsFragment);
+				ft.addToBackStack(null);
+				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				ft.commit();
 
-			onDetailsChanged(noteId);
+			}
 		}
 	}
 
@@ -102,9 +104,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		if (isDetailsShown()) {
-			onDetailsChanged(NO_DETAILS);
-		}
+		onDetailsChanged(NO_DETAILS);
 	}
 
 	private void onDetailsChanged(int newNoteId) {
@@ -112,8 +112,10 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		currentNoteId = newNoteId;
 		final boolean detailsShownNow = isDetailsShown();
 
+		// show/hide arrow on action bar
 		getActionBar().setDisplayHomeAsUpEnabled(detailsShownNow && isSinglePaneLayout());
 
+		// subscribe/unsubscribe to note changes
 		if (detailsShownNow != detailsWasShown) { // details view changed
 			if (detailsShownNow) {
 				NotesDatabaseFacade.getInstance().addNoteChangeListener(this);

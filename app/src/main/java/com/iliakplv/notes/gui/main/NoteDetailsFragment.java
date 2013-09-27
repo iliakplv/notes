@@ -17,12 +17,12 @@ import org.joda.time.DateTime;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class NoteDetailsFragment extends Fragment implements NotesDatabaseFacade.DatabaseChangeListener {
+public class NoteDetailsFragment extends Fragment {
 
-	// TODO !!! refactor ID storing
+	// TODO refactor this piece of engineering !!!
 
 	final static String ARG_NOTE_ID = "note_id";
-	private int currentNoteId = -1;
+	private int currentNoteId = 0;
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
@@ -36,32 +36,21 @@ public class NoteDetailsFragment extends Fragment implements NotesDatabaseFacade
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	public void onStart() {
+		super.onStart();
 		final Bundle args = getArguments();
 		if (args != null) {
 			currentNoteId = args.getInt(ARG_NOTE_ID);
 		}
-		if (currentNoteId != -1) {
-			updateNoteDetailsView(currentNoteId);
-		}
-		dbFacade.addDatabaseChangeListener(this);
+		updateNoteDetailsView(currentNoteId);
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		dbFacade.removeDatabaseChangeListener(this);
-	}
 
 	public void updateNoteDetailsView(int id) {
-		// TODO refactor this piece of code
-
 		final AbstractNote note = dbFacade.getNote(id).getNote();
 		if (note == null) {
 			return;
 		}
-
 
 		final String noteTitle = note.getTitle();
 		final String noteBody = note.getBody();
@@ -129,14 +118,10 @@ public class NoteDetailsFragment extends Fragment implements NotesDatabaseFacade
 		((TextView) getActivity().findViewById(R.id.note_modify_date)).setText(sb.toString());
 	}
 
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(ARG_NOTE_ID, currentNoteId);
-	}
-
-	@Override
-	public void onDatabaseChanged() {
-		updateNoteDetailsView(currentNoteId);
 	}
 }
