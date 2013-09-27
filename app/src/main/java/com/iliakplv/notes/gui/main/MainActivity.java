@@ -146,7 +146,11 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				}
 				break;
 			case R.id.action_add:
-				(new NoteDialogFragment(null)).show(getSupportFragmentManager(), "dialog");
+				final NoteDialogFragment dialogFragment = new NoteDialogFragment();
+				final Bundle args = new Bundle();
+				args.putBoolean(NoteDialogFragment.ARG_EDIT_MODE, false);
+				dialogFragment.setArguments(args);
+				dialogFragment.show(getSupportFragmentManager(), "dialog");
 				break;
 		}
 		return true;

@@ -144,7 +144,12 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
 				case EDIT_INDEX:
-					(new NoteDialogFragment(noteEntry)).show(getFragmentManager(), "dialog");
+					final NoteDialogFragment dialogFragment = new NoteDialogFragment();
+					final Bundle args = new Bundle();
+					args.putBoolean(NoteDialogFragment.ARG_EDIT_MODE, true);
+					args.putInt(NoteDialogFragment.ARG_NOTE_ID, noteEntry.getId());
+					dialogFragment.setArguments(args);
+					dialogFragment.show(getFragmentManager(), "dialog");
 					break;
 				case DELETE_INDEX:
 					// Show delete confirmation dialog

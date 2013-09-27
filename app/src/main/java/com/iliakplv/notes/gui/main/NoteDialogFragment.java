@@ -22,6 +22,9 @@ import com.iliakplv.notes.utils.StringUtils;
  */
 public class NoteDialogFragment extends DialogFragment implements View.OnClickListener {
 
+	public static final String ARG_EDIT_MODE = "edit_mode";
+	public static final String ARG_NOTE_ID = "note_id";
+
 	private NotesDatabaseEntry noteEntry;
 	private boolean editMode;
 
@@ -29,16 +32,19 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	private EditText body;
 	private Button saveButton;
 
-	// TODO create default constructor !!!
 
-	public NoteDialogFragment(NotesDatabaseEntry notesDatabaseEntry) {
-		noteEntry = notesDatabaseEntry;
-		editMode = noteEntry != null;
+	public NoteDialogFragment() {
+		super();
+	}
+
+	private Bundle getActualArguments(Bundle savedInstanceState) {
+		return savedInstanceState != null ? savedInstanceState : getArguments();
 	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		editMode = getActualArguments(savedInstanceState).getBoolean(ARG_EDIT_MODE);
 		dialog.setTitle(editMode ? R.string.note_dialog_edit_note : R.string.note_dialog_new_note);
 		return dialog;
 	}
@@ -46,6 +52,12 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_dialog, container, false);
+
+		Bundle args = getActualArguments(savedInstanceState);
+		editMode = args.getBoolean(ARG_EDIT_MODE);
+		if (editMode) {
+			noteEntry = NotesDatabaseFacade.getInstance().getNote(args.getInt(ARG_NOTE_ID));
+		}
 		initControls(view);
 		return view;
 	}
@@ -64,6 +76,15 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 			body.setText(noteEntry.getNote().getBody());
 		}
 		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(ARG_EDIT_MODE, editMode);
+		if (editMode) {
+			outState.putInt(ARG_NOTE_ID, noteEntry.getId());
+		}
 	}
 
 	@Override
