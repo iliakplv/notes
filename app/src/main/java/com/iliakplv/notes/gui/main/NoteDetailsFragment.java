@@ -47,7 +47,10 @@ public class NoteDetailsFragment extends Fragment {
 
 
 	public void updateNoteDetailsView(int id) {
-		final AbstractNote note = dbFacade.getNote(id).getNote();
+		AbstractNote note = null;
+		if (id > 0) {
+			note = dbFacade.getNote(id).getNote();
+		}
 		if (note == null) {
 			return;
 		}

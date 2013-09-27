@@ -16,7 +16,10 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	private static final String CURRENT_NOTE_ID = "current_note_id";
 	private static final int NO_DETAILS = 0;
+
 	private int currentNoteId = NO_DETAILS;
+
+	private boolean listeningExistingNote = false;
 
 
 	private boolean isSinglePaneLayout() {
@@ -39,8 +42,10 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				ft.add(R.id.fragment_container, noteListFragment);
 				ft.commit();
+			} else {
+				onDetailsChanged(savedInstanceState.getInt(CURRENT_NOTE_ID));
 			}
-		} else { // dual pane layout
+		} else { // dual pane
 			final int id = savedInstanceState != null ?
 					savedInstanceState.getInt(CURRENT_NOTE_ID) :
 					NO_DETAILS;
@@ -48,17 +53,25 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		startListeningNote();
+	}
+
+
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
+
+		// TODO refactor
 
 		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
 				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
 
-		if (isDetailsShown()) {
-			if (noteDetailsFragment != null) {
-				// TODO update or hide (if noteId == NO_DETAILS) !!!
+		if (isDetailsShown()) { // show/update details
+			if (noteDetailsFragment != null) { // dual pane
 				noteDetailsFragment.updateNoteDetailsView(noteId);
-			} else {
+			} else { // single pane
 				final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
 				final Bundle args = new Bundle();
 				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
@@ -69,9 +82,38 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				ft.addToBackStack(null);
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				ft.commit();
-
 			}
+		} else { // hide details if needed
+			if (noteDetailsFragment != null) { // dual pane
+				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.remove(noteDetailsFragment);
+				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				ft.commit();
+			}
+			// in single pane we don't need to do anything because details fragment is on stack
+			// it'll be hidden by Android
 		}
+	}
+
+	private void onDetailsChanged(int newNoteId) {
+		currentNoteId = newNoteId;
+
+		// show/hide arrow on action bar
+		getActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
+
+		// subscribe/unsubscribe to note changes
+		if (isDetailsShown()) {
+			startListeningNote();
+		} else {
+			stopListeningNote();
+		}
+	}
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		stopListeningNote();
 	}
 
 	@Override
@@ -79,6 +121,15 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		super.onSaveInstanceState(outState);
 		outState.putInt(CURRENT_NOTE_ID, currentNoteId);
 	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		onDetailsChanged(NO_DETAILS);
+	}
+
+
+	// menu
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,40 +152,35 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		return true;
 	}
 
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		onDetailsChanged(NO_DETAILS);
-	}
 
-	private void onDetailsChanged(int newNoteId) {
-		final boolean detailsWasShown = isDetailsShown();
-		currentNoteId = newNoteId;
-		final boolean detailsShownNow = isDetailsShown();
-
-		// show/hide arrow on action bar
-		getActionBar().setDisplayHomeAsUpEnabled(detailsShownNow && isSinglePaneLayout());
-
-		// subscribe/unsubscribe to note changes
-		if (detailsShownNow != detailsWasShown) { // details view changed
-			if (detailsShownNow) {
-				NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
-			} else {
-				NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
-			}
-		}
-	}
-
-
-	// listener implementation
+	// listener
 
 	@Override
 	public void onNoteChanged() {
-		onNoteSelected(getNoteId());
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				onNoteSelected(currentNoteId);
+			}
+		});
 	}
 
 	@Override
 	public int getNoteId() {
 		return currentNoteId;
+	}
+
+	private void startListeningNote() {
+		if (!listeningExistingNote && isDetailsShown()) {
+			NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
+			listeningExistingNote = true;
+		}
+	}
+
+	private void stopListeningNote() {
+		if (listeningExistingNote) {
+			NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
+			listeningExistingNote = false;
+		}
 	}
 }
