@@ -40,16 +40,16 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	public void onNoteSelected(int position) {
+	public void onNoteSelected(int noteId) {
 		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
 				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
 
 		if (noteDetailsFragment != null) { // Dual pane layout
-			noteDetailsFragment.updateNoteDetailsView(position);
+			noteDetailsFragment.updateNoteDetailsView(noteId);
 		} else { // Single pane layout
 			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
 			final Bundle args = new Bundle();
-			args.putInt(NoteDetailsFragment.ARG_POSITION, position);
+			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
 			newNoteDetailsFragment.setArguments(args);
 
 			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

@@ -17,43 +17,51 @@ import org.joda.time.DateTime;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class NoteDetailsFragment extends Fragment {
+public class NoteDetailsFragment extends Fragment implements NotesDatabaseFacade.DatabaseChangeListener {
 
-	final static String ARG_POSITION = "position";
+	// TODO !!! refactor ID storing
 
-	private int currentPosition = -1;
+	final static String ARG_NOTE_ID = "note_id";
+	private int currentNoteId = -1;
+
+	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			currentPosition = savedInstanceState.getInt(ARG_POSITION);
+			currentNoteId = savedInstanceState.getInt(ARG_NOTE_ID);
 		}
 		return inflater.inflate(R.layout.note_details, container, false);
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 		final Bundle args = getArguments();
 		if (args != null) {
-			updateNoteDetailsView(args.getInt(ARG_POSITION));
-		} else if (currentPosition != -1) {
-			updateNoteDetailsView(currentPosition);
+			currentNoteId = args.getInt(ARG_NOTE_ID);
 		}
+		if (currentNoteId != -1) {
+			updateNoteDetailsView(currentNoteId);
+		}
+		dbFacade.addDatabaseChangeListener(this);
 	}
 
-	public void updateNoteDetailsView(int position) {
-		// TODO store note id, use it to refresh
+	@Override
+	public void onPause() {
+		super.onPause();
+		dbFacade.removeDatabaseChangeListener(this);
+	}
+
+	public void updateNoteDetailsView(int id) {
 		// TODO refactor this piece of code
 
-		final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-
-		if (position >= dbFacade.getAllNotes().size()){
+		final AbstractNote note = dbFacade.getNote(id).getNote();
+		if (note == null) {
 			return;
 		}
 
-		final AbstractNote note = dbFacade.getAllNotes().get(position).getNote();
 
 		final String noteTitle = note.getTitle();
 		final String noteBody = note.getBody();
@@ -124,7 +132,11 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(ARG_POSITION, currentPosition);
+		outState.putInt(ARG_NOTE_ID, currentNoteId);
 	}
 
+	@Override
+	public void onDatabaseChanged() {
+		updateNoteDetailsView(currentNoteId);
+	}
 }

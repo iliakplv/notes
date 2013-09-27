@@ -22,6 +22,8 @@ class NotesDatabaseAdapter {
 	private static final String DATABASE_NAME	= "notes.db";
 	private static final int DATABASE_VERSION	= 1;
 
+	private static final int ALL_NOTES = 0;
+
 	// Common keys
 	private static final String KEY_ID = "_id";
 	private static final int KEY_ID_COLUMN = 0;
@@ -60,10 +62,23 @@ class NotesDatabaseAdapter {
 
 	// Queries
 
+	NotesDatabaseEntry getNote(int id) {
+		final List<NotesDatabaseEntry> list = getNotes(id);
+		if (list.isEmpty()) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+	}
+
 	List<NotesDatabaseEntry> getAllNotes() {
+		return getNotes(ALL_NOTES);
+	}
+
+	private List<NotesDatabaseEntry> getNotes(int id) {
 		Cursor cursor = db.query(NOTES_TABLE,
 				new String[] {KEY_ID, NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE},
-				null, null, null, null, null);
+				whereClauseForId(id), null, null, null, null);
 
 		List<NotesDatabaseEntry> result = new ArrayList<NotesDatabaseEntry>();
 
@@ -109,7 +124,12 @@ class NotesDatabaseAdapter {
 	}
 
 	private static String whereClauseForId(int id) {
-		return KEY_ID + "=" + id;
+		if (id == ALL_NOTES) {
+			return null;
+		} else if (id >= 1) {
+			return KEY_ID + "=" + id;
+		}
+		throw new IllegalArgumentException("Wrong id value: " + id);
 	}
 
 

@@ -34,6 +34,13 @@ public class NotesDatabaseFacade {
 
 	// Transactions
 
+	public synchronized NotesDatabaseEntry getNote(int id) {
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "Note entry fetching (id=" + id + ")");
+		}
+		return (NotesDatabaseEntry) performDatabaseTransaction(TransactionType.GetNote, id);
+	}
+
 	public synchronized List<NotesDatabaseEntry> getAllNotes() {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Notes entries fetching. Entries list " + (entriesListActual ? "" : "NOT ") + "actual");
@@ -66,6 +73,9 @@ public class NotesDatabaseFacade {
 		adapter.open();
 		Object result = null;
 		switch (transactionType) {
+			case GetNote:
+				result = adapter.getNote((Integer) args[0]);
+				break;
 			case GetAllNotes:
 				result = adapter.getAllNotes();
 				break;
@@ -79,7 +89,7 @@ public class NotesDatabaseFacade {
 				result = adapter.deleteNote((Integer) args[0]);
 				break;
 			default:
-				throw new IllegalArgumentException("Wrong DB transaction type");
+				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
 
@@ -129,8 +139,17 @@ public class NotesDatabaseFacade {
 	// Other
 
 	private static boolean nonModificationTransaction(TransactionType transactionType) {
-		// Only GetAllNotes transaction does not modify database entries
-		return transactionType == TransactionType.GetAllNotes;
+		switch (transactionType) {
+			case GetNote:
+			case GetAllNotes:
+				return true;
+
+			case InsertNote:
+			case UpdateNote:
+			case DeleteNote:
+				return false;
+		}
+		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
 	}
 
 
@@ -141,6 +160,7 @@ public class NotesDatabaseFacade {
 	 *********************************************/
 
 	private static enum TransactionType {
+		GetNote,
 		GetAllNotes,
 		InsertNote,
 		UpdateNote,
