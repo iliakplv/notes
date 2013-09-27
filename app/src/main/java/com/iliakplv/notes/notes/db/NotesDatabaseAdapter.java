@@ -30,7 +30,7 @@ class NotesDatabaseAdapter {
 
 	// Tables
 	// Table: Notes
-	static final String NOTES_TABLE                     = "notes"; // TODO make private
+	private static final String NOTES_TABLE             = "notes";
 	private static final int NOTES_NAME_COLUMN			= 1;
 	private static final String NOTES_NAME				= "name";
 	private static final int NOTES_BODY_COLUMN			= 2;
