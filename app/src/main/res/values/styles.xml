@@ -48,21 +48,22 @@
 	</style>
 
 
+	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
+		<item name="android:layout_width">@dimen/note_fragments_separator</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:background">@color/note_details_info</item>
+	</style>
+
+
 	<!--
 		Note Details
 	-->
 
 	<style name="NoteDetails">
 		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_height">fill_parent</item>
 		<item name="android:padding">@dimen/note_details_padding</item>
 		<item name="android:orientation">vertical</item>
-	</style>
-
-	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
-		<item name="android:layout_width">@dimen/note_fragments_separator</item>
-		<item name="android:layout_height">match_parent</item>
-		<item name="android:background">@color/note_details_info</item>
 	</style>
 
 	<style name="NoteDetailsText" parent="android:Widget.TextView">
