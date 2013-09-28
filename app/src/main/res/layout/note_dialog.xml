@@ -8,10 +8,16 @@
 			style="@style/NoteDialogEditText.Title"
 			android:hint="@string/note_dialog_title_hint"/>
 
-	<EditText
-			android:id="@+id/note_dialog_body"
-			style="@style/NoteDialogEditText.Body"
-			android:hint="@string/note_dialog_body_hint"/>
+
+	<ScrollView
+			style="@style/NoteDialogScrollView">
+
+		<EditText
+				android:id="@+id/note_dialog_body"
+				style="@style/NoteDialogEditText.Body"
+				android:hint="@string/note_dialog_body_hint"/>
+
+	</ScrollView>
 
 	<LinearLayout
 			style="@style/NoteDialogButtonBar">

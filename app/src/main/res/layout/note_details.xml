@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/details_fragment_layout"
               style="@style/NoteDetails">
 
 	<TextView
 			android:id="@+id/note_title"
-			android:visibility="gone"
 			style="@style/NoteDetailsText.Title"/>
 
-	<TextView
-			android:id="@+id/note_body"
-			android:visibility="gone"
-			style="@style/NoteDetailsText.Body"/>
+	<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/scrollView">
+
+		<TextView
+				android:id="@+id/note_body"
+				style="@style/NoteDetailsText.Body"/>
+
+	</ScrollView>
+
 
 	<TextView
 			style="@style/NoteInfoSeparator"/>
@@ -23,5 +30,6 @@
 	<TextView
 			android:id="@+id/note_modify_date"
 			style="@style/NoteDetailsText.Info"/>
+
 
 </LinearLayout>

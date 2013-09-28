@@ -59,6 +59,12 @@
 		<item name="android:orientation">vertical</item>
 	</style>
 
+	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
+		<item name="android:layout_width">@dimen/note_fragments_separator</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:background">@color/note_details_info</item>
+	</style>
+
 	<style name="NoteDetailsText" parent="android:Widget.TextView">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
@@ -73,20 +79,20 @@
 	<style name="NoteDetailsText.Body">
 		<item name="android:textColor">@color/note_details_body</item>
 		<item name="android:textSize">@dimen/note_details_body_text_size</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_body_bottom_margin</item>
+	</style>
+
+	<style name="NoteInfoSeparator" parent="android:Widget.TextView">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">1dp</item>
+		<item name="android:layout_marginTop">@dimen/note_details_info_top_margin</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_separator_bottom_margin</item>
+		<item name="android:background">@color/note_details_info</item>
 	</style>
 
 	<style name="NoteDetailsText.Info">
 		<item name="android:textColor">@color/note_details_info</item>
 		<item name="android:textSize">@dimen/note_details_info_text_size</item>
 		<item name="android:paddingLeft">@dimen/note_details_info_left_padding</item>
-	</style>
-
-	<style name="NoteInfoSeparator" parent="android:Widget.TextView">
-		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">1dp</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_separator_bottom_margin</item>
-		<item name="android:background">@color/note_details_info</item>
 	</style>
 
 
@@ -100,6 +106,11 @@
 		<item name="android:orientation">vertical</item>
 	</style>
 
+	<style name="NoteDialogScrollView">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">@dimen/note_dialog_scroll_view_height</item>
+	</style>
+
 	<style name="NoteDialogEditText">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
@@ -111,8 +122,8 @@
 	</style>
 
 	<style name="NoteDialogEditText.Body">
+		<item name="android:layout_height">fill_parent</item>
 		<item name="android:textSize">@dimen/note_dialog_body_text_size</item>
-		<item name="android:minLines">3</item>
 	</style>
 
 	<style name="NoteDialogButtonBar">

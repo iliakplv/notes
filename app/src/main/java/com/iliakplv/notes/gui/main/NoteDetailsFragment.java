@@ -24,6 +24,7 @@ public class NoteDetailsFragment extends Fragment {
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
+	private View layout;
 	private TextView title;
 	private TextView body;
 	private TextView createdDate;
@@ -33,6 +34,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_details, container, false);
+		layout = view.findViewById(R.id.details_fragment_layout);
 		title = (TextView) view.findViewById(R.id.note_title);
 		body = (TextView) view.findViewById(R.id.note_body);
 		createdDate = (TextView) view.findViewById(R.id.note_create_date);
@@ -55,12 +57,10 @@ public class NoteDetailsFragment extends Fragment {
 		this.noteId = noteId;
 		final NotesDatabaseEntry entry = noteId > 0 ? dbFacade.getNote(noteId) : null;
 		if (entry == null) {
-			title.setVisibility(View.GONE);
-			body.setVisibility(View.GONE);
-			createdDate.setVisibility(View.GONE);
-			modifiedDate.setVisibility(View.GONE);
+			layout.setVisibility(View.GONE);
 			return;
 		}
+		layout.setVisibility(View.VISIBLE);
 
 		final AbstractNote note = entry.getNote();
 		final String noteTitle = note.getTitle();
@@ -73,23 +73,18 @@ public class NoteDetailsFragment extends Fragment {
 			// show all
 			title.setVisibility(View.VISIBLE);
 			title.setText(noteTitle);
-			body.setVisibility(View.VISIBLE);
 			body.setText(noteBody);
 		} else if (!hasTitle && hasBody) {
 			// show only body
 			title.setVisibility(View.GONE);
-			body.setVisibility(View.VISIBLE);
 			body.setText(noteBody);
 		} else { // (hasTitle && !hasBody)
 			// show only title (like it's a body)
 			title.setVisibility(View.GONE);
-			body.setVisibility(View.VISIBLE);
 			body.setText(noteTitle);
 		}
 
-		createdDate.setVisibility(View.VISIBLE);
 		createdDate.setText(note.getCreateTime().toString());
-		modifiedDate.setVisibility(View.VISIBLE);
 		modifiedDate.setText(note.getChangeTime().toString());
 	}
 

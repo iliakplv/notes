@@ -9,6 +9,9 @@
 	          android:layout_width="0dp"
 	          android:layout_height="match_parent" />
 
+	<TextView
+		style="@style/NoteFragmentsSeparator"/>
+
 	<fragment android:name="com.iliakplv.notes.gui.main.NoteDetailsFragment"
 	          android:id="@+id/note_details_fragment"
 	          android:layout_weight="2"
