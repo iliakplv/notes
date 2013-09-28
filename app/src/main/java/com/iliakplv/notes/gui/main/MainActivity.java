@@ -14,7 +14,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  */
 public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
 
-	private static final String CURRENT_NOTE_ID = "current_note_id";
+	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	private static final int NO_DETAILS = 0;
 
 	private int currentNoteId = NO_DETAILS;
@@ -43,11 +43,11 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				ft.add(R.id.fragment_container, noteListFragment);
 				ft.commit();
 			} else {
-				onDetailsChanged(savedInstanceState.getInt(CURRENT_NOTE_ID));
+				onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
 			}
 		} else { // dual pane
 			final int id = savedInstanceState != null ?
-					savedInstanceState.getInt(CURRENT_NOTE_ID) :
+					savedInstanceState.getInt(ARG_CURRENT_NOTE_ID) :
 					NO_DETAILS;
 			onNoteSelected(id);
 		}
@@ -62,8 +62,6 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
-
-		// TODO refactor
 
 		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
 				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
@@ -83,15 +81,6 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				ft.commit();
 			}
-		} else { // hide details if needed
-			if (noteDetailsFragment != null) { // dual pane
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.remove(noteDetailsFragment);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				ft.commit();
-			}
-			// in single pane we don't need to do anything because details fragment is on stack
-			// it'll be hidden by Android
 		}
 	}
 
@@ -119,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(CURRENT_NOTE_ID, currentNoteId);
+		outState.putInt(ARG_CURRENT_NOTE_ID, currentNoteId);
 	}
 
 	@Override
