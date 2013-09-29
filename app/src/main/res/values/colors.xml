@@ -9,6 +9,8 @@
 	<color name="note_list_item_subtitle">#ffdadada</color>
 
 
+	<color name="note_fragments_separator">#ff33b0e0</color>
+
 	<!--
 		Note Details
 	-->

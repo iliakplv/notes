@@ -26,9 +26,8 @@
 	-->
 
 	<dimen name="note_details_padding">6dp</dimen>
-	<dimen name="note_details_title_bottom_margin">8dp</dimen>
-	<dimen name="note_details_separator_bottom_margin">6dp</dimen>
-	<dimen name="note_details_info_top_margin">12dp</dimen>
+	<dimen name="note_details_separator_inner_margin">6dp</dimen>
+	<dimen name="note_details_separator_outer_margin">4dp</dimen>
 	<dimen name="note_details_info_left_padding">6dp</dimen>
 	<dimen name="note_details_title_text_size">18sp</dimen>
 	<dimen name="note_details_body_text_size">20sp</dimen>

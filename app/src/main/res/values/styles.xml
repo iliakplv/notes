@@ -51,7 +51,7 @@
 	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
 		<item name="android:layout_width">@dimen/note_fragments_separator</item>
 		<item name="android:layout_height">match_parent</item>
-		<item name="android:background">@color/note_details_info</item>
+		<item name="android:background">@color/note_fragments_separator</item>
 	</style>
 
 
@@ -63,7 +63,6 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">fill_parent</item>
 		<item name="android:padding">@dimen/note_details_padding</item>
-		<item name="android:orientation">vertical</item>
 	</style>
 
 	<style name="NoteDetailsText" parent="android:Widget.TextView">
@@ -74,7 +73,6 @@
 	<style name="NoteDetailsText.Title">
 		<item name="android:textColor">@color/note_details_title</item>
 		<item name="android:textSize">@dimen/note_details_title_text_size</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteDetailsText.Body">
@@ -82,11 +80,20 @@
 		<item name="android:textSize">@dimen/note_details_body_text_size</item>
 	</style>
 
-	<style name="NoteInfoSeparator" parent="android:Widget.TextView">
+	<style name="NoteDetailsSeparator" parent="android:Widget.TextView">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">1dp</item>
-		<item name="android:layout_marginTop">@dimen/note_details_info_top_margin</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_separator_bottom_margin</item>
+	</style>
+
+	<style name="NoteDetailsSeparator.Title">
+		<item name="android:layout_marginTop">@dimen/note_details_separator_outer_margin</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_separator_inner_margin</item>
+		<item name="android:background">@color/note_details_title</item>
+	</style>
+
+	<style name="NoteDetailsSeparator.Info">
+		<item name="android:layout_marginTop">@dimen/note_details_separator_inner_margin</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_separator_outer_margin</item>
 		<item name="android:background">@color/note_details_info</item>
 	</style>
 

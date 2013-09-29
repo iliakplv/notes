@@ -24,7 +24,8 @@ public class NoteDetailsFragment extends Fragment {
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
-	private View layout;
+	private View rootLayout;
+	private View titleSeparator;
 	private TextView title;
 	private TextView body;
 	private TextView createdDate;
@@ -34,7 +35,8 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_details, container, false);
-		layout = view.findViewById(R.id.details_fragment_layout);
+		rootLayout = view.findViewById(R.id.details_fragment_layout);
+		titleSeparator = view.findViewById(R.id.note_title_separator);
 		title = (TextView) view.findViewById(R.id.note_title);
 		body = (TextView) view.findViewById(R.id.note_body);
 		createdDate = (TextView) view.findViewById(R.id.note_create_date);
@@ -57,10 +59,10 @@ public class NoteDetailsFragment extends Fragment {
 		this.noteId = noteId;
 		final NotesDatabaseEntry entry = noteId > 0 ? dbFacade.getNote(noteId) : null;
 		if (entry == null) {
-			layout.setVisibility(View.GONE);
+			rootLayout.setVisibility(View.GONE);
 			return;
 		}
-		layout.setVisibility(View.VISIBLE);
+		rootLayout.setVisibility(View.VISIBLE);
 
 		final AbstractNote note = entry.getNote();
 		final String noteTitle = note.getTitle();
@@ -68,24 +70,19 @@ public class NoteDetailsFragment extends Fragment {
 		final boolean hasTitle = !StringUtils.isNullOrEmpty(noteTitle);
 		final boolean hasBody = !StringUtils.isNullOrEmpty(noteBody);
 
-		// At least one of note's fields (title or body) will be not empty (empty note can't be stored)
-		if (hasTitle && hasBody) {
-			// show all
-			title.setVisibility(View.VISIBLE);
-			title.setText(noteTitle);
-			body.setText(noteBody);
-		} else if (!hasTitle && hasBody) {
-			// show only body
-			title.setVisibility(View.GONE);
-			body.setText(noteBody);
-		} else { // (hasTitle && !hasBody)
-			// show only title (like it's a body)
-			title.setVisibility(View.GONE);
-			body.setText(noteTitle);
-		}
+		title.setText(noteTitle);
+		// if note has only title or only body show it in body text view
+		setShowTitle(hasTitle && hasBody);
+		body.setText(hasBody ? noteBody : noteTitle);
 
-		createdDate.setText(note.getCreateTime().toString());
-		modifiedDate.setText(note.getChangeTime().toString());
+		createdDate.setText(getString(R.string.note_details_created) + note.getCreateTime().toString());
+		modifiedDate.setText(getString(R.string.note_details_modified) + note.getChangeTime().toString());
+	}
+
+	private void setShowTitle(boolean show) {
+		final int contentsVisibility = show ? View.VISIBLE : View.GONE;
+		title.setVisibility(contentsVisibility);
+		titleSeparator.setVisibility(contentsVisibility);
 	}
 
 
