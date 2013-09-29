@@ -75,8 +75,8 @@ public class NoteDetailsFragment extends Fragment {
 		setShowTitle(hasTitle && hasBody);
 		body.setText(hasBody ? noteBody : noteTitle);
 
-		createdDate.setText(getString(R.string.note_details_created) + note.getCreateTime().toString());
-		modifiedDate.setText(getString(R.string.note_details_modified) + note.getChangeTime().toString());
+		createdDate.setText(getString(R.string.note_details_created, note.getCreateTime().toString()));
+		modifiedDate.setText(getString(R.string.note_details_modified, note.getChangeTime().toString()));
 	}
 
 	private void setShowTitle(boolean show) {

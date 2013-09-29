@@ -42,7 +42,7 @@
 		Notes Details
 	-->
 
-	<string name="note_details_created">Создана: </string>
-	<string name="note_details_modified">Изменена: </string>
+	<string name="note_details_created">Создана: %s</string>
+	<string name="note_details_modified">Изменена: %s</string>
 
 </resources>

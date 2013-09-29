@@ -42,7 +42,7 @@
 		Notes Details
 	-->
 
-	<string name="note_details_created">Created: </string>
-	<string name="note_details_modified">Modified: </string>
+	<string name="note_details_created">Created: %s</string>
+	<string name="note_details_modified">Modified: %s</string>
 
 </resources>
