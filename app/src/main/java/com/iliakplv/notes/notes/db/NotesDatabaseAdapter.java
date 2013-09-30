@@ -99,8 +99,8 @@ class NotesDatabaseAdapter {
 
 	// Data modification
 
-	long insertNote(AbstractNote note) {
-		return db.insert(NOTES_TABLE, null, contentValuesForNote(note));
+	int insertNote(AbstractNote note) {
+		return (int) db.insert(NOTES_TABLE, null, contentValuesForNote(note));
 	}
 
 	boolean updateNote(int id, AbstractNote note) {

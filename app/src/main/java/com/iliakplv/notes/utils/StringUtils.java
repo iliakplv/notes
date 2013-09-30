@@ -6,6 +6,10 @@ package com.iliakplv.notes.utils;
  */
 public final class StringUtils {
 
+	public static String getNotNull(String s) {
+		return s != null ? s : "";
+	}
+
 	public static boolean isNullOrEmpty(String s) {
 		return s == null || s.length() == 0;
 	}

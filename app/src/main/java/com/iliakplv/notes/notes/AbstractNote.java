@@ -1,5 +1,6 @@
 package com.iliakplv.notes.notes;
 
+import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -15,14 +16,10 @@ public abstract class AbstractNote {
 
 
 	public AbstractNote(String title, String body) {
-		this.title = title;
-		this.body = body;
+		setTitle(title);
+		setBody(body);
 		createTime = new DateTime();
 		changeTime = new DateTime();
-	}
-
-	public AbstractNote(String body) {
-		this(null, body);
 	}
 
 
@@ -33,7 +30,7 @@ public abstract class AbstractNote {
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+		this.title = StringUtils.getNotNull(title);
 	}
 
 	public String getBody() {
@@ -41,7 +38,7 @@ public abstract class AbstractNote {
 	}
 
 	public void setBody(String body) {
-		this.body = body;
+		this.body = StringUtils.getNotNull(body);
 	}
 
 

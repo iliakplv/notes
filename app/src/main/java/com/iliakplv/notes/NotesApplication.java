@@ -37,9 +37,4 @@ public class NotesApplication extends Application {
 		return context;
 	}
 
-
-	public static void onFirstNoteCreated() {
-		Toast.makeText(context, R.string.note_actions_toast, Toast.LENGTH_LONG).show();
-	}
-
 }

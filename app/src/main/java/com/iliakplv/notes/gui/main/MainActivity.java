@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 /**
@@ -16,7 +17,6 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
-	public static final int NEW_NOTE = -1;
 
 	private int currentNoteId = NO_DETAILS;
 
@@ -99,6 +99,10 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		}
 	}
 
+	public void createNewNote() {
+		onNoteSelected(NotesDatabaseFacade.getInstance().insertNote(new TextNote()));
+	}
+
 
 	@Override
 	protected void onPause() {
@@ -136,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				}
 				break;
 			case R.id.action_add:
-				onNoteSelected(NEW_NOTE);
+				createNewNote();
 				break;
 		}
 		return true;

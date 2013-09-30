@@ -61,16 +61,10 @@ public class NotesDatabaseFacade {
 					(entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
-			final boolean emptyBeforeUpdate = notesDatabaseEntries != null && notesDatabaseEntries.isEmpty();
-
 			notesDatabaseEntries =
 					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
 			entriesListSize = notesDatabaseEntries.size();
 			entriesListActual = true;
-
-			if (emptyBeforeUpdate && !notesDatabaseEntries.isEmpty()) {
-				NotesApplication.onFirstNoteCreated();
-			}
 		}
 		return notesDatabaseEntries;
 	}
@@ -82,8 +76,8 @@ public class NotesDatabaseFacade {
 		return entriesListSize;
 	}
 
-	public synchronized long insertNote(AbstractNote note) {
-		return (Long) performDatabaseTransaction(TransactionType.InsertNote, note);
+	public synchronized int insertNote(AbstractNote note) {
+		return (Integer) performDatabaseTransaction(TransactionType.InsertNote, note);
 	}
 
 	public synchronized boolean updateNote(int id, AbstractNote note) {

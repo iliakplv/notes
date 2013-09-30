@@ -10,8 +10,8 @@ public class TextNote extends AbstractNote {
 		super(title, body);
 	}
 
-	public TextNote(String body) {
-		super(body);
+	public TextNote() {
+		super(null, null);
 	}
 
 }
