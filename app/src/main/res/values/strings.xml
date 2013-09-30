@@ -17,10 +17,6 @@
 
 	<string name="note_dialog_new_note">New note</string>
 	<string name="note_dialog_edit_note">Edit note</string>
-
-	<string name="note_dialog_title_hint">Title</string>
-	<string name="note_dialog_body_hint">Text</string>
-
 	<string name="note_dialog_cancel">Cancel</string>
 	<string name="note_dialog_save">Save</string>
 
@@ -36,6 +32,8 @@
 	<string name="note_action_delete_confirm_dialog_yes">Yes</string>
 	<string name="note_action_delete_confirm_dialog_no">No</string>
 	<string name="empty_note_placeholder">(empty note)</string>
+	<string name="note_details_title_hint">Title</string>
+	<string name="note_details_body_hint">Text</string>
 
 
 	<!--

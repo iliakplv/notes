@@ -22,6 +22,8 @@ import com.iliakplv.notes.utils.StringUtils;
  */
 public class NoteDialogFragment extends DialogFragment implements View.OnClickListener {
 
+	// TODO remove
+
 	public static final String ARG_EDIT_MODE = "edit_mode";
 	public static final String ARG_NOTE_ID = "note_id";
 

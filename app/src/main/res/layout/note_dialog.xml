@@ -6,7 +6,7 @@
 	<EditText
 			android:id="@+id/note_dialog_title"
 			style="@style/NoteDialogEditText.Title"
-			android:hint="@string/note_dialog_title_hint"/>
+			android:hint="@string/note_details_title_hint"/>
 
 
 	<ScrollView
@@ -15,7 +15,7 @@
 		<EditText
 				android:id="@+id/note_dialog_body"
 				style="@style/NoteDialogEditText.Body"
-				android:hint="@string/note_dialog_body_hint"/>
+				android:hint="@string/note_details_body_hint"/>
 
 	</ScrollView>
 

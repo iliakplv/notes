@@ -74,12 +74,14 @@
 	<style name="NoteDetailsText.Title">
 		<item name="android:textColor">@color/note_details_title</item>
 		<item name="android:textSize">@dimen/note_details_title_text_size</item>
+		<item name="android:hint">@string/note_details_title_hint</item>
 		<item name="android:layout_marginBottom">@dimen/note_details_separator_inner_margin</item>
 	</style>
 
 	<style name="NoteDetailsText.Body">
 		<item name="android:textColor">@color/note_details_body</item>
 		<item name="android:textSize">@dimen/note_details_body_text_size</item>
+		<item name="android:hint">@string/note_details_body_hint</item>
 	</style>
 
 
