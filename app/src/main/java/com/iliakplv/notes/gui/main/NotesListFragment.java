@@ -72,7 +72,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		// Show available actions for note
 		new AlertDialog.Builder(getActivity()).
-				setTitle(note.getTitle()). // TODO title
+				setTitle(getTitleForNote(note)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.note_dialog_cancel, null).
 				create().show();
@@ -89,6 +89,36 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					listAdapter.notifyDataSetChanged();
 				}
 			});
+		}
+	}
+
+
+	// list item text
+
+	public String getTitleForNote(AbstractNote note) {
+		final String originalTitle = note.getTitle();
+		final String originalBody = note.getBody();
+
+		if (!StringUtils.isBlank(originalTitle)) {
+			return originalTitle;
+		} else if (!StringUtils.isBlank(originalBody)) {
+			return originalBody;
+		} else {
+			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+		}
+	}
+
+	public String getBodyForNote(AbstractNote note) {
+		final String originalTitle = note.getTitle();
+		final String originalBody = note.getBody();
+
+		if (!StringUtils.isBlank(originalTitle)) {
+			// title not blank - show body under the title
+			return originalBody;
+		} else {
+			// title blank - body or placeholder will be shown as a title
+			// don't show body
+			return "";
 		}
 	}
 
@@ -184,7 +214,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				case DELETE_INDEX:
 					// Show delete confirmation dialog
 					new AlertDialog.Builder(getActivity()).
-							setTitle(noteEntry.getNote().getTitle()). // TODO title
+							setTitle(getTitleForNote(noteEntry.getNote())).
 							setMessage(R.string.note_action_delete_confirm_dialog_text).
 							setNegativeButton(R.string.note_action_delete_confirm_dialog_no, null).
 							setPositiveButton(R.string.note_action_delete_confirm_dialog_yes, new DialogInterface.OnClickListener() {
