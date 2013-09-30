@@ -63,17 +63,16 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 	}
 
 	private void initControls(View view) {
-		final NoteTextWatcher watcher = new NoteTextWatcher();
-
 		title = (EditText) view.findViewById(R.id.note_dialog_title);
-		title.addTextChangedListener(watcher);
 		body = (EditText) view.findViewById(R.id.note_dialog_body);
-		body.addTextChangedListener(watcher);
 		saveButton = (Button) view.findViewById(R.id.note_dialog_save);
 		saveButton.setOnClickListener(this);
 		if (editMode) {
 			title.setText(noteEntry.getNote().getTitle());
 			body.setText(noteEntry.getNote().getBody());
+			final NoteTextWatcher watcher = new NoteTextWatcher();
+			title.addTextChangedListener(watcher);
+			body.addTextChangedListener(watcher);
 		}
 		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
 	}
@@ -146,22 +145,11 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 		@Override
 		public void afterTextChanged(Editable s) {
 
-			final boolean notEmptyNote = !(StringUtils.isBlank(title.getText().toString()) &&
-					StringUtils.isBlank(body.getText().toString()));
-
-			final boolean ableToSaveNote;
-
-			if (editMode) {
-				final String originalTitle = noteEntry.getNote().getTitle();
-				final String originalBody = noteEntry.getNote().getBody();
-				// Edited note not empty and at least one field (title or body) has been changed
-				ableToSaveNote = notEmptyNote &&
-						(!StringUtils.equals(originalTitle, title.getText().toString()) ||
-								!StringUtils.equals(originalBody, body.getText().toString()));
-
-			} else {
-				ableToSaveNote = notEmptyNote;
-			}
+			final String originalTitle = noteEntry.getNote().getTitle();
+			final String originalBody = noteEntry.getNote().getBody();
+			// at least one field (title or body) has been changed
+			final boolean ableToSaveNote = (!StringUtils.equals(originalTitle, title.getText().toString()) ||
+					!StringUtils.equals(originalBody, body.getText().toString()));
 
 			saveButton.setEnabled(ableToSaveNote);
 		}

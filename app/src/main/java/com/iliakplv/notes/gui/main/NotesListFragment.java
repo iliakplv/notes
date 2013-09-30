@@ -12,10 +12,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 /**
  * Author: Ilya Kopylov
@@ -66,10 +68,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(i);
+		final AbstractNote note = selectedNoteEntry.getNote();
 
 		// Show available actions for note
 		new AlertDialog.Builder(getActivity()).
-				setTitle(selectedNoteEntry.getNote().getTitleOrPlaceholder()).
+				setTitle(note.getTitle()). // TODO title
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.note_dialog_cancel, null).
 				create().show();
@@ -112,10 +115,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			final AbstractNote note = dbFacade.getAllNotes().get(position).getNote();
-			((TextView) view.findViewById(R.id.title)).setText(note.getTitleOrPlaceholder());
-			((TextView) view.findViewById(R.id.subtitle)).setText(note.getBody());
-
-			// TODO first line or substring of note's body
+			((TextView) view.findViewById(R.id.title)).setText(getTitleForNote(note));
+			((TextView) view.findViewById(R.id.subtitle)).setText(getBodyForNote(note));
 
 			return view;
 		}
@@ -123,6 +124,35 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		@Override
 		public int getCount() {
 			return dbFacade.getNotesCount();
+		}
+
+		// list item text
+
+		public String getTitleForNote(AbstractNote note) {
+			final String originalTitle = note.getTitle();
+			final String originalBody = note.getBody();
+
+			if (!StringUtils.isBlank(originalTitle)) {
+				return originalTitle;
+			} else if (!StringUtils.isBlank(originalBody)) {
+				return originalBody;
+			} else {
+				return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+			}
+		}
+
+		public String getBodyForNote(AbstractNote note) {
+			final String originalTitle = note.getTitle();
+			final String originalBody = note.getBody();
+
+			if (!StringUtils.isBlank(originalTitle)) {
+				// title not blank - show body under the title
+				return originalBody;
+			} else {
+				// title blank - body or placeholder will be shown as a title
+				// don't show body
+				return "";
+			}
 		}
 	}
 
@@ -154,7 +184,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				case DELETE_INDEX:
 					// Show delete confirmation dialog
 					new AlertDialog.Builder(getActivity()).
-							setTitle(noteEntry.getNote().getTitleOrPlaceholder()).
+							setTitle(noteEntry.getNote().getTitle()). // TODO title
 							setMessage(R.string.note_action_delete_confirm_dialog_text).
 							setNegativeButton(R.string.note_action_delete_confirm_dialog_no, null).
 							setPositiveButton(R.string.note_action_delete_confirm_dialog_yes, new DialogInterface.OnClickListener() {

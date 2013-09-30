@@ -35,7 +35,7 @@
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
 	<string name="note_action_delete_confirm_dialog_yes">Да</string>
 	<string name="note_action_delete_confirm_dialog_no">Нет</string>
-	<string name="note_title_placeholder">(без названия)</string>
+	<string name="empty_note_placeholder">(пустая заметка)</string>
 
 
 	<!--

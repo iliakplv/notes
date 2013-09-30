@@ -19,6 +19,8 @@ import com.iliakplv.notes.utils.StringUtils;
  */
 public class NoteDetailsFragment extends Fragment {
 
+	 // TODO rework!
+
 	final static String ARG_NOTE_ID = "note_id";
 	private int noteId = 0;
 

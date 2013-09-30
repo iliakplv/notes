@@ -30,7 +30,6 @@
 		<Button
 				android:id="@+id/note_dialog_save"
 				style="@style/NoteDialogButton"
-				android:enabled="false"
 				android:text="@string/note_dialog_save"/>
 
 	</LinearLayout>

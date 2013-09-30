@@ -35,7 +35,7 @@
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
 	<string name="note_action_delete_confirm_dialog_yes">Yes</string>
 	<string name="note_action_delete_confirm_dialog_no">No</string>
-	<string name="note_title_placeholder">(no title)</string>
+	<string name="empty_note_placeholder">(empty note)</string>
 
 
 	<!--
