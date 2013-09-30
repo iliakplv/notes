@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
@@ -21,9 +22,10 @@ public class NoteDetailsFragment extends Fragment {
 	 // TODO rework!
 
 	final static String ARG_NOTE_ID = "note_id";
-	private int noteId = MainActivity.NO_DETAILS;
 
+	private int noteId = MainActivity.NO_DETAILS;
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private NotesDatabaseEntry noteEntry;
 
 	private View rootLayout;
 	private EditText title;
@@ -52,14 +54,14 @@ public class NoteDetailsFragment extends Fragment {
 
 	public void updateNoteDetailsView(int noteId) {
 		this.noteId = noteId;
-		final NotesDatabaseEntry entry = noteId > 0 ? dbFacade.getNote(noteId) : null;
-		if (entry == null) {
+		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
+		if (noteEntry == null) {
 			rootLayout.setVisibility(View.GONE);
 			return;
 		}
 
 		rootLayout.setVisibility(View.VISIBLE);
-		final AbstractNote note = entry.getNote();
+		final AbstractNote note = noteEntry.getNote();
 		title.setText(note. getTitle());
 		body.setText(note.getBody());
 	}
@@ -73,5 +75,11 @@ public class NoteDetailsFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(ARG_NOTE_ID, noteId);
+	}
+
+	private void saveNote() {
+		if (noteEntry != null) {
+			dbFacade.updateNote(noteEntry.getId(), new TextNote(title.getText().toString(), body.getText().toString()));
+		}
 	}
 }
