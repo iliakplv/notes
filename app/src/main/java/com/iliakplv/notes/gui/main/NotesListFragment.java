@@ -95,7 +95,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	// list item text
 
-	public String getTitleForNote(AbstractNote note) {
+	public static String getTitleForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
 		final String originalBody = note.getBody();
 
@@ -108,7 +108,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-	public String getBodyForNote(AbstractNote note) {
+	public static String getBodyForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
 		final String originalBody = note.getBody();
 
@@ -156,34 +156,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			return dbFacade.getNotesCount();
 		}
 
-		// list item text
-
-		public String getTitleForNote(AbstractNote note) {
-			final String originalTitle = note.getTitle();
-			final String originalBody = note.getBody();
-
-			if (!StringUtils.isBlank(originalTitle)) {
-				return originalTitle;
-			} else if (!StringUtils.isBlank(originalBody)) {
-				return originalBody;
-			} else {
-				return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
-			}
-		}
-
-		public String getBodyForNote(AbstractNote note) {
-			final String originalTitle = note.getTitle();
-			final String originalBody = note.getBody();
-
-			if (!StringUtils.isBlank(originalTitle)) {
-				// title not blank - show body under the title
-				return originalBody;
-			} else {
-				// title blank - body or placeholder will be shown as a title
-				// don't show body
-				return "";
-			}
-		}
 	}
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
