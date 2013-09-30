@@ -33,14 +33,4 @@
 	<dimen name="note_details_body_text_size">20sp</dimen>
 	<dimen name="note_details_info_text_size">16sp</dimen>
 
-
-	<!--
-		Note Dialog
-	-->
-
-	<dimen name="note_dialog_margin_common">6dp</dimen>
-	<dimen name="note_dialog_scroll_view_height">300dp</dimen>
-	<dimen name="note_dialog_title_text_size">20sp</dimen>
-	<dimen name="note_dialog_body_text_size">18sp</dimen>
-
 </resources>

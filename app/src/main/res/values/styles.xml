@@ -85,46 +85,4 @@
 	</style>
 
 
-	<!--
-		Note Dialog
-	-->
-
-	<style name="NoteDialog">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:orientation">vertical</item>
-	</style>
-
-	<style name="NoteDialogScrollView">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">@dimen/note_dialog_scroll_view_height</item>
-	</style>
-
-	<style name="NoteDialogEditText">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_marginBottom">@dimen/note_dialog_margin_common</item>
-	</style>
-
-	<style name="NoteDialogEditText.Title">
-		<item name="android:textSize">@dimen/note_dialog_title_text_size</item>
-	</style>
-
-	<style name="NoteDialogEditText.Body">
-		<item name="android:layout_height">fill_parent</item>
-		<item name="android:textSize">@dimen/note_dialog_body_text_size</item>
-	</style>
-
-	<style name="NoteDialogButtonBar">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:orientation">horizontal</item>
-	</style>
-
-	<style name="NoteDialogButton">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_weight">1</item>
-	</style>
-
 </resources>

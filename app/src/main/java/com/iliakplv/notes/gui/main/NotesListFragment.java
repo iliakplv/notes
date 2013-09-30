@@ -75,7 +75,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		new AlertDialog.Builder(getActivity()).
 				setTitle(getTitleForNote(note)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
-				setNegativeButton(R.string.note_dialog_cancel, null).
+				setNegativeButton(R.string.common_cancel, null).
 				create().show();
 
 		return true;
@@ -184,8 +184,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					new AlertDialog.Builder(getActivity()).
 							setTitle(getTitleForNote(noteEntry.getNote())).
 							setMessage(R.string.note_action_delete_confirm_dialog_text).
-							setNegativeButton(R.string.note_action_delete_confirm_dialog_no, null).
-							setPositiveButton(R.string.note_action_delete_confirm_dialog_yes, new DialogInterface.OnClickListener() {
+							setNegativeButton(R.string.common_no, null).
+							setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialogInterface, int i) {
