@@ -2,7 +2,6 @@
 <resources>
 
 	<array name="note_actions">
-		<item>@string/note_action_edit</item>
 		<item>@string/note_action_delete</item>
 	</array>
 

@@ -62,11 +62,11 @@
 
 	<style name="NoteDetails">
 		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_height">match_parent</item>
 		<item name="android:padding">@dimen/note_details_padding</item>
 	</style>
 
-	<style name="NoteDetailsText" parent="android:Widget.TextView">
+	<style name="NoteDetailsText" parent="android:Widget.EditText">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 	</style>
@@ -74,34 +74,12 @@
 	<style name="NoteDetailsText.Title">
 		<item name="android:textColor">@color/note_details_title</item>
 		<item name="android:textSize">@dimen/note_details_title_text_size</item>
+		<item name="android:layout_marginBottom">@dimen/note_details_separator_inner_margin</item>
 	</style>
 
 	<style name="NoteDetailsText.Body">
 		<item name="android:textColor">@color/note_details_body</item>
 		<item name="android:textSize">@dimen/note_details_body_text_size</item>
-	</style>
-
-	<style name="NoteDetailsSeparator" parent="android:Widget.TextView">
-		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">1dp</item>
-	</style>
-
-	<style name="NoteDetailsSeparator.Title">
-		<item name="android:layout_marginTop">@dimen/note_details_separator_outer_margin</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_separator_inner_margin</item>
-		<item name="android:background">@color/note_details_title</item>
-	</style>
-
-	<style name="NoteDetailsSeparator.Info">
-		<item name="android:layout_marginTop">@dimen/note_details_separator_inner_margin</item>
-		<item name="android:layout_marginBottom">@dimen/note_details_separator_outer_margin</item>
-		<item name="android:background">@color/note_details_info</item>
-	</style>
-
-	<style name="NoteDetailsText.Info">
-		<item name="android:textColor">@color/note_details_info</item>
-		<item name="android:textSize">@dimen/note_details_info_text_size</item>
-		<item name="android:paddingLeft">@dimen/note_details_info_left_padding</item>
 	</style>
 
 

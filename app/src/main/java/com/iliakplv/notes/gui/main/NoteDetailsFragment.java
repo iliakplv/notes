@@ -6,12 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
-import com.iliakplv.notes.utils.StringUtils;
 
 /**
  * Author: Ilya Kopylov
@@ -22,27 +21,21 @@ public class NoteDetailsFragment extends Fragment {
 	 // TODO rework!
 
 	final static String ARG_NOTE_ID = "note_id";
-	private int noteId = 0;
+	private int noteId = MainActivity.NO_DETAILS;
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
 	private View rootLayout;
-	private View titleSeparator;
-	private TextView title;
-	private TextView body;
-	private TextView createdDate;
-	private TextView modifiedDate;
+	private EditText title;
+	private EditText body;
 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_details, container, false);
-		rootLayout = view.findViewById(R.id.details_fragment_layout);
-		titleSeparator = view.findViewById(R.id.note_title_separator);
-		title = (TextView) view.findViewById(R.id.note_title);
-		body = (TextView) view.findViewById(R.id.note_body);
-		createdDate = (TextView) view.findViewById(R.id.note_create_date);
-		modifiedDate = (TextView) view.findViewById(R.id.note_modify_date);
+		rootLayout = view.findViewById(R.id.details_scroll_view);
+		title = (EditText) view.findViewById(R.id.note_title);
+		body = (EditText) view.findViewById(R.id.note_body);
 		return view;
 	}
 
@@ -64,29 +57,17 @@ public class NoteDetailsFragment extends Fragment {
 			rootLayout.setVisibility(View.GONE);
 			return;
 		}
+
 		rootLayout.setVisibility(View.VISIBLE);
-
 		final AbstractNote note = entry.getNote();
-		final String noteTitle = note.getTitle();
-		final String noteBody = note.getBody();
-		final boolean hasTitle = !StringUtils.isNullOrEmpty(noteTitle);
-		final boolean hasBody = !StringUtils.isNullOrEmpty(noteBody);
-
-		title.setText(noteTitle);
-		// if note has only title or only body show it in body text view
-		setShowTitle(hasTitle && hasBody);
-		body.setText(hasBody ? noteBody : noteTitle);
-
-		createdDate.setText(getString(R.string.note_details_created, note.getCreateTime().toString()));
-		modifiedDate.setText(getString(R.string.note_details_modified, note.getChangeTime().toString()));
+		title.setText(note. getTitle());
+		body.setText(note.getBody());
 	}
 
-	private void setShowTitle(boolean show) {
-		final int contentsVisibility = show ? View.VISIBLE : View.GONE;
-		title.setVisibility(contentsVisibility);
-		titleSeparator.setVisibility(contentsVisibility);
+	@Override
+	public void onPause() {
+		super.onPause();
 	}
-
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

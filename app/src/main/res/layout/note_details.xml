@@ -1,69 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                style="@style/NoteDetails"
-                android:id="@+id/details_fragment_layout">
-
-	<!--
-		Title (top)
-	-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/details_scroll_view"
+            style="@style/NoteDetails">
 
 	<LinearLayout
 			android:id="@+id/note_title_layout"
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:layout_alignParentTop="true">
+			android:orientation="vertical">
 
-		<TextView
+		<EditText
 				android:id="@+id/note_title"
 				style="@style/NoteDetailsText.Title"/>
 
-		<TextView
-				android:id="@+id/note_title_separator"
-				style="@style/NoteDetailsSeparator.Title"/>
-
-	</LinearLayout>
-
-
-	<!--
-		Info bar (bottom)
-	-->
-
-	<LinearLayout
-			android:id="@+id/note_info_layout"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:layout_alignParentBottom="true">
-
-		<TextView
-				style="@style/NoteDetailsSeparator.Info"/>
-		<TextView
-				android:id="@+id/note_create_date"
-				style="@style/NoteDetailsText.Info"/>
-		<TextView
-				android:id="@+id/note_modify_date"
-				style="@style/NoteDetailsText.Info"/>
-
-	</LinearLayout>
-
-
-	<!--
-	    Body in scroll view (center)
-	-->
-
-	<ScrollView
-			android:id="@+id/body_scroll_view"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_above="@id/note_info_layout"
-			android:layout_below="@id/note_title_layout">
-
-		<TextView
+		<EditText
 				android:id="@+id/note_body"
 				style="@style/NoteDetailsText.Body"/>
 
-	</ScrollView>
+	</LinearLayout>
 
-</RelativeLayout>
+</ScrollView>
+

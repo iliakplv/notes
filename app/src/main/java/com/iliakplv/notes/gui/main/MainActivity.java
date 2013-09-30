@@ -15,7 +15,8 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
-	private static final int NO_DETAILS = 0;
+	public static final int NO_DETAILS = 0;
+	public static final int NEW_NOTE = -1;
 
 	private int currentNoteId = NO_DETAILS;
 
@@ -135,11 +136,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 				}
 				break;
 			case R.id.action_add:
-				final NoteDialogFragment dialogFragment = new NoteDialogFragment();
-				final Bundle args = new Bundle();
-				args.putBoolean(NoteDialogFragment.ARG_EDIT_MODE, false);
-				dialogFragment.setArguments(args);
-				dialogFragment.show(getSupportFragmentManager(), "dialog");
+				onNoteSelected(NEW_NOTE);
 				break;
 		}
 		return true;

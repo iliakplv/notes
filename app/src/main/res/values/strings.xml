@@ -30,7 +30,6 @@
 	-->
 
 	<string name="note_actions_toast">Hold the note to see options</string>
-	<string name="note_action_edit">Edit</string>
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
 	<string name="note_action_delete_confirm_dialog_yes">Yes</string>

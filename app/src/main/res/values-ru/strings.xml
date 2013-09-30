@@ -30,7 +30,6 @@
 	-->
 
 	<string name="note_actions_toast">Удерживайте заметку, чтобы увидеть опции</string>
-	<string name="note_action_edit">Редактировать</string>
 	<string name="note_action_delete">Удалить</string>
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
 	<string name="note_action_delete_confirm_dialog_yes">Да</string>
