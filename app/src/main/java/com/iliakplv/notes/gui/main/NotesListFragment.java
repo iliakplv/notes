@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
@@ -160,7 +161,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 
-		private final int EDIT_INDEX = 0;
+		private final int INFO_INDEX = 0;
 		private final int DELETE_INDEX = 1;
 
 		private NotesDatabaseEntry noteEntry;
@@ -175,13 +176,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		@Override
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
-				case EDIT_INDEX:
-					final NoteDialogFragment dialogFragment = new NoteDialogFragment();
-					final Bundle args = new Bundle();
-					args.putBoolean(NoteDialogFragment.ARG_EDIT_MODE, true);
-					args.putInt(NoteDialogFragment.ARG_NOTE_ID, noteEntry.getId());
-					dialogFragment.setArguments(args);
-					dialogFragment.show(getFragmentManager(), "dialog");
+				case INFO_INDEX:
+					Toast.makeText(getActivity(), "[very important info]", Toast.LENGTH_SHORT).show();
 					break;
 				case DELETE_INDEX:
 					// Show delete confirmation dialog
