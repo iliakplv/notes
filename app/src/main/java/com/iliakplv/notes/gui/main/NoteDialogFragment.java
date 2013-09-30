@@ -73,6 +73,7 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
 			final NoteTextWatcher watcher = new NoteTextWatcher();
 			title.addTextChangedListener(watcher);
 			body.addTextChangedListener(watcher);
+			saveButton.setEnabled(false);
 		}
 		view.findViewById(R.id.note_dialog_cancel).setOnClickListener(this);
 	}
