@@ -21,6 +21,9 @@ import com.iliakplv.notes.utils.StringUtils;
  */
 public class NoteDetailsFragment extends Fragment {
 
+	// TODO note info button (+layout)
+	// TODO note delete button (~layout)
+
 	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
 
 	final static String ARG_NOTE_ID = "note_id";
