@@ -89,7 +89,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					listAdapter.notifyDataSetChanged();
+					if (listeningDatabase && listAdapter != null) {
+						listAdapter.notifyDataSetChanged();
+					}
 				}
 			});
 		}
