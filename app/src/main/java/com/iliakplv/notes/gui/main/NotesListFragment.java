@@ -84,7 +84,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onDatabaseChanged() {
-		// TODO store listening state (like MainActivity)
+		// TODO store listening state and check it here (like MainActivity)
 		if (listAdapter != null) {
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
