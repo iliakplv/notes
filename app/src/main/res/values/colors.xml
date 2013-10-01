@@ -5,8 +5,12 @@
 		Notes List
 	-->
 
-	<color name="note_list_item_title">#ffffffff</color>
-	<color name="note_list_item_subtitle">#ffdadada</color>
+	<color name="note_list_item_background_default">#ff000000</color>
+	<color name="note_list_item_background_checked">#ffddd747</color>
+	<color name="note_list_item_title_default">#ffffffff</color>
+	<color name="note_list_item_title_checked">#ff000000</color>
+	<color name="note_list_item_subtitle_default">#ffdadada</color>
+	<color name="note_list_item_subtitle_checked">#ff000000</color>
 
 
 	<color name="note_fragments_separator">#ff33b0e0</color>
