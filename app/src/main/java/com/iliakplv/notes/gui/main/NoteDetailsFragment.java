@@ -55,8 +55,9 @@ public class NoteDetailsFragment extends Fragment {
 
 
 	public void updateNoteDetailsView(int noteId) {
-		// try save previously shown note
+		// try save changes on previously shown note
 		trySaveCurrentNote();
+
 		// show new note
 		this.noteId = noteId;
 		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
@@ -74,6 +75,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
+		// try save changes
 		trySaveCurrentNote();
 	}
 

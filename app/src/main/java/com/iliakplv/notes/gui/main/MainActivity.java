@@ -151,6 +151,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	@Override
 	public void onNoteChanged() {
+		// TODO called after onSaveInstanceState() ???
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

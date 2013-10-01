@@ -48,6 +48,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onResume() {
 		super.onResume();
+		// TODO list view choice mode
 		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		}
@@ -83,6 +84,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onDatabaseChanged() {
+		// TODO store listening state (like MainActivity)
 		if (listAdapter != null) {
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
