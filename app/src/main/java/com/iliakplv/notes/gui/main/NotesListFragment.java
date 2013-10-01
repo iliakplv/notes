@@ -30,6 +30,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
+	private boolean listeningDatabase = false;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -52,13 +53,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		}
-		dbFacade.addDatabaseChangeListener(this);
+		startListeningDatabase();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		dbFacade.removeDatabaseChangeListener(this);
+		stopListeningDatabase();
 	}
 
 	@Override
@@ -84,14 +85,27 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onDatabaseChanged() {
-		// TODO store listening state and check it here (like MainActivity)
-		if (listAdapter != null) {
+		if (listeningDatabase && listAdapter != null) {
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
 					listAdapter.notifyDataSetChanged();
 				}
 			});
+		}
+	}
+
+	private void startListeningDatabase() {
+		if (!listeningDatabase) {
+			dbFacade.addDatabaseChangeListener(this);
+			listeningDatabase = true;
+		}
+	}
+
+	private void stopListeningDatabase() {
+		if (listeningDatabase) {
+			dbFacade.removeDatabaseChangeListener(this);
+			listeningDatabase = false;
 		}
 	}
 
