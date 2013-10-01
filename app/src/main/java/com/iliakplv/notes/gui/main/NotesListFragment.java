@@ -167,18 +167,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			((TextView) view.findViewById(R.id.title)).setText(getTitleForNote(note));
 			((TextView) view.findViewById(R.id.subtitle)).setText(getBodyForNote(note));
 
-			// colorize
-			final boolean checked = getListView().isItemChecked(position);
-			view.setBackgroundResource(checked ?
-					R.color.note_list_item_background_checked :
-					R.color.note_list_item_background_default);
-			((TextView) view.findViewById(R.id.title)).setTextColor(checked ?
-					R.color.note_list_item_title_checked :
-					R.color.note_list_item_title_default);
-			((TextView) view.findViewById(R.id.subtitle)).setTextColor(checked ?
-					R.color.note_list_item_subtitle_checked :
-					R.color.note_list_item_subtitle_default);
-
 			return view;
 		}
 
