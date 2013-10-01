@@ -21,9 +21,6 @@ import com.iliakplv.notes.utils.StringUtils;
  */
 public class NoteDetailsFragment extends Fragment {
 
-	// TODO note info button (+layout)
-	// TODO note delete button (~layout)
-
 	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
 
 	final static String ARG_NOTE_ID = "note_id";
@@ -32,7 +29,8 @@ public class NoteDetailsFragment extends Fragment {
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private NotesDatabaseEntry noteEntry;
 
-	private View rootLayout;
+	private View dualPaneDetails;
+	private View dualPaneSeparator;
 	private EditText title;
 	private EditText body;
 
@@ -40,7 +38,6 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_details, container, false);
-		rootLayout = view.findViewById(R.id.details_scroll_view);
 		title = (EditText) view.findViewById(R.id.note_title);
 		body = (EditText) view.findViewById(R.id.note_body);
 		return view;
@@ -64,15 +61,26 @@ public class NoteDetailsFragment extends Fragment {
 		// show new note
 		this.noteId = noteId;
 		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
-		if (noteEntry == null) {
-			rootLayout.setVisibility(View.GONE);
-			return;
-		}
+		final boolean gotNoteToShow = noteEntry != null;
 
-		rootLayout.setVisibility(View.VISIBLE);
-		final AbstractNote note = noteEntry.getNote();
-		title.setText(note. getTitle());
-		body.setText(note.getBody());
+		dualPaneDetails = getActivity().findViewById(R.id.note_details_fragment);
+		dualPaneSeparator = getActivity().findViewById(R.id.dual_pane_fragments_separator);
+		showDetailsPane(gotNoteToShow);
+		if (gotNoteToShow) {
+			final AbstractNote note = noteEntry.getNote();
+			title.setText(note.getTitle());
+			body.setText(note.getBody());
+		}
+	}
+
+	private void showDetailsPane(boolean show) {
+		final int visibility = show ? View.VISIBLE : View.GONE;
+		if (dualPaneDetails != null) {
+			dualPaneDetails.setVisibility(visibility);
+		}
+		if (dualPaneSeparator != null) {
+			dualPaneSeparator.setVisibility(visibility);
+		}
 	}
 
 	@Override
