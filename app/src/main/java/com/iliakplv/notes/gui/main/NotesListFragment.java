@@ -19,6 +19,7 @@ import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
+import org.joda.time.DateTime;
 
 /**
  * Author: Ilya Kopylov
@@ -195,7 +196,21 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
 				case INFO_INDEX:
-					Toast.makeText(getActivity(), "[very important info]", Toast.LENGTH_SHORT).show();
+					final String timeFormat = "HH:mm";
+					final DateTime created = noteEntry.getNote().getCreateTime();
+					final String createdString = created.toLocalDate().toString() + " " +
+							created.toLocalTime().toString(timeFormat);
+					final DateTime changed = noteEntry.getNote().getChangeTime();
+					final String changedString = changed.toLocalDate().toString() + " " +
+							changed.toLocalTime().toString(timeFormat);
+					final String info = "\n" + getString(R.string.note_info_created, createdString) +
+							"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
+
+					new AlertDialog.Builder(getActivity()).
+							setTitle(getTitleForNote(noteEntry.getNote())).
+							setMessage(info).
+							setNegativeButton(R.string.common_ok, null).
+							create().show();
 					break;
 				case DELETE_INDEX:
 					// Show delete confirmation dialog
