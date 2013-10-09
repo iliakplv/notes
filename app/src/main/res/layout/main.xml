@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/MainActivity">
-
-	<FrameLayout
-			android:id="@+id/notes_list"
-			style="@style/MainFragment.List"/>
-
-	<FrameLayout
-			android:id="@+id/details"
-			style="@style/MainFragment.Details"/>
-
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             style="@style/MainActivity"
+             android:id="@+id/fragment_container"/>
 

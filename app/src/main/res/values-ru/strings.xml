@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Заметки</string>
+
+
+	<!--
+		Common
+	-->
+
+	<string name="common_ok">OK</string>
+	<string name="common_cancel">Отмена</string>
+	<string name="common_yes">Да</string>
+	<string name="common_no">Нет</string>
+
+
+	<!--
+		Action Bar
+	-->
+
+	<string name="action_bar_add">Новая заметка</string>
+
+
+	<!--
+		Notes List
+	-->
+
+	<string name="empty_note_placeholder">(пустая заметка)</string>
+
+
+	<!--
+		Note Actions
+	-->
+
+	<string name="note_action_info">Свойства</string>
+	<string name="note_info_created">Создана: %s</string>
+	<string name="note_info_modified">Изменена: %s</string>
+	<string name="note_action_delete">Удалить</string>
+	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
+
+
+	<!--
+		Note Details
+	-->
+
+	<string name="note_details_title_hint">Заголовок</string>
+	<string name="note_details_body_hint">Текст</string>
+
+
+</resources>

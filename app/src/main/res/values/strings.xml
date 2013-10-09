@@ -4,4 +4,47 @@
 	<string name="app_name">Notes</string>
 
 
+	<!--
+		Common
+	-->
+
+	<string name="common_ok">OK</string>
+	<string name="common_cancel">Cancel</string>
+	<string name="common_yes">Yes</string>
+	<string name="common_no">No</string>
+
+
+	<!--
+		Action Bar
+	-->
+
+	<string name="action_bar_add">New note</string>
+
+
+	<!--
+		Notes List
+	-->
+
+	<string name="empty_note_placeholder">(empty note)</string>
+
+
+	<!--
+		Note Actions
+	-->
+
+	<string name="note_action_info">Note Info</string>
+	<string name="note_info_created">Created: %s</string>
+	<string name="note_info_modified">Modified: %s</string>
+	<string name="note_action_delete">Delete</string>
+	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
+
+
+	<!--
+		Note Details
+	-->
+
+	<string name="note_details_title_hint">Title</string>
+	<string name="note_details_body_hint">Text</string>
+
+
 </resources>

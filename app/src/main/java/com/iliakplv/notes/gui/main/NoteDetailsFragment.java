@@ -3,13 +3,17 @@ package com.iliakplv.notes.gui.main;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
+import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
-import org.joda.time.DateTime;
+import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 /**
  * Author: Ilya Kopylov
@@ -17,71 +21,108 @@ import org.joda.time.DateTime;
  */
 public class NoteDetailsFragment extends Fragment {
 
-	private AbstractNote note;
+	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
 
-	public NoteDetailsFragment() {
-		// do nothing
-	}
+	final static String ARG_NOTE_ID = "note_id";
 
-	public NoteDetailsFragment(AbstractNote note) {
-		this.note = note;
-	}
+	private int noteId = MainActivity.NO_DETAILS;
+	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private NotesDatabaseEntry noteEntry;
 
-	public AbstractNote getNote() {
-		return note;
-	}
+	private View dualPaneDetails;
+	private View dualPaneSeparator;
+	private EditText title;
+	private EditText body;
 
-	public void setNote(AbstractNote note) {
-		this.note = note;
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// TODO rework this bullshit (test)
-		if (note == null) {
-			return null;
-		}
-
-		final String LINE_SPACING = "\n";
-		final String DATE_SPACING = ".";
-		final String TIME_SPACING = ":";
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(note.getBody());
-		sb.append(LINE_SPACING);
-
-		DateTime timestamp = note.getCreateTime();
-		sb.append(timestamp.getHourOfDay());
-		sb.append(TIME_SPACING);
-		sb.append(timestamp.getMinuteOfHour());
-		sb.append(TIME_SPACING);
-		sb.append(timestamp.getSecondOfMinute());
-		sb.append(" ");
-		sb.append(timestamp.getDayOfMonth());
-		sb.append(DATE_SPACING);
-		sb.append(timestamp.getMonthOfYear());
-		sb.append(DATE_SPACING);
-		sb.append(timestamp.getYear());
-		sb.append(LINE_SPACING);
-
-		timestamp = note.getChangeTime();
-		sb.append(timestamp.getHourOfDay());
-		sb.append(TIME_SPACING);
-		sb.append(timestamp.getMinuteOfHour());
-		sb.append(TIME_SPACING);
-		sb.append(timestamp.getSecondOfMinute());
-		sb.append(" ");
-		sb.append(timestamp.getDayOfMonth());
-		sb.append(DATE_SPACING);
-		sb.append(timestamp.getMonthOfYear());
-		sb.append(DATE_SPACING);
-		sb.append(timestamp.getYear());
-		sb.append(LINE_SPACING);
-
 		final View view = inflater.inflate(R.layout.note_details, container, false);
-		((TextView) view.findViewById(R.id.test_text)).setText(sb.toString());
+		title = (EditText) view.findViewById(R.id.note_title);
+		body = (EditText) view.findViewById(R.id.note_body);
 		return view;
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		final Bundle args = getArguments();
+		if (args != null) {
+			noteId = args.getInt(ARG_NOTE_ID);
+		}
+		updateNoteDetailsView(noteId);
+	}
 
+
+	public void updateNoteDetailsView(int noteId) {
+		// try save changes on previously shown note
+		trySaveCurrentNote();
+
+		// show new note
+		this.noteId = noteId;
+		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
+		final boolean gotNoteToShow = noteEntry != null;
+
+		dualPaneDetails = getActivity().findViewById(R.id.note_details_fragment);
+		dualPaneSeparator = getActivity().findViewById(R.id.dual_pane_fragments_separator);
+		showDetailsPane(gotNoteToShow);
+		if (gotNoteToShow) {
+			final AbstractNote note = noteEntry.getNote();
+			title.setText(note.getTitle());
+			body.setText(note.getBody());
+		}
+	}
+
+	private void showDetailsPane(boolean show) {
+		final int visibility = show ? View.VISIBLE : View.GONE;
+		if (dualPaneDetails != null) {
+			dualPaneDetails.setVisibility(visibility);
+		}
+		if (dualPaneSeparator != null) {
+			dualPaneSeparator.setVisibility(visibility);
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		// try save changes
+		trySaveCurrentNote();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(ARG_NOTE_ID, noteId);
+	}
+
+	private void trySaveCurrentNote() {
+		final String LOG_PREFIX = "trySaveCurrentNote(): ";
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, LOG_PREFIX + "call");
+		}
+		if (noteEntry != null) {
+			final String newTitle = title.getText().toString();
+			final String newBody = body.getText().toString();
+			final AbstractNote currentNote = noteEntry.getNote();
+			if (!StringUtils.equals(currentNote.getBody(), newBody) ||
+					!StringUtils.equals(currentNote.getTitle(), newTitle)) {
+				currentNote.setTitle(newTitle);
+				currentNote.setBody(newBody);
+				currentNote.updateChangeTime();
+				final boolean updated = dbFacade.updateNote(noteEntry.getId(), currentNote);
+				if (BuildConfig.DEBUG) {
+					Log.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database " + (updated ? "" : "NOT ") + "updated");
+				}
+			} else {
+				if (BuildConfig.DEBUG) {
+					Log.d(LOG_TAG, LOG_PREFIX + "Note data unchanged. End");
+				}
+			}
+		} else {
+			if (BuildConfig.DEBUG) {
+				Log.d(LOG_TAG, LOG_PREFIX + "Note entry is null. End");
+			}
+		}
+	}
 }

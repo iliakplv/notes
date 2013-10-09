@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<dimen name="note_list_item_title_text_size">16sp</dimen>
-	<dimen name="note_list_item_subtitle_text_size">14sp</dimen>
+	<!--
+		Main
+	-->
+
+	<dimen name="main_side_padding">6dp</dimen>
+
+
+	<!--
+		Note List
+	-->
+
+	<dimen name="note_list_item_side_padding">4dp</dimen>
+	<dimen name="note_list_item_vertical_padding">2dp</dimen>
+	<dimen name="note_list_item_title_bottom_margin">1dp</dimen>
+	<dimen name="note_list_item_title_text_size">22sp</dimen>
+	<dimen name="note_list_item_subtitle_text_size">18sp</dimen>
+
+	<dimen name="note_fragments_separator">2dp</dimen>
+
+
+	<!--
+		Note Details
+	-->
+
+	<dimen name="note_details_padding">6dp</dimen>
+	<dimen name="note_details_title_bottom_margin">4dp</dimen>
+	<dimen name="note_details_title_text_size">22sp</dimen>
+	<dimen name="note_details_body_text_size">22sp</dimen>
 
 </resources>

@@ -35,7 +35,7 @@ public class NotesDatabaseEntry {
 
 	public void setId(int id) {
 		if (id < 1) {
-			throw new IllegalArgumentException("Wrong id value");
+			throw new IllegalArgumentException("Wrong id value:" + id);
 		}
 		this.id = id;
 	}

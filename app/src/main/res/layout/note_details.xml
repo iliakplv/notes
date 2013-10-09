@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/NoteDetails">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/details_scroll_view"
+            style="@style/NoteDetails">
 
-	<TextView
-		android:id="@+id/test_text"
-	    android:layout_height="match_parent"
-	    android:layout_width="match_parent"
-	    android:padding="20dp"
-	    android:textSize="16sp"
-	    android:textColor="#ffcccccc"/>
+	<LinearLayout
+			android:id="@+id/note_title_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 
-</LinearLayout>
+		<EditText
+				android:id="@+id/note_title"
+				style="@style/NoteDetailsText.Title"/>
+
+		<EditText
+				android:id="@+id/note_body"
+				style="@style/NoteDetailsText.Body"/>
+
+	</LinearLayout>
+
+</ScrollView>
+

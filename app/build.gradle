@@ -24,10 +24,18 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 18
+
+	    testPackageName "com.iliakplv.notes.tests"
+	    testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
+
+	testOptions {
+		resultsDir = "$project.buildDir/tests"
+	}
 }
 
 dependencies {
 	compile files('../appcompat/libs/android-support-v4.jar')
+	compile files('../appcompat/libs/android-support-v7-appcompat.jar')
 	compile files('libs/joda-time-2.3.jar')
 }
