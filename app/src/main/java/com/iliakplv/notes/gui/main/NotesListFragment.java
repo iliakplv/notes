@@ -111,19 +111,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-//	TODO
-//	public void setItemChecked(int position, boolean checked) {
-//		getListView().setItemChecked(position, checked);
-//	}
-//
-//	public void setLastItemChecked() {
-//		getListView().setItemChecked(getListView().getCount() - 1, true);
-//	}
-//
-//	public void clearChoices() {
-//		getListView().clearChoices();
-//	}
-
 
 	// list item text
 
@@ -182,11 +169,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			title.setText(getTitleForNote(note));
 			subtitle.setText(getBodyForNote(note));
 
-			final boolean selected = getListView().isItemChecked(position);
-			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
-			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
-			title.setTextColor(getResources().getColor(titleColor));
-			subtitle.setTextColor(getResources().getColor(subtitleColor));
+//			final boolean selected = getListView().isItemChecked(position);
+//			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
+//			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
+//			title.setTextColor(getResources().getColor(titleColor));
+//			subtitle.setTextColor(getResources().getColor(subtitleColor));
 
 			return view;
 		}
