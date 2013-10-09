@@ -236,7 +236,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					// Show delete confirmation dialog
 					new AlertDialog.Builder(getActivity()).
 							setTitle(getTitleForNote(noteEntry.getNote())).
-							setMessage(R.string.note_action_delete_confirm_dialog_text).
+							setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
 							setNegativeButton(R.string.common_no, null).
 							setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 
