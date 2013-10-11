@@ -49,7 +49,7 @@
 	</style>
 
 
-	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
+	<style name="NoteFragmentsSeparator">
 		<item name="android:layout_width">@dimen/note_fragments_separator</item>
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:background">@color/note_fragments_separator</item>

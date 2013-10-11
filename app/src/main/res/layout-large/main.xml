@@ -9,7 +9,7 @@
 	          android:layout_width="0dp"
 	          android:layout_height="match_parent"/>
 
-	<TextView
+	<View
 			android:id="@+id/dual_pane_fragments_separator"
 			style="@style/NoteFragmentsSeparator"/>
 
