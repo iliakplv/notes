@@ -70,10 +70,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		return onNoteLongClick(i);
+		return showNoteMenu(i);
 	}
 
-	public boolean onNoteLongClick(int position) {
+	public boolean showNoteMenu(int position) {
 		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(position);
 		final AbstractNote note = selectedNoteEntry.getNote();
 
@@ -201,7 +201,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public void onClick(View v) {
-			onNoteLongClick(position);
+			showNoteMenu(position);
 		}
 	}
 
