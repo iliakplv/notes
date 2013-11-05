@@ -70,7 +70,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(i);
+		return onNoteLongClick(i);
+	}
+
+	public boolean onNoteLongClick(int position) {
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(position);
 		final AbstractNote note = selectedNoteEntry.getNote();
 
 		// Show available actions for note
@@ -169,6 +173,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			title.setText(getTitleForNote(note));
 			subtitle.setText(getBodyForNote(note));
 
+			view.findViewById(R.id.note_list_item_menu).setOnClickListener(new NoteMenuClickListener(position));
+
 //			final boolean selected = getListView().isItemChecked(position);
 //			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
 //			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
@@ -184,6 +190,21 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 	}
+
+	private class NoteMenuClickListener implements View.OnClickListener {
+
+		private int position;
+
+		public NoteMenuClickListener(int position) {
+			this.position = position;
+		}
+
+		@Override
+		public void onClick(View v) {
+			NotesListFragment.this.onNoteLongClick(position);
+		}
+	}
+
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 

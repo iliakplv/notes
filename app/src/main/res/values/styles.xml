@@ -24,7 +24,7 @@
 	<style name="NoteListItem">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:orientation">vertical</item>
+		<item name="android:orientation">horizontal</item>
 		<item name="android:paddingLeft">@dimen/note_list_item_side_padding</item>
 		<item name="android:paddingRight">@dimen/note_list_item_side_padding</item>
 		<item name="android:paddingTop">@dimen/note_list_item_vertical_padding</item>

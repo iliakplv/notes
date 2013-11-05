@@ -3,12 +3,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               style="@style/NoteListItem">
 
-	<TextView
-			android:id="@+id/title"
-			style="@style/NoteListItemText.Title"/>
+	<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="50">
 
-	<TextView
-			android:id="@+id/subtitle"
-			style="@style/NoteListItemText.Subtitle"/>
+		<TextView
+				android:id="@+id/title"
+				style="@style/NoteListItemText.Title"/>
+
+		<TextView
+				android:id="@+id/subtitle"
+				style="@style/NoteListItemText.Subtitle"/>
+	</LinearLayout>
+
+	<ImageView
+			android:id="@+id/note_list_item_menu"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="@dimen/note_list_item_menu_image_side_padding"
+			android:layout_marginRight="@dimen/note_list_item_menu_image_side_padding"
+			android:src="@android:drawable/ic_menu_more"
+			android:layout_gravity="center_vertical|right"/>
 
 </LinearLayout>
