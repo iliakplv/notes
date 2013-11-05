@@ -201,7 +201,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public void onClick(View v) {
-			NotesListFragment.this.onNoteLongClick(position);
+			onNoteLongClick(position);
 		}
 	}
 
