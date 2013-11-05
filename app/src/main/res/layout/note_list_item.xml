@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/NoteListItem">
+              style="@style/NoteListItem"
+              android:baselineAligned="false">
 
 	<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="0dip"
 			android:layout_height="wrap_content"
-			android:layout_weight="50">
+			android:layout_weight="50"
+			android:paddingTop="@dimen/note_list_item_vertical_padding"
+			android:paddingBottom="@dimen/note_list_item_vertical_padding">
 
 		<TextView
 				android:id="@+id/title"
@@ -18,13 +21,28 @@
 				style="@style/NoteListItemText.Subtitle"/>
 	</LinearLayout>
 
-	<ImageView
+	<View
+			android:id="@+id/dual_pane_fragments_separator"
+			style="@style/NoteListItemMenuSeparator"/>
+
+	<LinearLayout
 			android:id="@+id/note_list_item_menu"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="@dimen/note_list_item_menu_image_side_padding"
-			android:layout_marginRight="@dimen/note_list_item_menu_image_side_padding"
-			android:src="@android:drawable/ic_menu_more"
-			android:layout_gravity="center_vertical|right"/>
+			android:layout_height="fill_parent"
+			android:paddingLeft="@dimen/note_list_item_menu_image_side_padding"
+			android:paddingRight="@dimen/note_list_item_menu_image_side_padding"
+			android:paddingTop="@dimen/note_list_item_vertical_padding"
+			android:paddingBottom="@dimen/note_list_item_vertical_padding"
+			android:layout_gravity="center_vertical|right"
+			android:background="@drawable/list_item_menu_selector">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:src="@android:drawable/ic_menu_more"/>
+
+	</LinearLayout>
+
 
 </LinearLayout>
