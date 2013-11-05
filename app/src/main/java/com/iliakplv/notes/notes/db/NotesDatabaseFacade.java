@@ -2,7 +2,6 @@ package com.iliakplv.notes.notes.db;
 
 import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 
 import java.util.LinkedList;
