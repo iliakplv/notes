@@ -231,8 +231,12 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					final DateTime changed = noteEntry.getNote().getChangeTime();
 					final String changedString = changed.toLocalDate().toString() + " " +
 							changed.toLocalTime().toString(timeFormat);
+					final int length = noteEntry.getNote().getTitle().length() +
+							noteEntry.getNote().getBody().length();
+
 					final String info = "\n" + getString(R.string.note_info_created, createdString) +
-							"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
+							"\n\n" + getString(R.string.note_info_modified, changedString) +
+							"\n\n" + getString(R.string.note_info_length, length) + "\n";
 
 					new AlertDialog.Builder(getActivity()).
 							setTitle(getTitleForNote(noteEntry.getNote())).

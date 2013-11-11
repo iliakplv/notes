@@ -35,6 +35,7 @@
 	<string name="note_action_info">Свойства</string>
 	<string name="note_info_created">Создана: %s</string>
 	<string name="note_info_modified">Изменена: %s</string>
+	<string name="note_info_length">Длина (символы): %s</string>
 	<string name="note_action_delete">Удалить</string>
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
 
