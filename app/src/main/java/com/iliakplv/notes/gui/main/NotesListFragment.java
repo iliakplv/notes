@@ -116,7 +116,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 
-	// list item text
+	// List item texts
 
 	public static String getTitleForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
@@ -146,11 +146,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 
-	/*********************************************
-	 *
-	 *            Inner classes
-	 *
-	 *********************************************/
+	/**
+	 * ******************************************
+	 * <p/>
+	 * Inner classes
+	 * <p/>
+	 * *******************************************
+	 */
 
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
@@ -173,8 +175,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			title.setText(getTitleForNote(note));
 			subtitle.setText(getBodyForNote(note));
 
-			view.findViewById(R.id.note_list_item_menu).setOnClickListener(new NoteMenuClickListener(position));
-
 //			final boolean selected = getListView().isItemChecked(position);
 //			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
 //			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
@@ -190,21 +190,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 	}
-
-	private class NoteMenuClickListener implements View.OnClickListener {
-
-		private int position;
-
-		public NoteMenuClickListener(int position) {
-			this.position = position;
-		}
-
-		@Override
-		public void onClick(View v) {
-			showNoteMenu(position);
-		}
-	}
-
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 
@@ -224,47 +209,51 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
 				case INFO_INDEX:
-					final String timeFormat = "HH:mm";
-					final DateTime created = noteEntry.getNote().getCreateTime();
-					final String createdString = created.toLocalDate().toString() + " " +
-							created.toLocalTime().toString(timeFormat);
-					final DateTime changed = noteEntry.getNote().getChangeTime();
-					final String changedString = changed.toLocalDate().toString() + " " +
-							changed.toLocalTime().toString(timeFormat);
-					final int length = noteEntry.getNote().getTitle().length() +
-							noteEntry.getNote().getBody().length();
-
-					final String info = "\n" + getString(R.string.note_info_created, createdString) +
-							"\n\n" + getString(R.string.note_info_modified, changedString) +
-							"\n\n" + getString(R.string.note_info_length, length) + "\n";
-
-					new AlertDialog.Builder(getActivity()).
-							setTitle(getTitleForNote(noteEntry.getNote())).
-							setMessage(info).
-							setNegativeButton(R.string.common_ok, null).
-							create().show();
+					showNoteInfo();
 					break;
 				case DELETE_INDEX:
-					// Show delete confirmation dialog
-					new AlertDialog.Builder(getActivity()).
-							setTitle(getTitleForNote(noteEntry.getNote())).
-							setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
-							setNegativeButton(R.string.common_no, null).
-							setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialogInterface, int i) {
-									new Thread(new Runnable() {
-										@Override
-										public void run() {
-											NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
-										}
-									}).start();
-								}
-
-							}).create().show();
+					showDeleteDialog();
 					break;
 			}
+		}
+
+		private void showDeleteDialog() {
+			new AlertDialog.Builder(getActivity()).
+					setTitle(getTitleForNote(noteEntry.getNote())).
+					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
+					setNegativeButton(R.string.common_no, null).
+					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
+								}
+							}).start();
+						}
+					}).create().show();
+		}
+
+		private void showNoteInfo() {
+			final String timeFormat = "HH:mm";
+
+			final DateTime created = noteEntry.getNote().getCreateTime();
+			final String createdString = created.toLocalDate().toString() + " " +
+					created.toLocalTime().toString(timeFormat);
+
+			final DateTime changed = noteEntry.getNote().getChangeTime();
+			final String changedString = changed.toLocalDate().toString() + " " +
+					changed.toLocalTime().toString(timeFormat);
+
+			final String info = "\n" + getString(R.string.note_info_created, createdString) +
+					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
+
+			new AlertDialog.Builder(getActivity()).
+					setTitle(getTitleForNote(noteEntry.getNote())).
+					setMessage(info).
+					setNegativeButton(R.string.common_ok, null).
+					create().show();
 		}
 	}
 

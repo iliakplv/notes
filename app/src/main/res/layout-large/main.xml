@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/MainActivity.DualPane"
-              android:baselineAligned="false">
+              style="@style/MainActivity.DualPane">
 
 	<fragment android:name="com.iliakplv.notes.gui.main.NotesListFragment"
 	          android:id="@+id/note_list_fragment"

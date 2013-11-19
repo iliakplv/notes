@@ -35,7 +35,6 @@
 	<string name="note_action_info">Note Info</string>
 	<string name="note_info_created">Created: %s</string>
 	<string name="note_info_modified">Modified: %s</string>
-	<string name="note_info_length">Length (symbols): %s</string>
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
 

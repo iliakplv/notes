@@ -24,8 +24,11 @@
 	<style name="NoteListItem">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:orientation">horizontal</item>
+		<item name="android:orientation">vertical</item>
 		<item name="android:paddingLeft">@dimen/note_list_item_side_padding</item>
+		<item name="android:paddingRight">@dimen/note_list_item_side_padding</item>
+		<item name="android:paddingTop">@dimen/note_list_item_vertical_padding</item>
+		<item name="android:paddingBottom">@dimen/note_list_item_vertical_padding</item>
 	</style>
 
 	<style name="NoteListItemText" parent="android:Widget.TextView">
@@ -45,14 +48,10 @@
 		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
 	</style>
 
-	<style name="NoteListItemMenuSeparator">
-		<item name="android:layout_width">@dimen/note_list_item_menu_separator</item>
-		<item name="android:layout_height">match_parent</item>
-		<item name="android:layout_marginTop">@dimen/note_list_item_menu_separator_vertical_margin</item>
-		<item name="android:layout_marginBottom">@dimen/note_list_item_menu_separator_vertical_margin</item>
-		<item name="android:background">@color/note_list_item_menu_separator</item>
-	</style>
 
+	<!--
+		Separator
+	-->
 
 	<style name="NoteFragmentsSeparator">
 		<item name="android:layout_width">@dimen/note_fragments_separator</item>
