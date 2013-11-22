@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		currentNoteId = newNoteId;
 
 		// show/hide arrow on action bar
-		getActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
 
 		// subscribe/unsubscribe to note changes
 		if (isDetailsShown()) {
