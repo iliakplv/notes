@@ -65,13 +65,16 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
 
-		final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
-				getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
-
 		if (isDetailsShown()) { // show/update details
+
+			final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
+					getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
+
 			if (noteDetailsFragment != null) { // dual pane
 				noteDetailsFragment.updateNoteDetailsView(noteId);
+
 			} else { // single pane
+
 				final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
 				final Bundle args = new Bundle();
 				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
