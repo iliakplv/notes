@@ -40,14 +40,40 @@ class NotesDatabaseAdapter {
 	private static final int NOTES_CHANGE_DATE_COLUMN	= 4;
 	private static final String NOTES_CHANGE_DATE		= "change_date";
 
+	// Table: Labels
+	private static final String LABELS_TABLE             = "notes";
+	private static final int LABELS_NAME_COLUMN			= 1;
+	private static final String LABELS_NAME				= "name";
+
+	// Table: NotesLabels
+	private static final String NOTES_LABELS_TABLE      = "notes_labels";
+	private static final int NOTES_LABELS_NOTE_COLUMN   = 1;
+	private static final String NOTES_LABELS_NOTE		= "note";
+	private static final int NOTES_LABELS_LABEL_COLUMN  = 2;
+	private static final String NOTES_LABELS_LABEL  	= "label";
+
+
 	// Scheme creation
-	static final String CREATE_SCHEME_COMMAND =
+	static final String CREATE_NOTES_TABLE =
 			"CREATE TABLE " + NOTES_TABLE +
 					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 					NOTES_NAME + " TEXT NOT NULL, " +
 					NOTES_BODY + " TEXT NOT NULL, " +
 					NOTES_CREATE_DATE + " LONG, " +
 					NOTES_CHANGE_DATE + " LONG);";
+
+	static final String CREATE_LABELS_TABLE =
+			"CREATE TABLE " + LABELS_TABLE +
+					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+					LABELS_NAME + " TEXT NOT NULL);";
+
+	static final String CREATE_NOTES_LABELS_TABLE =
+			"CREATE TABLE " + NOTES_LABELS_TABLE +
+					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+					NOTES_LABELS_NOTE + " INTEGER, " +
+					NOTES_LABELS_LABEL + " INTEGER, " +
+					" FOREIGN KEY (" + NOTES_LABELS_NOTE + ") REFERENCES " + NOTES_TABLE + " (" + KEY_ID + ")," +
+					" FOREIGN KEY (" + NOTES_LABELS_LABEL + ") REFERENCES " + LABELS_TABLE +" (" + KEY_ID + ");";
 
 	private SQLiteDatabase db;
 	private NotesDatabaseOpenHelper dbHelper;
