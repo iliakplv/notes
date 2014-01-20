@@ -25,7 +25,7 @@
 		Notes List
 	-->
 
-	<string name="empty_note_placeholder">(пустая заметка)</string>
+	<string name="empty_note_placeholder">Новая заметка</string>
 
 
 	<!--
