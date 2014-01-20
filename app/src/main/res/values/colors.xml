@@ -5,8 +5,8 @@
 		Notes List
 	-->
 
-	<color name="note_list_item_title">#ffffffff</color>
-	<color name="note_list_item_subtitle">#ffdadada</color>
+	<color name="note_list_item_title">#ff000000</color>
+	<color name="note_list_item_subtitle">#ff6a6a6a</color>
 
 
 	<!--
@@ -20,7 +20,7 @@
 		Note Details
 	-->
 
-	<color name="note_details_title">#ffffec85</color>
-	<color name="note_details_body">#ffffffff</color>
+	<color name="note_details_title">#ff6a6a6a</color>
+	<color name="note_details_body">#ff000000</color>
 
 </resources>
