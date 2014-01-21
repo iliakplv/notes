@@ -23,11 +23,11 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// TODO test
 		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_TABLE);
-		db.execSQL(NotesDatabaseAdapter.CREATE_LABELS_TABLE);
-		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
+//		db.execSQL(NotesDatabaseAdapter.CREATE_LABELS_TABLE);
+//		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
-			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_LABELS_TABLE);
+//			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
+//			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_LABELS_TABLE);
 			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
 		}
 	}
