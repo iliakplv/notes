@@ -7,9 +7,10 @@
 		android:icon="@drawable/ic_menu_add"
 		sabd:showAsAction="always"/>
 
+
 	<item
 		android:id="@+id/action_share"
-		android:title="[in note list]"
+		android:title="[in note details]"
 		sabd:showAsAction="never"/>
 
 </menu> 

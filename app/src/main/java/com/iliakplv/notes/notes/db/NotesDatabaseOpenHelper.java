@@ -21,7 +21,7 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO test
+		// TODO [db] test
 		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_TABLE);
 //		db.execSQL(NotesDatabaseAdapter.CREATE_LABELS_TABLE);
 //		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
@@ -37,7 +37,7 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "[empty] Upgrading version " + oldVersion + " to " + newVersion);
 		}
-//		TODO implement in case of schema changing
+//		TODO [db] implement in case of schema changing
 //		db.execSQL("DROP TABLE IF EXISTS " + NotesDatabaseAdapter.NOTES_TABLE);
 //		onCreate(db);
 	}

@@ -15,7 +15,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  */
 public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
 
-	// TODO handle creating multiple notes one by one
+	// TODO [ui] handle creating multiple notes one by one
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	}
 
 	private boolean isDetailsShown() {
+		// TODO [ui] returns true if current note was deleted in dual pane mode
 		return currentNoteId != NO_DETAILS;
 	}
 
@@ -91,6 +92,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	private void onDetailsChanged(int newNoteId) {
 		currentNoteId = newNoteId;
+		supportInvalidateOptionsMenu();
 
 		// show/hide arrow on action bar
 		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
@@ -131,7 +133,8 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
+		final int menuId = isDetailsShown() ? R.menu.main_note : R.menu.main;
+		getMenuInflater().inflate(menuId, menu);
 		return true;
 	}
 
