@@ -15,8 +15,6 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  */
 public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
 
-	// TODO [ui] handle creating multiple notes one by one
-
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
 
