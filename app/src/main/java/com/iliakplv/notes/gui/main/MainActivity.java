@@ -104,6 +104,9 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	}
 
 	public void createNewNote() {
+		if (getSupportFragmentManager().findFragmentById(R.id.note_details_fragment) == null) { // single pane
+			goBackToList();
+		}
 		onNoteSelected(NotesDatabaseFacade.getInstance().insertNote(new TextNote()));
 	}
 
@@ -131,8 +134,7 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		final int menuId = isDetailsShown() ? R.menu.main_note : R.menu.main;
-		getMenuInflater().inflate(menuId, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -140,15 +142,19 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (isDetailsShown()) {
-					onBackPressed();
-				}
+				goBackToList();
 				break;
 			case R.id.action_add:
 				createNewNote();
 				break;
 		}
 		return true;
+	}
+
+	private void goBackToList() {
+		if (isDetailsShown()) {
+			onBackPressed();
+		}
 	}
 
 
