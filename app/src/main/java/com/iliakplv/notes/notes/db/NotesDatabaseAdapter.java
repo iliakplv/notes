@@ -5,8 +5,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.TextNote;
+
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -19,8 +21,9 @@ import java.util.List;
 class NotesDatabaseAdapter {
 
 	// Database
-	private static final String DATABASE_NAME	= "notes.db";
-	private static final int DATABASE_VERSION	= 1;
+	private static final String DATABASE_NAME = "notes.db";
+
+	private static final int CURRENT_VERSION = NotesDatabaseOpenHelper.DATABASE_VERSION_LABELS;
 
 	private static final int ALL_NOTES = 0;
 
@@ -30,27 +33,29 @@ class NotesDatabaseAdapter {
 
 	// Tables
 	// Table: Notes
-	private static final String NOTES_TABLE             = "notes";
-	private static final int NOTES_NAME_COLUMN			= 1;
-	private static final String NOTES_NAME				= "name";
-	private static final int NOTES_BODY_COLUMN			= 2;
-	private static final String NOTES_BODY				= "body";
-	private static final int NOTES_CREATE_DATE_COLUMN	= 3;
-	private static final String NOTES_CREATE_DATE		= "create_date";
-	private static final int NOTES_CHANGE_DATE_COLUMN	= 4;
-	private static final String NOTES_CHANGE_DATE		= "change_date";
+	private static final String NOTES_TABLE = "notes";
+	private static final int NOTES_NAME_COLUMN = 1;
+	private static final String NOTES_NAME = "name";
+	private static final int NOTES_BODY_COLUMN = 2;
+	private static final String NOTES_BODY = "body";
+	private static final int NOTES_CREATE_DATE_COLUMN = 3;
+	private static final String NOTES_CREATE_DATE = "create_date";
+	private static final int NOTES_CHANGE_DATE_COLUMN = 4;
+	private static final String NOTES_CHANGE_DATE = "change_date";
 
 	// Table: Labels
-	private static final String LABELS_TABLE             = "notes";
-	private static final int LABELS_NAME_COLUMN			= 1;
-	private static final String LABELS_NAME				= "name";
+	private static final String LABELS_TABLE = "labels";
+	private static final int LABELS_NAME_COLUMN = 1;
+	private static final String LABELS_NAME = "name";
+	private static final int LABELS_COLOR_COLUMN = 2;
+	private static final String LABELS_COLOR = "color";
 
 	// Table: NotesLabels
-	private static final String NOTES_LABELS_TABLE      = "notes_labels";
-	private static final int NOTES_LABELS_NOTE_COLUMN   = 1;
-	private static final String NOTES_LABELS_NOTE		= "note";
-	private static final int NOTES_LABELS_LABEL_COLUMN  = 2;
-	private static final String NOTES_LABELS_LABEL  	= "label";
+	private static final String NOTES_LABELS_TABLE = "notes_labels";
+	private static final int NOTES_LABELS_NOTE_COLUMN = 1;
+	private static final String NOTES_LABELS_NOTE = "note";
+	private static final int NOTES_LABELS_LABEL_COLUMN = 2;
+	private static final String NOTES_LABELS_LABEL = "label";
 
 
 	// Scheme creation
@@ -65,7 +70,8 @@ class NotesDatabaseAdapter {
 	static final String CREATE_LABELS_TABLE =
 			"CREATE TABLE " + LABELS_TABLE +
 					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-					LABELS_NAME + " TEXT NOT NULL);";
+					LABELS_NAME + " TEXT NOT NULL, " +
+					LABELS_COLOR + " INTEGER);";
 
 	static final String CREATE_NOTES_LABELS_TABLE =
 			"CREATE TABLE " + NOTES_LABELS_TABLE +
@@ -73,7 +79,7 @@ class NotesDatabaseAdapter {
 					NOTES_LABELS_NOTE + " INTEGER, " +
 					NOTES_LABELS_LABEL + " INTEGER, " +
 					" FOREIGN KEY (" + NOTES_LABELS_NOTE + ") REFERENCES " + NOTES_TABLE + " (" + KEY_ID + ")," +
-					" FOREIGN KEY (" + NOTES_LABELS_LABEL + ") REFERENCES " + LABELS_TABLE +" (" + KEY_ID + ");";
+					" FOREIGN KEY (" + NOTES_LABELS_LABEL + ") REFERENCES " + LABELS_TABLE + " (" + KEY_ID + "));";
 
 	private SQLiteDatabase db;
 	private NotesDatabaseOpenHelper dbHelper;
@@ -82,7 +88,7 @@ class NotesDatabaseAdapter {
 	// Constructors
 
 	NotesDatabaseAdapter() {
-		dbHelper = new NotesDatabaseOpenHelper(DATABASE_NAME, null, DATABASE_VERSION);
+		dbHelper = new NotesDatabaseOpenHelper(DATABASE_NAME, null, CURRENT_VERSION);
 	}
 
 
@@ -103,7 +109,7 @@ class NotesDatabaseAdapter {
 
 	private List<NotesDatabaseEntry> getNotes(int id) {
 		Cursor cursor = db.query(NOTES_TABLE,
-				new String[] {KEY_ID, NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE},
+				new String[]{KEY_ID, NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE},
 				whereClauseForId(id), null, null, null, null);
 
 		List<NotesDatabaseEntry> result = new ArrayList<NotesDatabaseEntry>();
