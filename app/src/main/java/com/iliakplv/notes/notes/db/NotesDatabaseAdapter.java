@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.TextNote;
 
 import org.joda.time.DateTime;
@@ -92,8 +93,7 @@ class NotesDatabaseAdapter {
 	}
 
 
-	// Notes
-	// Queries
+	// notes queries
 
 	NotesDatabaseEntry<AbstractNote> getNote(int id) {
 		final List<NotesDatabaseEntry<AbstractNote>> list = getNotes(id);
@@ -130,7 +130,7 @@ class NotesDatabaseAdapter {
 	}
 
 
-	// Data modification
+	// notes data modification
 
 	int insertNote(AbstractNote note) {
 		return (int) db.insert(NOTES_TABLE, null, contentValuesForNote(note));
@@ -145,14 +145,82 @@ class NotesDatabaseAdapter {
 	}
 
 
+	// labels queries
+
+	NotesDatabaseEntry<Label> getLabel(int id) {
+		final List<NotesDatabaseEntry<Label>> list = getLabels(id);
+		if (list.isEmpty()) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+	}
+
+	List<NotesDatabaseEntry<Label>> getAllLabels() {
+		return getLabels(ALL_ENTRIES);
+	}
+
+	private List<NotesDatabaseEntry<Label>> getLabels(int id) {
+		Cursor cursor = db.query(LABELS_TABLE,
+				new String[]{KEY_ID, LABELS_NAME, LABELS_COLOR},
+				whereClauseForId(id), null, null, null, null);
+
+		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+
+		if (cursor.moveToFirst()) {
+			do {
+				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
+				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
+				result.add(entry);
+			} while (cursor.moveToNext());
+		}
+
+		return result;
+	}
+
+
+	// labels data modification
+	// TODO
+
+
+	// notes_labels queries
+
+	private List<NotesDatabaseEntry<Label>> getLabelsForNote(int id) {
+		// TODO
+		return null;
+	}
+
+	private List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int id) {
+		// TODO
+		return null;
+	}
+
+	// notes_labels data modification
+	// TODO
+
+
+
 	// Util methods
 
 	private static ContentValues contentValuesForNote(AbstractNote note) {
-		ContentValues cv = new ContentValues();
+		final ContentValues cv = new ContentValues();
 		cv.put(NOTES_NAME, note.getTitle());
 		cv.put(NOTES_BODY, note.getBody());
 		cv.put(NOTES_CREATE_DATE, note.getCreateTime().getMillis());
 		cv.put(NOTES_CHANGE_DATE, note.getChangeTime().getMillis());
+		return cv;
+	}
+
+	private static ContentValues contentValuesForLabel(Label label) {
+		final ContentValues cv = new ContentValues();
+		cv.put(LABELS_NAME, label.getName());
+		cv.put(LABELS_COLOR, label.getColor());
+		return cv;
+	}
+
+	private static ContentValues contentValuesForNoteLabel() {
+		final ContentValues cv = new ContentValues();
+		// TODO
 		return cv;
 	}
 
