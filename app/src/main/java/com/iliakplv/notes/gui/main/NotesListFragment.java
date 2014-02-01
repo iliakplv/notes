@@ -117,8 +117,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	// List item texts
 
-	public static String getTitleForNote(NotesDatabaseEntry entry) {
-		return getTitleForNote(entry.getNote(), entry.getId());
+	public static String getTitleForNote(NotesDatabaseEntry<AbstractNote> entry) {
+		return getTitleForNote(entry.getEntry(), entry.getId());
 	}
 
 	public static String getTitleForNote(AbstractNote note, int number) {
@@ -173,11 +173,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry entry = dbFacade.getAllNotes().get(position);
+			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getAllNotes().get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(getTitleForNote(entry));
-			subtitle.setText(getBodyForNote(entry.getNote()));
+			subtitle.setText(getBodyForNote(entry.getEntry()));
 
 //			final boolean selected = getListView().isItemChecked(position);
 //			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
@@ -200,7 +200,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private final int INFO_INDEX = 0;
 		private final int DELETE_INDEX = 1;
 
-		private NotesDatabaseEntry noteEntry;
+		private NotesDatabaseEntry<AbstractNote> noteEntry;
 
 		public NoteActionDialogClickListener(NotesDatabaseEntry noteEntry) {
 			if (noteEntry == null) {
@@ -242,11 +242,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private void showNoteInfo() {
 			final String timeFormat = "HH:mm";
 
-			final DateTime created = noteEntry.getNote().getCreateTime();
+			final DateTime created = noteEntry.getEntry().getCreateTime();
 			final String createdString = created.toLocalDate().toString() + " " +
 					created.toLocalTime().toString(timeFormat);
 
-			final DateTime changed = noteEntry.getNote().getChangeTime();
+			final DateTime changed = noteEntry.getEntry().getChangeTime();
 			final String changedString = changed.toLocalDate().toString() + " " +
 					changed.toLocalTime().toString(timeFormat);
 

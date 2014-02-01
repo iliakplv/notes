@@ -25,7 +25,7 @@ class NotesDatabaseAdapter {
 
 	private static final int CURRENT_VERSION = NotesDatabaseOpenHelper.DATABASE_VERSION_LABELS;
 
-	private static final int ALL_NOTES = 0;
+	private static final int ALL_ENTRIES = 0;
 
 	// Common keys
 	private static final String KEY_ID = "_id";
@@ -92,10 +92,11 @@ class NotesDatabaseAdapter {
 	}
 
 
+	// Notes
 	// Queries
 
-	NotesDatabaseEntry getNote(int id) {
-		final List<NotesDatabaseEntry> list = getNotes(id);
+	NotesDatabaseEntry<AbstractNote> getNote(int id) {
+		final List<NotesDatabaseEntry<AbstractNote>> list = getNotes(id);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -103,16 +104,16 @@ class NotesDatabaseAdapter {
 		}
 	}
 
-	List<NotesDatabaseEntry> getAllNotes() {
-		return getNotes(ALL_NOTES);
+	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
+		return getNotes(ALL_ENTRIES);
 	}
 
-	private List<NotesDatabaseEntry> getNotes(int id) {
+	private List<NotesDatabaseEntry<AbstractNote>> getNotes(int id) {
 		Cursor cursor = db.query(NOTES_TABLE,
 				new String[]{KEY_ID, NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE},
 				whereClauseForId(id), null, null, null, null);
 
-		List<NotesDatabaseEntry> result = new ArrayList<NotesDatabaseEntry>();
+		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -156,7 +157,7 @@ class NotesDatabaseAdapter {
 	}
 
 	private static String whereClauseForId(int id) {
-		if (id == ALL_NOTES) {
+		if (id == ALL_ENTRIES) {
 			return null;
 		} else if (id >= 1) {
 			return KEY_ID + "=" + id;

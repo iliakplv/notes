@@ -1,32 +1,31 @@
 package com.iliakplv.notes.notes.db;
 
-import com.iliakplv.notes.notes.AbstractNote;
 
 /**
  * Autor: Ilya Kopylov
  * Date:  22.08.2013
  */
-public class NotesDatabaseEntry {
+public class NotesDatabaseEntry<T> {
 
-	private AbstractNote note;
+	private T entry;
 	private int id;
 
 
-	public NotesDatabaseEntry(AbstractNote note, int id) {
-		setNote(note);
+	public NotesDatabaseEntry(T entry, int id) {
+		setEntry(entry);
 		setId(id);
 	}
 
 
-	public AbstractNote getNote() {
-		return note;
+	public T getEntry() {
+		return entry;
 	}
 
-	public void setNote(AbstractNote note) {
-		if (note == null) {
-			throw new NullPointerException("Note is null");
+	public void setEntry(T entry) {
+		if (entry == null) {
+			throw new NullPointerException("Entry is null");
 		}
-		this.note = note;
+		this.entry = entry;
 	}
 
 	public int getId() {

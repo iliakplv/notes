@@ -28,7 +28,7 @@ public class NoteDetailsFragment extends Fragment {
 
 	private int noteId = MainActivity.NO_DETAILS;
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-	private NotesDatabaseEntry noteEntry;
+	private NotesDatabaseEntry<AbstractNote> noteEntry;
 
 	private View dualPaneDetails;
 	private View dualPaneSeparator;
@@ -68,7 +68,7 @@ public class NoteDetailsFragment extends Fragment {
 		dualPaneSeparator = getActivity().findViewById(R.id.dual_pane_fragments_separator);
 		showDetailsPane(gotNoteToShow);
 		if (gotNoteToShow) {
-			final AbstractNote note = noteEntry.getNote();
+			final AbstractNote note = noteEntry.getEntry();
 			title.setHint(NotesListFragment.getTitleForNote(TextNote.EMPTY, noteEntry.getId()));
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
@@ -106,7 +106,7 @@ public class NoteDetailsFragment extends Fragment {
 		if (noteEntry != null) {
 			final String newTitle = title.getText().toString();
 			final String newBody = body.getText().toString();
-			final AbstractNote currentNote = noteEntry.getNote();
+			final AbstractNote currentNote = noteEntry.getEntry();
 			if (!StringUtils.equals(currentNote.getBody(), newBody) ||
 					!StringUtils.equals(currentNote.getTitle(), newTitle)) {
 				currentNote.setTitle(newTitle);
