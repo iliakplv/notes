@@ -25,11 +25,8 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_TABLE);
+		createFirstVersion(db);
 		upgradeToLabels(db, true);
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
-		}
 	}
 
 	@Override
@@ -40,6 +37,13 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 		if (oldVersion == DATABASE_VERSION_FIRST && newVersion == DATABASE_VERSION_LABELS) {
 			upgradeToLabels(db, false);
+		}
+	}
+
+	private void createFirstVersion(SQLiteDatabase db) {
+		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_TABLE);
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
 		}
 	}
 
