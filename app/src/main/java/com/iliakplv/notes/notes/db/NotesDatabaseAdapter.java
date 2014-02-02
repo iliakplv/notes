@@ -44,12 +44,18 @@ class NotesDatabaseAdapter {
 	private static final int NOTES_CHANGE_DATE_COLUMN = 4;
 	private static final String NOTES_CHANGE_DATE = "change_date";
 
+	private static final String[] NOTES_PROJECTION = {KEY_ID,
+			NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE};
+
 	// Table: Labels
 	private static final String LABELS_TABLE = "labels";
 	private static final int LABELS_NAME_COLUMN = 1;
 	private static final String LABELS_NAME = "name";
 	private static final int LABELS_COLOR_COLUMN = 2;
 	private static final String LABELS_COLOR = "color";
+
+	private static final String[] LABELS_PROJECTION = {KEY_ID,
+			LABELS_NAME, LABELS_COLOR};
 
 	// Table: NotesLabels
 	private static final String NOTES_LABELS_TABLE = "notes_labels";
@@ -59,7 +65,7 @@ class NotesDatabaseAdapter {
 	private static final String NOTES_LABELS_LABEL = "label";
 
 
-	// Scheme creation
+	// Schema creation
 	static final String CREATE_NOTES_TABLE =
 			"CREATE TABLE " + NOTES_TABLE +
 					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -109,8 +115,7 @@ class NotesDatabaseAdapter {
 	}
 
 	private List<NotesDatabaseEntry<AbstractNote>> getNotes(int id) {
-		Cursor cursor = db.query(NOTES_TABLE,
-				new String[]{KEY_ID, NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE},
+		Cursor cursor = db.query(NOTES_TABLE, NOTES_PROJECTION,
 				whereClauseForId(id), null, null, null, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
@@ -121,7 +126,7 @@ class NotesDatabaseAdapter {
 						cursor.getString(NOTES_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
-				NotesDatabaseEntry entry = new NotesDatabaseEntry(note, cursor.getInt(KEY_ID_COLUMN));
+				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
 				result.add(entry);
 			} while (cursor.moveToNext());
 		}
@@ -161,8 +166,7 @@ class NotesDatabaseAdapter {
 	}
 
 	private List<NotesDatabaseEntry<Label>> getLabels(int id) {
-		Cursor cursor = db.query(LABELS_TABLE,
-				new String[]{KEY_ID, LABELS_NAME, LABELS_COLOR},
+		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
 				whereClauseForId(id), null, null, null, null);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
@@ -180,23 +184,79 @@ class NotesDatabaseAdapter {
 
 
 	// labels data modification
-	// TODO
+
+	int insertLabel(Label label) {
+		return (int) db.insert(LABELS_TABLE, null, contentValuesForLabel(label));
+	}
+
+	boolean updateLabel(int id, Label label) {
+		return db.update(LABELS_TABLE, contentValuesForLabel(label), whereClauseForId(id), null) > 0;
+	}
+
+	boolean deleteLabel(int id) {
+		return db.delete(LABELS_TABLE, whereClauseForId(id), null) > 0;
+	}
 
 
 	// notes_labels queries
 
-	private List<NotesDatabaseEntry<Label>> getLabelsForNote(int id) {
-		// TODO
-		return null;
+	private List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
+		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
+				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
+				" IN (SELECT " + NOTES_LABELS_LABEL + " FROM " + NOTES_LABELS_TABLE +
+				" " + whereClause(NOTES_LABELS_NOTE, noteId) + ");";
+		Cursor cursor = db.rawQuery(query, null);
+
+		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+
+		if (cursor.moveToFirst()) {
+			do {
+				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
+				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
+				result.add(entry);
+			} while (cursor.moveToNext());
+		}
+
+		return result;
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int id) {
-		// TODO
-		return null;
+	private List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
+				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
+				" IN (SELECT " + NOTES_LABELS_NOTE + " FROM " + NOTES_LABELS_TABLE +
+				" " + whereClause(NOTES_LABELS_LABEL, labelId) + ");";
+		Cursor cursor = db.rawQuery(query, null);
+
+		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
+
+		if (cursor.moveToFirst()) {
+			do {
+				AbstractNote note = new TextNote(cursor.getString(NOTES_NAME_COLUMN),
+						cursor.getString(NOTES_BODY_COLUMN));
+				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
+				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
+				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
+				result.add(entry);
+			} while (cursor.moveToNext());
+		}
+
+		return result;
 	}
+
 
 	// notes_labels data modification
-	// TODO
+
+	int insertNoteLabel(int noteId, int labelId) {
+		return (int) db.insert(NOTES_LABELS_TABLE, null, contentValuesForNoteLabel(noteId, labelId));
+	}
+
+	boolean updateNoteLabel(int id, int noteId, int labelId) {
+		return db.update(NOTES_LABELS_TABLE, contentValuesForNoteLabel(noteId, labelId), whereClauseForId(id), null) > 0;
+	}
+
+	boolean deleteNoteLabel(int id) {
+		return db.delete(NOTES_LABELS_TABLE, whereClauseForId(id), null) > 0;
+	}
 
 
 
@@ -218,19 +278,41 @@ class NotesDatabaseAdapter {
 		return cv;
 	}
 
-	private static ContentValues contentValuesForNoteLabel() {
+	private static ContentValues contentValuesForNoteLabel(int noteId, int labelId) {
 		final ContentValues cv = new ContentValues();
-		// TODO
+		cv.put(NOTES_LABELS_NOTE, noteId);
+		cv.put(NOTES_LABELS_LABEL, labelId);
 		return cv;
 	}
 
-	private static String whereClauseForId(int id) {
+
+	private static String whereClause(String column, int id) {
 		if (id == ALL_ENTRIES) {
 			return null;
 		} else if (id >= 1) {
-			return KEY_ID + "=" + id;
+			return column + "=" + id;
 		}
 		throw new IllegalArgumentException("Wrong id value: " + id);
+	}
+
+	private static String whereClauseForId(int id) {
+		return whereClause(KEY_ID, id);
+	}
+
+	private static String projectionToString(String[] projection) {
+		if (projection != null && projection.length > 0) {
+			final int elements = projection.length;
+
+			final StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < elements - 1; i++) {
+				sb.append(projection[i]);
+				sb.append(", ");
+			}
+			sb.append(projection[elements - 1]);
+
+			return sb.toString();
+		}
+		return "";
 	}
 
 
