@@ -17,6 +17,7 @@ public class NotesDatabaseFacade {
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
+	private static final int INVALID_NOTE_ID = -1;
 
 	private List<NotesDatabaseEntry<AbstractNote>> notesDatabaseEntries;
 	private volatile boolean entriesListActual = false;
@@ -122,20 +123,23 @@ public class NotesDatabaseFacade {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
 	}
 
-	public synchronized boolean deleteLabelFromNote(int id) {
-		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabelFromNote, id);
+	public synchronized boolean deleteLabelFromNote(int noteId, int labelId) {
+		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabelFromNote, noteId, labelId);
 	}
 
 
 	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
-		Object result = null;
-		int id = 0;
+
+		Object result;
+		int noteId = INVALID_NOTE_ID;
+		int labelId;
+
 		switch (transactionType) {
 			case GetNote:
-				id = (Integer) args[0];
-				result = adapter.getNote(id);
+				noteId = (Integer) args[0];
+				result = adapter.getNote(noteId);
 				break;
 			case GetAllNotes:
 				result = adapter.getAllNotes();
@@ -145,16 +149,16 @@ public class NotesDatabaseFacade {
 				entriesListSize++;
 				break;
 			case UpdateNote:
-				id = (Integer) args[0];
-				result = adapter.updateNote(id, (AbstractNote) args[1]);
+				noteId = (Integer) args[0];
+				result = adapter.updateNote(noteId, (AbstractNote) args[1]);
 				break;
 			case DeleteNote:
-				id = (Integer) args[0];
-				final List<NotesDatabaseEntry<Label>> labelsForNote = adapter.getLabelsForNote(id);
+				noteId = (Integer) args[0];
+				final List<NotesDatabaseEntry<Label>> labelsForNote = adapter.getLabelsForNote(noteId);
 				for (NotesDatabaseEntry<Label> entry : labelsForNote) {
-					adapter.deleteNoteLabel(entry.getId());
+					adapter.deleteNoteLabel(noteId, entry.getId());
 				}
-				result = adapter.deleteNote(id);
+				result = adapter.deleteNote(noteId);
 				entriesListSize--;
 				break;
 
@@ -165,41 +169,42 @@ public class NotesDatabaseFacade {
 				result = adapter.insertLabel((Label) args[0]);
 				break;
 			case UpdateLabel:
-				id = (Integer) args[0];
-				result = adapter.updateLabel(id, (Label) args[1]);
+				labelId = (Integer) args[0];
+				result = adapter.updateLabel(labelId, (Label) args[1]);
 				break;
 			case DeleteLabel:
-				id = (Integer) args[0];
-				final List<NotesDatabaseEntry<AbstractNote>> notesForLabel = adapter.getNotesForLabel(id);
+				labelId = (Integer) args[0];
+				final List<NotesDatabaseEntry<AbstractNote>> notesForLabel = adapter.getNotesForLabel(labelId);
 				for (NotesDatabaseEntry<AbstractNote> entry : notesForLabel) {
-					adapter.deleteNoteLabel(entry.getId());
+					adapter.deleteNoteLabel(entry.getId(), labelId);
 				}
-				result = adapter.deleteLabel(id);
+				result = adapter.deleteLabel(labelId);
 				break;
 
 			case GetLabelsForNote:
-				id = (Integer) args[0];
-				result = adapter.getLabelsForNote(id);
+				noteId = (Integer) args[0];
+				result = adapter.getLabelsForNote(noteId);
 				break;
 			case GetNotesForLabel:
-				id = (Integer) args[0];
-				result = adapter.getNotesForLabel(id);
+				labelId = (Integer) args[0];
+				result = adapter.getNotesForLabel(labelId);
 				break;
 			case InsertLabelToNote:
-				int noteId = (Integer) args[0];
-				int labelId = (Integer) args[1];
+				noteId = (Integer) args[0];
+				labelId = (Integer) args[1];
 				result = adapter.insertNoteLabel(noteId, labelId);
 				break;
 			case DeleteLabelFromNote:
-				id = (Integer) args[0];
-				result = adapter.deleteNoteLabel(id);
+				noteId = (Integer) args[0];
+				labelId = (Integer) args[1];
+				result = adapter.deleteNoteLabel(noteId, labelId);
 				break;
 
 			default:
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
-		onTransactionPerformed(transactionType, id);
+		onTransactionPerformed(transactionType, noteId);
 		return result;
 	}
 
@@ -211,7 +216,9 @@ public class NotesDatabaseFacade {
 			if (BuildConfig.DEBUG) {
 				Log.d(LOG_TAG, "Changed note id=" + changedNoteId);
 			}
-			lastFetchedEntryActual = lastFetchedEntryId != changedNoteId;
+			if (changedNoteId != INVALID_NOTE_ID) {
+				lastFetchedEntryActual = lastFetchedEntryId != changedNoteId;
+			}
 			notifyNoteListeners(changedNoteId);
 		}
 		if (databaseModificationTransaction(transactionType)) {
@@ -242,7 +249,7 @@ public class NotesDatabaseFacade {
 				@Override
 				public void run() {
 					for (NoteChangeListener listener : noteListeners) {
-						if (listener.getNoteId() == changedNoteId) {
+						if (changedNoteId == INVALID_NOTE_ID || listener.getNoteId() == changedNoteId) {
 							listener.onNoteChanged();
 						}
 					}
@@ -290,31 +297,33 @@ public class NotesDatabaseFacade {
 
 	private static boolean databaseModificationTransaction(TransactionType transactionType) {
 		switch (transactionType) {
-			case GetNote:
-			case GetAllNotes:
-				return false;
-
 			case InsertNote:
 			case UpdateNote:
 			case DeleteNote:
+
+			case InsertLabel:
+			case UpdateLabel:
+			case DeleteLabel:
+
+			case InsertLabelToNote:
+			case DeleteLabelFromNote:
 				return true;
 		}
-//		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
 		return false;
 	}
 
 	private static boolean existingNoteModificationTransaction(TransactionType transactionType) {
 		switch (transactionType) {
-			case GetNote:
-			case GetAllNotes:
-			case InsertNote:
-				return false;
-
 			case UpdateNote:
 			case DeleteNote:
+
+			case UpdateLabel:
+			case DeleteLabel:
+
+			case InsertLabelToNote:
+			case DeleteLabelFromNote:
 				return true;
 		}
-//		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
 		return false;
 	}
 

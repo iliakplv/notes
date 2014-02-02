@@ -195,7 +195,7 @@ class NotesDatabaseAdapter {
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_LABEL + " FROM " + NOTES_LABELS_TABLE +
-				" " + whereClause(NOTES_LABELS_NOTE, noteId) + ");";
+				" WHERE " + whereClause(NOTES_LABELS_NOTE, noteId) + ");";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
@@ -215,7 +215,7 @@ class NotesDatabaseAdapter {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE + " FROM " + NOTES_LABELS_TABLE +
-				" " + whereClause(NOTES_LABELS_LABEL, labelId) + ");";
+				" WHERE " + whereClause(NOTES_LABELS_LABEL, labelId) + ");";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
@@ -242,8 +242,10 @@ class NotesDatabaseAdapter {
 		return (int) db.insert(NOTES_LABELS_TABLE, null, contentValuesForNoteLabel(noteId, labelId));
 	}
 
-	boolean deleteNoteLabel(int id) {
-		return db.delete(NOTES_LABELS_TABLE, whereClauseForId(id), null) > 0;
+	boolean deleteNoteLabel(int noteId, int labelId) {
+		return db.delete(NOTES_LABELS_TABLE,
+				whereClause(NOTES_LABELS_NOTE, noteId) + " AND " + whereClause(NOTES_LABELS_LABEL, labelId),
+				null) > 0;
 	}
 
 
