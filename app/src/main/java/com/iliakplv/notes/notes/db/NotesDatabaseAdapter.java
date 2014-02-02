@@ -102,7 +102,7 @@ class NotesDatabaseAdapter {
 	// notes queries
 
 	NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final List<NotesDatabaseEntry<AbstractNote>> list = getNotes(id);
+		final List<NotesDatabaseEntry<AbstractNote>> list = notesQuery(id);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -111,10 +111,10 @@ class NotesDatabaseAdapter {
 	}
 
 	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
-		return getNotes(ALL_ENTRIES);
+		return notesQuery(ALL_ENTRIES);
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> getNotes(int id) {
+	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id) {
 		Cursor cursor = db.query(NOTES_TABLE, NOTES_PROJECTION,
 				whereClauseForId(id), null, null, null, null);
 
@@ -153,7 +153,7 @@ class NotesDatabaseAdapter {
 	// labels queries
 
 	NotesDatabaseEntry<Label> getLabel(int id) {
-		final List<NotesDatabaseEntry<Label>> list = getLabels(id);
+		final List<NotesDatabaseEntry<Label>> list = labelsQuery(id);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -162,10 +162,10 @@ class NotesDatabaseAdapter {
 	}
 
 	List<NotesDatabaseEntry<Label>> getAllLabels() {
-		return getLabels(ALL_ENTRIES);
+		return labelsQuery(ALL_ENTRIES);
 	}
 
-	private List<NotesDatabaseEntry<Label>> getLabels(int id) {
+	private List<NotesDatabaseEntry<Label>> labelsQuery(int id) {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
 				whereClauseForId(id), null, null, null, null);
 
