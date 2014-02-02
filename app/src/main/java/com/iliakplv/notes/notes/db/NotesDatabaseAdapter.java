@@ -35,33 +35,33 @@ class NotesDatabaseAdapter {
 	// Tables
 	// Table: Notes
 	private static final String NOTES_TABLE = "notes";
-	private static final int NOTES_NAME_COLUMN = 1;
 	private static final String NOTES_NAME = "name";
-	private static final int NOTES_BODY_COLUMN = 2;
 	private static final String NOTES_BODY = "body";
-	private static final int NOTES_CREATE_DATE_COLUMN = 3;
 	private static final String NOTES_CREATE_DATE = "create_date";
-	private static final int NOTES_CHANGE_DATE_COLUMN = 4;
 	private static final String NOTES_CHANGE_DATE = "change_date";
+
+	private static final int NOTES_NAME_COLUMN = 1;
+	private static final int NOTES_BODY_COLUMN = 2;
+	private static final int NOTES_CREATE_DATE_COLUMN = 3;
+	private static final int NOTES_CHANGE_DATE_COLUMN = 4;
 
 	private static final String[] NOTES_PROJECTION = {KEY_ID,
 			NOTES_NAME, NOTES_BODY, NOTES_CREATE_DATE, NOTES_CHANGE_DATE};
 
 	// Table: Labels
 	private static final String LABELS_TABLE = "labels";
-	private static final int LABELS_NAME_COLUMN = 1;
 	private static final String LABELS_NAME = "name";
-	private static final int LABELS_COLOR_COLUMN = 2;
 	private static final String LABELS_COLOR = "color";
+
+	private static final int LABELS_NAME_COLUMN = 1;
+	private static final int LABELS_COLOR_COLUMN = 2;
 
 	private static final String[] LABELS_PROJECTION = {KEY_ID,
 			LABELS_NAME, LABELS_COLOR};
 
 	// Table: NotesLabels
 	private static final String NOTES_LABELS_TABLE = "notes_labels";
-	private static final int NOTES_LABELS_NOTE_COLUMN = 1;
 	private static final String NOTES_LABELS_NOTE = "note";
-	private static final int NOTES_LABELS_LABEL_COLUMN = 2;
 	private static final String NOTES_LABELS_LABEL = "label";
 
 
@@ -151,15 +151,6 @@ class NotesDatabaseAdapter {
 
 
 	// labels queries
-
-	NotesDatabaseEntry<Label> getLabel(int id) {
-		final List<NotesDatabaseEntry<Label>> list = labelsQuery(id);
-		if (list.isEmpty()) {
-			return null;
-		} else {
-			return list.get(0);
-		}
-	}
 
 	List<NotesDatabaseEntry<Label>> getAllLabels() {
 		return labelsQuery(ALL_ENTRIES);
