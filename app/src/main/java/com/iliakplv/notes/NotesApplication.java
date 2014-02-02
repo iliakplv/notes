@@ -21,7 +21,7 @@ public class NotesApplication extends Application {
 			Log.d(LOG_TAG, "onCreate() call");
 		}
 		super.onCreate();
-		context = this;
+		context = this.getApplicationContext();
 	}
 
 	@Override
