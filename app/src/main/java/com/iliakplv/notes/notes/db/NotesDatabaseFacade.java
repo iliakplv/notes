@@ -3,6 +3,7 @@ package com.iliakplv.notes.notes.db;
 import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.Label;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class NotesDatabaseFacade {
 	}
 
 
-	// Transactions
+	// notes
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
 		final boolean needToRefresh = lastFetchedEntryId != id || !lastFetchedEntryActual;
@@ -87,6 +88,45 @@ public class NotesDatabaseFacade {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteNote, id);
 	}
 
+
+	// labels
+
+	public List<NotesDatabaseEntry<Label>> getAllLabels() {
+		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetAllLabels);
+	}
+
+	public synchronized int insertLabel(Label label) {
+		return (Integer) performDatabaseTransaction(TransactionType.InsertLabel, label);
+	}
+
+	public synchronized boolean updateLabel(int id, Label label) {
+		return (Boolean) performDatabaseTransaction(TransactionType.UpdateLabel, id, label);
+	}
+
+	public synchronized boolean deleteLabel(int id) {
+		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabel, id);
+	}
+
+
+	// notes_labels
+
+	public List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
+		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
+	}
+
+	public List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+		return (List<NotesDatabaseEntry<AbstractNote>>) performDatabaseTransaction(TransactionType.GetNotesForLabel, labelId);
+	}
+
+	public synchronized int insertLabelToNote(int noteId, int labelId) {
+		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
+	}
+
+	public synchronized boolean deleteLabelFromNote(int id) {
+		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabelFromNote, id);
+	}
+
+
 	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
@@ -110,9 +150,51 @@ public class NotesDatabaseFacade {
 				break;
 			case DeleteNote:
 				id = (Integer) args[0];
+				final List<NotesDatabaseEntry<Label>> labelsForNote = adapter.getLabelsForNote(id);
+				for (NotesDatabaseEntry<Label> entry : labelsForNote) {
+					adapter.deleteNoteLabel(entry.getId());
+				}
 				result = adapter.deleteNote(id);
 				entriesListSize--;
 				break;
+
+			case GetAllLabels:
+				result = adapter.getAllLabels();
+				break;
+			case InsertLabel:
+				result = adapter.insertLabel((Label) args[0]);
+				break;
+			case UpdateLabel:
+				id = (Integer) args[0];
+				result = adapter.updateLabel(id, (Label) args[1]);
+				break;
+			case DeleteLabel:
+				id = (Integer) args[0];
+				final List<NotesDatabaseEntry<AbstractNote>> notesForLabel = adapter.getNotesForLabel(id);
+				for (NotesDatabaseEntry<AbstractNote> entry : notesForLabel) {
+					adapter.deleteNoteLabel(entry.getId());
+				}
+				result = adapter.deleteLabel(id);
+				break;
+
+			case GetLabelsForNote:
+				id = (Integer) args[0];
+				result = adapter.getLabelsForNote(id);
+				break;
+			case GetNotesForLabel:
+				id = (Integer) args[0];
+				result = adapter.getNotesForLabel(id);
+				break;
+			case InsertLabelToNote:
+				int noteId = (Integer) args[0];
+				int labelId = (Integer) args[1];
+				result = adapter.insertNoteLabel(noteId, labelId);
+				break;
+			case DeleteLabelFromNote:
+				id = (Integer) args[0];
+				result = adapter.deleteNoteLabel(id);
+				break;
+
 			default:
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
@@ -138,7 +220,6 @@ public class NotesDatabaseFacade {
 		}
 
 	}
-
 
 	// Listeners
 
@@ -218,7 +299,8 @@ public class NotesDatabaseFacade {
 			case DeleteNote:
 				return true;
 		}
-		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
+//		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
+		return false;
 	}
 
 	private static boolean existingNoteModificationTransaction(TransactionType transactionType) {
@@ -232,7 +314,8 @@ public class NotesDatabaseFacade {
 			case DeleteNote:
 				return true;
 		}
-		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
+//		throw new IllegalArgumentException("Unknown transaction type: " + transactionType.name());
+		return false;
 	}
 
 
@@ -247,7 +330,17 @@ public class NotesDatabaseFacade {
 		GetAllNotes,
 		InsertNote,
 		UpdateNote,
-		DeleteNote
+		DeleteNote,
+
+		GetAllLabels,
+		InsertLabel,
+		UpdateLabel,
+		DeleteLabel,
+
+		GetLabelsForNote,
+		GetNotesForLabel,
+		InsertLabelToNote,
+		DeleteLabelFromNote
 	}
 
 	public interface DatabaseChangeListener {

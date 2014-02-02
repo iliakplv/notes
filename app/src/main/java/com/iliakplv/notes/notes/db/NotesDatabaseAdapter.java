@@ -200,7 +200,7 @@ class NotesDatabaseAdapter {
 
 	// notes_labels queries
 
-	private List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
+	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_LABEL + " FROM " + NOTES_LABELS_TABLE +
@@ -220,7 +220,7 @@ class NotesDatabaseAdapter {
 		return result;
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE + " FROM " + NOTES_LABELS_TABLE +
@@ -245,19 +245,15 @@ class NotesDatabaseAdapter {
 
 
 	// notes_labels data modification
+	// (no updates for current values, only insert and delete)
 
 	int insertNoteLabel(int noteId, int labelId) {
 		return (int) db.insert(NOTES_LABELS_TABLE, null, contentValuesForNoteLabel(noteId, labelId));
 	}
 
-	boolean updateNoteLabel(int id, int noteId, int labelId) {
-		return db.update(NOTES_LABELS_TABLE, contentValuesForNoteLabel(noteId, labelId), whereClauseForId(id), null) > 0;
-	}
-
 	boolean deleteNoteLabel(int id) {
 		return db.delete(NOTES_LABELS_TABLE, whereClauseForId(id), null) > 0;
 	}
-
 
 
 	// Util methods
