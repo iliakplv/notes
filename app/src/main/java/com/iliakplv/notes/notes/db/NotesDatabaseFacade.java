@@ -17,11 +17,11 @@ public class NotesDatabaseFacade {
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
 
-	private List<NotesDatabaseEntry> notesDatabaseEntries;
+	private List<NotesDatabaseEntry<AbstractNote>> notesDatabaseEntries;
 	private volatile boolean entriesListActual = false;
 	private volatile int entriesListSize = -1;
 
-	private NotesDatabaseEntry lastFetchedEntry;
+	private NotesDatabaseEntry<AbstractNote> lastFetchedEntry;
 	private volatile int lastFetchedEntryId = 0;
 	private volatile boolean lastFetchedEntryActual = false;
 
@@ -40,28 +40,28 @@ public class NotesDatabaseFacade {
 
 	// Transactions
 
-	public NotesDatabaseEntry getNote(int id) {
+	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
 		final boolean needToRefresh = lastFetchedEntryId != id || !lastFetchedEntryActual;
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
 					(needToRefresh ? "NOT " : "") + "actual");
 		}
 		if (needToRefresh) {
-			lastFetchedEntry = (NotesDatabaseEntry) performDatabaseTransaction(TransactionType.GetNote, id);
+			lastFetchedEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
 			lastFetchedEntryId = id;
 			lastFetchedEntryActual = true;
 		}
 		return lastFetchedEntry;
 	}
 
-	public List<NotesDatabaseEntry> getAllNotes() {
+	public List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Notes entries fetching. Cached entries list " +
 					(entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
 			notesDatabaseEntries =
-					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+					 (List<NotesDatabaseEntry<AbstractNote>>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
 			entriesListSize = notesDatabaseEntries.size();
 			entriesListActual = true;
 		}
