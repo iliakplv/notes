@@ -61,8 +61,8 @@ class NotesDatabaseAdapter {
 
 	// Table: NotesLabels
 	private static final String NOTES_LABELS_TABLE = "notes_labels";
-	private static final String NOTES_LABELS_NOTE = "note";
-	private static final String NOTES_LABELS_LABEL = "label";
+	private static final String NOTES_LABELS_NOTE_ID = "note_id";
+	private static final String NOTES_LABELS_LABEL_ID = "label_id";
 
 
 	// Schema creation
@@ -83,10 +83,10 @@ class NotesDatabaseAdapter {
 	static final String CREATE_NOTES_LABELS_TABLE =
 			"CREATE TABLE " + NOTES_LABELS_TABLE +
 					" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-					NOTES_LABELS_NOTE + " INTEGER, " +
-					NOTES_LABELS_LABEL + " INTEGER, " +
-					" FOREIGN KEY (" + NOTES_LABELS_NOTE + ") REFERENCES " + NOTES_TABLE + " (" + KEY_ID + ")," +
-					" FOREIGN KEY (" + NOTES_LABELS_LABEL + ") REFERENCES " + LABELS_TABLE + " (" + KEY_ID + "));";
+					NOTES_LABELS_NOTE_ID + " INTEGER, " +
+					NOTES_LABELS_LABEL_ID + " INTEGER, " +
+					" FOREIGN KEY (" + NOTES_LABELS_NOTE_ID + ") REFERENCES " + NOTES_TABLE + " (" + KEY_ID + ")," +
+					" FOREIGN KEY (" + NOTES_LABELS_LABEL_ID + ") REFERENCES " + LABELS_TABLE + " (" + KEY_ID + "));";
 
 	private SQLiteDatabase db;
 	private NotesDatabaseOpenHelper dbHelper;
@@ -194,8 +194,8 @@ class NotesDatabaseAdapter {
 	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
-				" IN (SELECT " + NOTES_LABELS_LABEL + " FROM " + NOTES_LABELS_TABLE +
-				" WHERE " + whereClause(NOTES_LABELS_NOTE, noteId) + ");";
+				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
+				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ");";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
@@ -214,8 +214,8 @@ class NotesDatabaseAdapter {
 	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
-				" IN (SELECT " + NOTES_LABELS_NOTE + " FROM " + NOTES_LABELS_TABLE +
-				" WHERE " + whereClause(NOTES_LABELS_LABEL, labelId) + ");";
+				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
+				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ");";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
@@ -244,7 +244,7 @@ class NotesDatabaseAdapter {
 
 	boolean deleteNoteLabel(int noteId, int labelId) {
 		return db.delete(NOTES_LABELS_TABLE,
-				whereClause(NOTES_LABELS_NOTE, noteId) + " AND " + whereClause(NOTES_LABELS_LABEL, labelId),
+				whereClause(NOTES_LABELS_NOTE_ID, noteId) + " AND " + whereClause(NOTES_LABELS_LABEL_ID, labelId),
 				null) > 0;
 	}
 
@@ -269,8 +269,8 @@ class NotesDatabaseAdapter {
 
 	private static ContentValues contentValuesForNoteLabel(int noteId, int labelId) {
 		final ContentValues cv = new ContentValues();
-		cv.put(NOTES_LABELS_NOTE, noteId);
-		cv.put(NOTES_LABELS_LABEL, labelId);
+		cv.put(NOTES_LABELS_NOTE_ID, noteId);
+		cv.put(NOTES_LABELS_LABEL_ID, labelId);
 		return cv;
 	}
 
