@@ -1,13 +1,10 @@
 package com.iliakplv.notes.notes;
 
-import android.graphics.Color;
 
 import com.iliakplv.notes.utils.StringUtils;
 
 
 public class Label {
-
-	private static final int DEFAULT_COLOR = Color.WHITE;
 
 	private String name;
 	private int color;
@@ -19,7 +16,7 @@ public class Label {
 	}
 
 	public Label(String name) {
-		this(name, DEFAULT_COLOR);
+		this(name, LabelColor.NO_COLOR);
 	}
 
 
