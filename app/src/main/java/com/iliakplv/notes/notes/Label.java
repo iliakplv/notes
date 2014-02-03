@@ -38,16 +38,4 @@ public class Label {
 		this.color = color;
 	}
 
-
-	// Color values. Use index of value in this array.
-
-	public static final int[] COLORS = {
-			0,           // transparent
-			0xFFE14F4F,  // red
-			0xFFD24726,  // orange
-			0xFFF0AD4E,  // yellow
-			0xFF8CC63F,  // green
-			0xFF39B3D7,  // light blue
-			0xFF3D6C87,  // dark blue
-			0xFF811A56}; // purple
 }
