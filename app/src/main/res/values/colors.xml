@@ -28,7 +28,7 @@
 		Labels
 	-->
 
-	<color name="label_color_default">#00000000</color>
+	<color name="label_color_default">#ffffffff</color>
 	<color name="label_color_red">#ffe14f4f</color>
 	<color name="label_color_orange">#ffff9710</color>
 	<color name="label_color_yellow">#fff9e02a</color>
