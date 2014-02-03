@@ -19,7 +19,7 @@ public class NotesDatabaseFacade {
 
 	private static final int INVALID_NOTE_ID = -1;
 
-	private List<NotesDatabaseEntry<AbstractNote>> notesDatabaseEntries;
+	private List<NotesDatabaseEntry> notesDatabaseEntries; // List<NotesDatabaseEntry<AbstractNote>>
 	private volatile boolean entriesListActual = false;
 	private volatile int entriesListSize = -1;
 
@@ -56,14 +56,14 @@ public class NotesDatabaseFacade {
 		return lastFetchedEntry;
 	}
 
-	public List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
+	public List<NotesDatabaseEntry> getAllNotes() {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Notes entries fetching. Cached entries list " +
 					(entriesListActual ? "" : "NOT ") + "actual");
 		}
 		if (!entriesListActual) {
 			notesDatabaseEntries =
-					 (List<NotesDatabaseEntry<AbstractNote>>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
 			entriesListSize = notesDatabaseEntries.size();
 			entriesListActual = true;
 		}
