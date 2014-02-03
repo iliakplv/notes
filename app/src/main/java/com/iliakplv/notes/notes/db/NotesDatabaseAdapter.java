@@ -195,7 +195,8 @@ class NotesDatabaseAdapter {
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
-				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ");";
+				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ")" +
+				" ORDER BY " + KEY_ID + " DESC;";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
@@ -215,7 +216,8 @@ class NotesDatabaseAdapter {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
-				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ");";
+				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ")" +
+				" ORDER BY " + KEY_ID + " ASC;";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
