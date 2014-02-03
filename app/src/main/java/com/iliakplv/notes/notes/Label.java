@@ -6,6 +6,8 @@ import com.iliakplv.notes.utils.StringUtils;
 
 public class Label {
 
+	private static final int DEFAULT_COLOR_INDEX = 0;
+
 	private String name;
 	private int color;
 
@@ -16,7 +18,7 @@ public class Label {
 	}
 
 	public Label(String name) {
-		this(name, LabelColor.NO_COLOR);
+		this(name, DEFAULT_COLOR_INDEX);
 	}
 
 
@@ -35,4 +37,17 @@ public class Label {
 	public void setColor(int color) {
 		this.color = color;
 	}
+
+
+	// Color values. Use index of value in this array.
+
+	public static final int[] COLORS = {
+			0,           // transparent
+			0xFFE14F4F,  // red
+			0xFFD24726,  // orange
+			0xFFF0AD4E,  // yellow
+			0xFF8CC63F,  // green
+			0xFF39B3D7,  // light blue
+			0xFF3D6C87,  // dark blue
+			0xFF811A56}; // purple
 }
