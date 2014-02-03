@@ -15,10 +15,13 @@ import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 /**
  * Author: Ilya Kopylov
@@ -160,8 +163,18 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
+		private final int[] LABELS_IDS = {
+				R.id.label_1,
+				R.id.label_2,
+				R.id.label_3,
+				R.id.label_4,
+				R.id.label_5};
+
+		private int [] labelsColors;
+
 		public NotesListAdapter() {
 			super(NotesListFragment.this.getActivity(), 0, dbFacade.getAllNotes());
+			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
 		@Override
@@ -178,6 +191,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(getTitleForNote(entry));
 			subtitle.setText(getBodyForNote(entry.getEntry()));
+
+			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
+			final int labelsCount = Math.min(LABELS_IDS.length, labelEntries.size());
+			for (int i = 0; i < labelsCount; i++) {
+				final View labelView = view.findViewById(LABELS_IDS[i]);
+				labelView.setBackgroundColor(labelsColors[labelEntries.get(i).getEntry().getColor()]);
+				labelView.setVisibility(View.VISIBLE);
+			}
 
 //			final boolean selected = getListView().isItemChecked(position);
 //			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
