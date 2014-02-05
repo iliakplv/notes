@@ -5,6 +5,14 @@
 
 
 	<!--
+		Accessibility
+	-->
+
+	<string name="navigation_drawer_open">Показать навигацию</string>
+	<string name="navigation_drawer_close">Скрыть навигацию</string>
+
+
+	<!--
 		Common
 	-->
 
@@ -19,6 +27,7 @@
 	-->
 
 	<string name="action_bar_add">Новая заметка</string>
+	<string name="action_settings">Настройки</string>
 
 
 	<!--

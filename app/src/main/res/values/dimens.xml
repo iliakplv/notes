@@ -7,6 +7,8 @@
 
 	<dimen name="main_side_padding">6dp</dimen>
 
+	<dimen name="navigation_drawer_width">260dp</dimen>
+
 
 	<!--
 		Note List

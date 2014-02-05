@@ -2,9 +2,13 @@ package com.iliakplv.notes.gui.main;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
@@ -13,13 +17,17 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class MainActivity extends ActionBarActivity implements NotesDatabaseFacade.NoteChangeListener {
+public class MainActivity extends ActionBarActivity
+		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
 
 	private int currentNoteId = NO_DETAILS;
 	private boolean listeningExistingNote = false;
+
+	private NavigationDrawerFragment navigationDrawerFragment;
+	private CharSequence title;
 
 
 	private boolean isSinglePaneLayout() {
@@ -52,6 +60,41 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 					NO_DETAILS;
 			onNoteSelected(id);
 		}
+
+		// drawer setup
+		navigationDrawerFragment = (NavigationDrawerFragment)
+				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+		title = getTitle();
+
+		navigationDrawerFragment.setUp(
+				R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout));
+	}
+
+	@Override
+	public void onNavigationDrawerItemSelected(int position) {
+		Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show();
+	}
+
+	public void onSectionAttached(int number) {
+		switch (number) {
+			case 1:
+				title = "title 1";
+				break;
+			case 2:
+				title = "title 2";
+				break;
+			case 3:
+				title = "title 3";
+				break;
+		}
+	}
+
+	public void restoreActionBar() {
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setTitle(title);
 	}
 
 	@Override
@@ -93,7 +136,8 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 		supportInvalidateOptionsMenu();
 
 		// show/hide arrow on action bar
-		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
+//		TODO home button removed
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
 
 		// subscribe/unsubscribe to note changes
 		if (isDetailsShown()) {
@@ -134,21 +178,21 @@ public class MainActivity extends ActionBarActivity implements NotesDatabaseFaca
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		if (!navigationDrawerFragment.isDrawerOpen()) {
+			getMenuInflater().inflate(R.menu.main, menu);
+			restoreActionBar();
+			return true;
+		}
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				goBackToList();
-				break;
-			case R.id.action_add:
-				createNewNote();
-				break;
+		if (item.getItemId() == R.id.action_add) {
+			createNewNote();
+			return true;
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void goBackToList() {
