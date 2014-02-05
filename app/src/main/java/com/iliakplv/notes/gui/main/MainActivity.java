@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.TextNote;
@@ -73,7 +72,7 @@ public class MainActivity extends ActionBarActivity
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-		Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show();
 	}
 
 	public void onSectionAttached(int number) {
