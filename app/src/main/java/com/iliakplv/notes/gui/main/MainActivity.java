@@ -147,9 +147,6 @@ public class MainActivity extends ActionBarActivity
 	}
 
 	public void createNewNote() {
-		if (getSupportFragmentManager().findFragmentById(R.id.note_details_fragment) == null) { // single pane
-			goBackToList();
-		}
 		onNoteSelected(NotesDatabaseFacade.getInstance().insertNote(new TextNote()));
 	}
 
