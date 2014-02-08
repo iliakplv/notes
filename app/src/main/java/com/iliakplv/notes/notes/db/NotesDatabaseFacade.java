@@ -31,8 +31,6 @@ public class NotesDatabaseFacade {
 	private List<NoteChangeListener> noteListeners;
 
 
-	// Instance
-
 	private NotesDatabaseFacade() {}
 
 	public static NotesDatabaseFacade getInstance() {
@@ -146,7 +144,7 @@ public class NotesDatabaseFacade {
 				break;
 			case InsertNote:
 				result = adapter.insertNote((AbstractNote) args[0]);
-				entriesListSize++;
+				incrementEntriesListSize();
 				break;
 			case UpdateNote:
 				noteId = (Integer) args[0];
@@ -159,7 +157,7 @@ public class NotesDatabaseFacade {
 					adapter.deleteNoteLabel(noteId, entry.getId());
 				}
 				result = adapter.deleteNote(noteId);
-				entriesListSize--;
+				decrementEntriesListSize();
 				break;
 
 			case GetAllLabels:
@@ -206,6 +204,22 @@ public class NotesDatabaseFacade {
 		adapter.close();
 		onTransactionPerformed(transactionType, noteId);
 		return result;
+	}
+
+	private int incrementEntriesListSize() {
+		if (entriesListSize < 0) {
+			entriesListSize = 0;
+		}
+		entriesListSize++;
+		return entriesListSize;
+	}
+
+	private int decrementEntriesListSize() {
+		entriesListSize--;
+		if (entriesListSize < 0) {
+			entriesListSize = 0;
+		}
+		return entriesListSize;
 	}
 
 	private void onTransactionPerformed(TransactionType transactionType, int changedNoteId) {
