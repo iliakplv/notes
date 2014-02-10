@@ -249,6 +249,18 @@ class NotesDatabaseAdapter {
 				null) > 0;
 	}
 
+	boolean deleteNoteLabelsForNote(int noteId) {
+		return db.delete(NOTES_LABELS_TABLE,
+				whereClause(NOTES_LABELS_NOTE_ID, noteId),
+				null) > 0;
+	}
+
+	boolean deleteNoteLabelsForLabel(int labelId) {
+		return db.delete(NOTES_LABELS_TABLE,
+				whereClause(NOTES_LABELS_LABEL_ID, labelId),
+				null) > 0;
+	}
+
 
 	// Util methods
 

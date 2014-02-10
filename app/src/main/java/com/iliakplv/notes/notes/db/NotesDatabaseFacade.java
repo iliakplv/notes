@@ -162,10 +162,7 @@ public class NotesDatabaseFacade {
 				break;
 			case DeleteNote:
 				noteId = (Integer) args[0];
-				final List<NotesDatabaseEntry<Label>> labelsForNote = adapter.getLabelsForNote(noteId);
-				for (NotesDatabaseEntry<Label> entry : labelsForNote) {
-					adapter.deleteNoteLabel(noteId, entry.getId());
-				}
+				adapter.deleteNoteLabelsForNote(noteId);
 				result = adapter.deleteNote(noteId);
 				break;
 
@@ -181,10 +178,7 @@ public class NotesDatabaseFacade {
 				break;
 			case DeleteLabel:
 				labelId = (Integer) args[0];
-				final List<NotesDatabaseEntry<AbstractNote>> notesForLabel = adapter.getNotesForLabel(labelId);
-				for (NotesDatabaseEntry<AbstractNote> entry : notesForLabel) {
-					adapter.deleteNoteLabel(entry.getId(), labelId);
-				}
+				adapter.deleteNoteLabelsForLabel(labelId);
 				result = adapter.deleteLabel(labelId);
 				break;
 
