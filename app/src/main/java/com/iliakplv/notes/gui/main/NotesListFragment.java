@@ -195,12 +195,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				labelView.setVisibility(View.VISIBLE);
 			}
 
-//			final boolean selected = getListView().isItemChecked(position);
-//			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
-//			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
-//			title.setTextColor(getResources().getColor(titleColor));
-//			subtitle.setTextColor(getResources().getColor(subtitleColor));
-
 			return view;
 		}
 
