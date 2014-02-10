@@ -128,10 +128,6 @@ public class NotesDatabaseFacade {
 		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> getNotesForExistingLabel(int labelId) {
-		return (List<NotesDatabaseEntry<AbstractNote>>) performDatabaseTransaction(TransactionType.GetNotesForLabel, labelId);
-	}
-
 	public synchronized int insertLabelToNote(int noteId, int labelId) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
 	}
