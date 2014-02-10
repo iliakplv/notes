@@ -30,8 +30,6 @@ public class NoteDetailsFragment extends Fragment {
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private NotesDatabaseEntry<AbstractNote> noteEntry;
 
-	private View dualPaneDetails;
-	private View dualPaneSeparator;
 	private EditText title;
 	private EditText body;
 
@@ -64,24 +62,11 @@ public class NoteDetailsFragment extends Fragment {
 		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
 		final boolean gotNoteToShow = noteEntry != null;
 
-		dualPaneDetails = getActivity().findViewById(R.id.note_details_fragment);
-		dualPaneSeparator = getActivity().findViewById(R.id.dual_pane_fragments_separator);
-		showDetailsPane(gotNoteToShow);
 		if (gotNoteToShow) {
 			final AbstractNote note = noteEntry.getEntry();
 			title.setHint(NotesListFragment.getTitleForNote(TextNote.EMPTY, noteEntry.getId()));
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
-		}
-	}
-
-	private void showDetailsPane(boolean show) {
-		final int visibility = show ? View.VISIBLE : View.GONE;
-		if (dualPaneDetails != null) {
-			dualPaneDetails.setVisibility(visibility);
-		}
-		if (dualPaneSeparator != null) {
-			dualPaneSeparator.setVisibility(visibility);
 		}
 	}
 

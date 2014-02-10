@@ -29,12 +29,7 @@ public class MainActivity extends Activity
 	private CharSequence title;
 
 
-	private boolean isSinglePaneLayout() {
-		return findViewById(R.id.fragment_container) != null;
-	}
-
 	private boolean isDetailsShown() {
-		// TODO [ui] returns true if current note was deleted in dual pane mode
 		return currentNoteId != NO_DETAILS;
 	}
 
@@ -43,24 +38,21 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		if (isSinglePaneLayout()) {
-			if (savedInstanceState == null) { // show only list
-				final NotesListFragment noteListFragment = new NotesListFragment();
-				noteListFragment.setArguments(getIntent().getExtras());
-				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.fragment_container, noteListFragment);
-				ft.commit();
-			} else {
-				onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
-			}
-		} else { // dual pane
-			final int id = savedInstanceState != null ?
-					savedInstanceState.getInt(ARG_CURRENT_NOTE_ID) :
-					NO_DETAILS;
-			onNoteSelected(id);
+		setupNavigationDrawer();
+
+		if (savedInstanceState == null) {
+			final NotesListFragment noteListFragment = new NotesListFragment();
+			noteListFragment.setArguments(getIntent().getExtras());
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.fragment_container, noteListFragment);
+			ft.commit();
+		} else {
+			onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
 		}
 
-		// drawer setup
+	}
+
+	private void setupNavigationDrawer() {
 		navigationDrawerFragment = (NavigationDrawerFragment)
 				getFragmentManager().findFragmentById(R.id.navigation_drawer);
 		title = getTitle();
@@ -72,25 +64,25 @@ public class MainActivity extends Activity
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-//		Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show();
+		onSectionAttached(position + 1);
 	}
 
 	public void onSectionAttached(int number) {
 		switch (number) {
 			case 1:
-				title = "title 1";
+				title = "One category";
 				break;
 			case 2:
-				title = "title 2";
+				title = "Two category";
 				break;
 			case 3:
-				title = "title 3";
+				title = "Three category";
 				break;
 		}
 	}
 
 	public void restoreActionBar() {
-		ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(title);
@@ -106,27 +98,17 @@ public class MainActivity extends Activity
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
 
-		if (isDetailsShown()) { // show/update details
+		if (isDetailsShown()) {
+			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
+			final Bundle args = new Bundle();
+			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+			newNoteDetailsFragment.setArguments(args);
 
-			final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
-					getFragmentManager().findFragmentById(R.id.note_details_fragment);
-
-			if (noteDetailsFragment != null) { // dual pane
-				noteDetailsFragment.updateNoteDetailsView(noteId);
-
-			} else { // single pane
-
-				final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
-				final Bundle args = new Bundle();
-				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-				newNoteDetailsFragment.setArguments(args);
-
-				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.fragment_container, newNoteDetailsFragment);
-				ft.addToBackStack(null);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				ft.commit();
-			}
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.fragment_container, newNoteDetailsFragment);
+			ft.addToBackStack(null);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
 		}
 	}
 
