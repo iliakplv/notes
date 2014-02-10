@@ -1,10 +1,10 @@
 package com.iliakplv.notes.gui.main;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,7 +16,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity
 		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity
 			if (savedInstanceState == null) { // show only list
 				final NotesListFragment noteListFragment = new NotesListFragment();
 				noteListFragment.setArguments(getIntent().getExtras());
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				final FragmentTransaction ft = getFragmentManager().beginTransaction();
 				ft.add(R.id.fragment_container, noteListFragment);
 				ft.commit();
 			} else {
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity
 
 		// drawer setup
 		navigationDrawerFragment = (NavigationDrawerFragment)
-				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+				getFragmentManager().findFragmentById(R.id.navigation_drawer);
 		title = getTitle();
 
 		navigationDrawerFragment.setUp(
@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity
 	}
 
 	public void restoreActionBar() {
-		ActionBar actionBar = getSupportActionBar();
+		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(title);
@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity
 		if (isDetailsShown()) { // show/update details
 
 			final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
-					getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
+					getFragmentManager().findFragmentById(R.id.note_details_fragment);
 
 			if (noteDetailsFragment != null) { // dual pane
 				noteDetailsFragment.updateNoteDetailsView(noteId);
@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity
 				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
 				newNoteDetailsFragment.setArguments(args);
 
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				final FragmentTransaction ft = getFragmentManager().beginTransaction();
 				ft.replace(R.id.fragment_container, newNoteDetailsFragment);
 				ft.addToBackStack(null);
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -132,11 +132,7 @@ public class MainActivity extends ActionBarActivity
 
 	private void onDetailsChanged(int newNoteId) {
 		currentNoteId = newNoteId;
-		supportInvalidateOptionsMenu();
-
-		// show/hide arrow on action bar
-//		TODO home button removed
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
+		invalidateOptionsMenu();
 
 		// subscribe/unsubscribe to note changes
 		if (isDetailsShown()) {
