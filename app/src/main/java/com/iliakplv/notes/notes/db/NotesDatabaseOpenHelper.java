@@ -15,8 +15,8 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String LOG_TAG = NotesDatabaseOpenHelper.class.getSimpleName();
 
-	public static final int DATABASE_VERSION_FIRST = 1;     // Only (notes)
-	public static final int DATABASE_VERSION_LABELS = 2;    // Added: (labels), (notes_labels)
+	static final int DATABASE_VERSION_FIRST = 1;     // Only (notes)
+	static final int DATABASE_VERSION_LABELS = 2;    // Added: (labels), (notes_labels)
 
 
 	NotesDatabaseOpenHelper(String name, SQLiteDatabase.CursorFactory factory, int version) {

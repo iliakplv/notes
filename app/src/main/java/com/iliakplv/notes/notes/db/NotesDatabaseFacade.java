@@ -18,7 +18,7 @@ public class NotesDatabaseFacade {
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
-	public static final int ALL_LABELS = 0;
+	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
 
 	private static final int INVALID_ID = -1;
 
