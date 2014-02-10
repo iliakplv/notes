@@ -2,6 +2,7 @@ package com.iliakplv.notes.notes.db;
 
 import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 
@@ -246,20 +247,20 @@ public class NotesDatabaseFacade {
 
 	private void notifyDatabaseListeners() {
 		if (databaseListeners != null) {
-			new Thread(new Runnable() {
+			NotesApplication.executeInBackground(new Runnable() {
 				@Override
 				public void run() {
 					for (DatabaseChangeListener listener : databaseListeners) {
 						listener.onDatabaseChanged();
 					}
 				}
-			}).start();
+			});
 		}
 	}
 
 	private void notifyNoteListeners(final int changedNoteId) {
 		if (noteListeners != null) {
-			new Thread(new Runnable() {
+			NotesApplication.executeInBackground(new Runnable() {
 				@Override
 				public void run() {
 					for (NoteChangeListener listener : noteListeners) {
@@ -268,7 +269,7 @@ public class NotesDatabaseFacade {
 						}
 					}
 				}
-			}).start();
+			});
 		}
 	}
 

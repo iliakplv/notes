@@ -246,12 +246,12 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							new Thread(new Runnable() {
+							NotesApplication.executeInBackground(new Runnable() {
 								@Override
 								public void run() {
 									NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
 								}
-							}).start();
+							});
 						}
 					}).create().show();
 		}

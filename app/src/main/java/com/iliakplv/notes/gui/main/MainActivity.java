@@ -125,6 +125,7 @@ public class MainActivity extends Activity
 	}
 
 	public void createNewNote() {
+		// TODO consider moving this to background thread
 		onNoteSelected(NotesDatabaseFacade.getInstance().insertNote(new TextNote()));
 	}
 
