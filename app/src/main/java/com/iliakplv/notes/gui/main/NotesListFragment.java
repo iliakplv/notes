@@ -64,7 +64,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		mainActivity.onNoteSelected(dbFacade.getAllNotes().get(position).getId());
-		getListView().setItemChecked(position, true);
 	}
 
 	@Override
@@ -88,7 +87,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onDatabaseChanged() {
 		if (listeningDatabase && listAdapter != null) {
-			getActivity().runOnUiThread(new Runnable() {
+			mainActivity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
 					if (listeningDatabase && listAdapter != null) {
