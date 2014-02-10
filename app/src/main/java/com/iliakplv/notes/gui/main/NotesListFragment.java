@@ -75,7 +75,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(position);
 
 		// Show available actions for note
-		new AlertDialog.Builder(getActivity()).
+		new AlertDialog.Builder(mainActivity).
 				setTitle(getTitleForNote(selectedNoteEntry)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.common_cancel, null).
@@ -168,7 +168,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private int [] labelsColors;
 
 		public NotesListAdapter() {
-			super(NotesListFragment.this.getActivity(), 0, dbFacade.getAllNotes());
+			super(mainActivity, 0, dbFacade.getAllNotes());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
@@ -238,7 +238,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		private void showDeleteDialog() {
-			new AlertDialog.Builder(getActivity()).
+			new AlertDialog.Builder(mainActivity).
 					setTitle(getTitleForNote(noteEntry)).
 					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
 					setNegativeButton(R.string.common_no, null).
@@ -269,7 +269,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final String info = "\n" + getString(R.string.note_info_created, createdString) +
 					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
 
-			new AlertDialog.Builder(getActivity()).
+			new AlertDialog.Builder(mainActivity).
 					setTitle(getTitleForNote(noteEntry)).
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
