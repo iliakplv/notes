@@ -18,7 +18,7 @@ public class NotesApplication extends Application {
 
 	private static Context context;
 
-	private static final int THREAD_KEEP_ALIVE_TIME_SECONDS = 30;
+	private static final int THREAD_KEEP_ALIVE_TIME_SECONDS = 5;
 	private static ThreadPoolExecutor executor;
 
 	@Override
