@@ -1,10 +1,10 @@
 package com.iliakplv.notes.gui.main;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,7 +16,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity
 		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
@@ -29,12 +29,7 @@ public class MainActivity extends ActionBarActivity
 	private CharSequence title;
 
 
-	private boolean isSinglePaneLayout() {
-		return findViewById(R.id.fragment_container) != null;
-	}
-
 	private boolean isDetailsShown() {
-		// TODO [ui] returns true if current note was deleted in dual pane mode
 		return currentNoteId != NO_DETAILS;
 	}
 
@@ -43,26 +38,23 @@ public class MainActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		if (isSinglePaneLayout()) {
-			if (savedInstanceState == null) { // show only list
-				final NotesListFragment noteListFragment = new NotesListFragment();
-				noteListFragment.setArguments(getIntent().getExtras());
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.add(R.id.fragment_container, noteListFragment);
-				ft.commit();
-			} else {
-				onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
-			}
-		} else { // dual pane
-			final int id = savedInstanceState != null ?
-					savedInstanceState.getInt(ARG_CURRENT_NOTE_ID) :
-					NO_DETAILS;
-			onNoteSelected(id);
+		setupNavigationDrawer();
+
+		if (savedInstanceState == null) {
+			final NotesListFragment noteListFragment = new NotesListFragment();
+			noteListFragment.setArguments(getIntent().getExtras());
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.fragment_container, noteListFragment);
+			ft.commit();
+		} else {
+			onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
 		}
 
-		// drawer setup
+	}
+
+	private void setupNavigationDrawer() {
 		navigationDrawerFragment = (NavigationDrawerFragment)
-				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+				getFragmentManager().findFragmentById(R.id.navigation_drawer);
 		title = getTitle();
 
 		navigationDrawerFragment.setUp(
@@ -72,25 +64,25 @@ public class MainActivity extends ActionBarActivity
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-//		Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show();
+		onSectionAttached(position + 1);
 	}
 
 	public void onSectionAttached(int number) {
 		switch (number) {
 			case 1:
-				title = "title 1";
+				title = "One category";
 				break;
 			case 2:
-				title = "title 2";
+				title = "Two category";
 				break;
 			case 3:
-				title = "title 3";
+				title = "Three category";
 				break;
 		}
 	}
 
 	public void restoreActionBar() {
-		ActionBar actionBar = getSupportActionBar();
+		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(title);
@@ -106,37 +98,23 @@ public class MainActivity extends ActionBarActivity
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
 
-		if (isDetailsShown()) { // show/update details
+		if (isDetailsShown()) {
+			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
+			final Bundle args = new Bundle();
+			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+			newNoteDetailsFragment.setArguments(args);
 
-			final NoteDetailsFragment noteDetailsFragment = (NoteDetailsFragment)
-					getSupportFragmentManager().findFragmentById(R.id.note_details_fragment);
-
-			if (noteDetailsFragment != null) { // dual pane
-				noteDetailsFragment.updateNoteDetailsView(noteId);
-
-			} else { // single pane
-
-				final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
-				final Bundle args = new Bundle();
-				args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-				newNoteDetailsFragment.setArguments(args);
-
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.replace(R.id.fragment_container, newNoteDetailsFragment);
-				ft.addToBackStack(null);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				ft.commit();
-			}
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.fragment_container, newNoteDetailsFragment);
+			ft.addToBackStack(null);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
 		}
 	}
 
 	private void onDetailsChanged(int newNoteId) {
 		currentNoteId = newNoteId;
-		supportInvalidateOptionsMenu();
-
-		// show/hide arrow on action bar
-//		TODO home button removed
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(isDetailsShown() && isSinglePaneLayout());
+		invalidateOptionsMenu();
 
 		// subscribe/unsubscribe to note changes
 		if (isDetailsShown()) {

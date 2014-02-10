@@ -2,9 +2,9 @@ package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,10 +52,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onResume() {
 		super.onResume();
-		// TODO [ui] list view choice mode
-		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
-			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		}
 		startListeningDatabase();
 	}
 
