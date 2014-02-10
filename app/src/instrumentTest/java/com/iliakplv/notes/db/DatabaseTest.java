@@ -12,6 +12,8 @@ import java.util.List;
 
 
 public class DatabaseTest extends TestCase {
+	
+	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 
 	List<Integer> notesIds;
 	List<Integer> labelsIds;
@@ -46,8 +48,8 @@ public class DatabaseTest extends TestCase {
 		// title1 -- label1
 		// title2 -- (no labels)
 
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesCount());
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getAllNotes().size());
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), NotesDatabaseFacade.getInstance().getAllLabels().size());
 
 		Assert.assertEquals(2, NotesDatabaseFacade.getInstance().getLabelsForNote(notesIds.get(0)).size());
@@ -74,8 +76,8 @@ public class DatabaseTest extends TestCase {
 		// title1 -- (no labels)
 		// title2 -- (no labels)
 
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesCount());
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getAllNotes().size());
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), NotesDatabaseFacade.getInstance().getAllLabels().size());
 
 		Assert.assertEquals(1, NotesDatabaseFacade.getInstance().getLabelsForNote(notesIds.get(0)).size());
@@ -97,12 +99,16 @@ public class DatabaseTest extends TestCase {
 		// (no notes)
 		// label0
 
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesCount());
-		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getAllNotes().size());
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), NotesDatabaseFacade.getInstance().getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), NotesDatabaseFacade.getInstance().getAllLabels().size());
 
 		Assert.assertEquals(0, NotesDatabaseFacade.getInstance().getNotesForLabel(labelsIds.get(0)).size());
 		Assert.assertNull(NotesDatabaseFacade.getInstance().getNote(removedId));
 
+
+		// ...finally remove label (label0)
+
+		NotesDatabaseFacade.getInstance().deleteLabel(labelsIds.get(0));
 	}
 }

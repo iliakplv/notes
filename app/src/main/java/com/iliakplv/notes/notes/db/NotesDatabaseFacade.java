@@ -18,16 +18,22 @@ public class NotesDatabaseFacade {
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
-	private static final int INVALID_NOTE_ID = -1;
+	public static final int ALL_LABELS = 0;
 
-	private List<NotesDatabaseEntry> notesDatabaseEntries; // List<NotesDatabaseEntry<AbstractNote>>
-	private volatile boolean entriesListActual = false;
-	private volatile int entriesListSize = -1;
+	private static final int INVALID_ID = -1;
 
-	private NotesDatabaseEntry<AbstractNote> lastFetchedEntry;
-	private volatile int lastFetchedEntryId = 0;
-	private volatile boolean lastFetchedEntryActual = false;
+	// list cache
+	private List<NotesDatabaseEntry> lastFetchedNotesList; // List<NotesDatabaseEntry<AbstractNote>>
+	private volatile int lastFetchedNotesListLabelId = INVALID_ID;
+	private volatile boolean lastFetchedNotesListActual = false;
+	private volatile int lastFetchedNotesListSize = 0;
 
+	// note cache
+	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
+	private volatile int lastFetchedNoteEntryId = INVALID_ID;
+	private volatile boolean lastFetchedNoteEntryActual = false;
+
+	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
 	private List<NoteChangeListener> noteListeners;
 
@@ -42,38 +48,46 @@ public class NotesDatabaseFacade {
 	// notes
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final boolean needToRefresh = lastFetchedEntryId != id || !lastFetchedEntryActual;
+		final boolean needToRefresh = lastFetchedNoteEntryId != id || !lastFetchedNoteEntryActual;
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
 					(needToRefresh ? "NOT " : "") + "actual");
 		}
 		if (needToRefresh) {
-			lastFetchedEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
-			lastFetchedEntryId = id;
-			lastFetchedEntryActual = true;
+			lastFetchedNoteEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
+			lastFetchedNoteEntryId = id;
+			lastFetchedNoteEntryActual = true;
 		}
-		return lastFetchedEntry;
+		return lastFetchedNoteEntry;
 	}
 
-	public List<NotesDatabaseEntry> getAllNotes() {
+	public List<NotesDatabaseEntry> getNotesForLabel(int labelId) {
+		final boolean needToRefresh = lastFetchedNotesListLabelId != labelId || !lastFetchedNotesListActual;
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Notes entries fetching. Cached entries list " +
-					(entriesListActual ? "" : "NOT ") + "actual");
+			Log.d(LOG_TAG, "Notes entries fetching (labelId=" + labelId + "). Cached entries list " +
+					(needToRefresh ? "NOT " : "") + "actual");
 		}
-		if (!entriesListActual) {
-			notesDatabaseEntries =
-					 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
-			entriesListSize = notesDatabaseEntries.size();
-			entriesListActual = true;
+		if (needToRefresh) {
+			if (labelId == ALL_LABELS) {
+				lastFetchedNotesList =
+						 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
+			} else {
+				lastFetchedNotesList =
+						(List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetNotesForLabel, labelId);
+			}
+			lastFetchedNotesListLabelId = labelId;
+			lastFetchedNotesListSize = lastFetchedNotesList.size();
+			lastFetchedNotesListActual = true;
 		}
-		return notesDatabaseEntries;
+		return lastFetchedNotesList;
 	}
 
-	public int getNotesCount() {
-		if (entriesListSize < 0) {
-			getAllNotes();
+	public int getNotesForLabelCount(int labelId) {
+		final boolean needToRefresh = lastFetchedNotesListLabelId != labelId || !lastFetchedNotesListActual;
+		if (needToRefresh) {
+			getNotesForLabel(labelId);
 		}
-		return entriesListSize;
+		return lastFetchedNotesListSize;
 	}
 
 	public synchronized int insertNote(AbstractNote note) {
@@ -114,7 +128,7 @@ public class NotesDatabaseFacade {
 		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
-	public List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+	private List<NotesDatabaseEntry<AbstractNote>> getNotesForExistingLabel(int labelId) {
 		return (List<NotesDatabaseEntry<AbstractNote>>) performDatabaseTransaction(TransactionType.GetNotesForLabel, labelId);
 	}
 
@@ -132,7 +146,7 @@ public class NotesDatabaseFacade {
 		adapter.open();
 
 		Object result;
-		int noteId = INVALID_NOTE_ID;
+		int noteId = INVALID_ID;
 		int labelId;
 
 		switch (transactionType) {
@@ -145,7 +159,6 @@ public class NotesDatabaseFacade {
 				break;
 			case InsertNote:
 				result = adapter.insertNote((AbstractNote) args[0]);
-				incrementEntriesListSize();
 				break;
 			case UpdateNote:
 				noteId = (Integer) args[0];
@@ -158,7 +171,6 @@ public class NotesDatabaseFacade {
 					adapter.deleteNoteLabel(noteId, entry.getId());
 				}
 				result = adapter.deleteNote(noteId);
-				decrementEntriesListSize();
 				break;
 
 			case GetAllLabels:
@@ -207,22 +219,6 @@ public class NotesDatabaseFacade {
 		return result;
 	}
 
-	private int incrementEntriesListSize() {
-		if (entriesListSize < 0) {
-			entriesListSize = 0;
-		}
-		entriesListSize++;
-		return entriesListSize;
-	}
-
-	private int decrementEntriesListSize() {
-		entriesListSize--;
-		if (entriesListSize < 0) {
-			entriesListSize = 0;
-		}
-		return entriesListSize;
-	}
-
 	private void onTransactionPerformed(TransactionType transactionType, int changedNoteId) {
 		if (BuildConfig.DEBUG) {
 			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() +") performed");
@@ -231,13 +227,14 @@ public class NotesDatabaseFacade {
 			if (BuildConfig.DEBUG) {
 				Log.d(LOG_TAG, "Changed note id=" + changedNoteId);
 			}
-			if (changedNoteId != INVALID_NOTE_ID) {
-				lastFetchedEntryActual = lastFetchedEntryId != changedNoteId;
+			if (changedNoteId != INVALID_ID) {
+				lastFetchedNoteEntryActual = lastFetchedNoteEntryActual &&
+						lastFetchedNoteEntryId != changedNoteId;
 			}
 			notifyNoteListeners(changedNoteId);
 		}
 		if (databaseModificationTransaction(transactionType)) {
-			entriesListActual = false;
+			lastFetchedNotesListActual = false;
 			notifyDatabaseListeners();
 		}
 
@@ -264,7 +261,7 @@ public class NotesDatabaseFacade {
 				@Override
 				public void run() {
 					for (NoteChangeListener listener : noteListeners) {
-						if (changedNoteId == INVALID_NOTE_ID || listener.getNoteId() == changedNoteId) {
+						if (changedNoteId == INVALID_ID || listener.getNoteId() == changedNoteId) {
 							listener.onNoteChanged();
 						}
 					}
