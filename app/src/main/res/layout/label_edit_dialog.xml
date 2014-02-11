@@ -5,9 +5,88 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-	<EditText
+
+	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:hint="Label"/>
+		android:orientation="horizontal"
+		android:gravity="center"
+		android:layout_marginBottom="@dimen/label_edit_title_bottom_margin">
+
+		<EditText
+			style="@style/LabelEditTitle"
+			android:hint="@string/label_title_hint"/>
+
+	</LinearLayout>
+
+
+	<RadioGroup
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_marginBottom="@dimen/label_edit_select_color_text_bottom_margin"
+			android:textSize="@dimen/label_edit_select_color_text_size"
+			android:text="@string/label_edit_color_select"/>
+
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center"
+			android:layout_marginBottom="5dp">
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:checked="true"
+				android:layout_marginLeft="0dp"
+				android:background="@color/label_color_default"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_red"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_yellow"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_orange"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center">
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:layout_marginLeft="0dp"
+				android:background="@color/label_color_green"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_light_blue"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_dark_blue"/>
+
+			<RadioButton
+				style="@style/LabelEditColorRadioButton"
+				android:background="@color/label_color_purple"/>
+
+		</LinearLayout>
+
+	</RadioGroup>
 
 </LinearLayout>
