@@ -17,7 +17,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Date:  16.08.2013
  */
 public class MainActivity extends Activity
-		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
+		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
