@@ -81,13 +81,13 @@ public class MainActivity extends Activity
 	public void onSectionAttached(int number) {
 		switch (number) {
 			case 1:
-				title = "One category";
+				title = "All notes";
 				break;
 			case 2:
-				title = "Two category";
+				title = "Label 1";
 				break;
 			case 3:
-				title = "Three category";
+				title = "Label 2";
 				break;
 		}
 	}
@@ -179,12 +179,6 @@ public class MainActivity extends Activity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	private void goBackToList() {
-		if (isDetailsShown()) {
-			onBackPressed();
-		}
 	}
 
 
