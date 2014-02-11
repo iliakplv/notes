@@ -12,13 +12,6 @@
 
 
 	<!--
-		Separator
-	-->
-
-	<color name="note_fragments_separator">#ff33b0e0</color>
-
-
-	<!--
 		Note Details
 	-->
 
@@ -38,5 +31,9 @@
 	<color name="label_color_light_blue">#ff39b3d7</color>
 	<color name="label_color_dark_blue">#ff3d7792</color>
 	<color name="label_color_purple">#ffa21d71</color>
+
+	<color name="label_color_picker_default">#ffdddddd</color>
+	<color name="label_color_picker_selected">#ff000000</color>
+	<color name="label_color_picker_pressed">#ff367aff</color>
 
 </resources>
