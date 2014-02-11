@@ -11,6 +11,17 @@ Current features
   - Navigation
 
 
+Planned features
+
+  - Notes/Labels search with suggest
+
+  - Export/Import using external storage
+
+  - Sync with cloud service (Dropbox or another)
+
+  - Archive old notes
+
+
 ----------------------------------------------------------------
 
 Application core is in the <project>/app directory.
