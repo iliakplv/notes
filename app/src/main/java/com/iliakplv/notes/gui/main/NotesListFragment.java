@@ -35,8 +35,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private NotesListAdapter listAdapter;
 	private boolean listeningDatabase = false;
 
-	// TODO replace usages by real labels ids
-	private static final int TEMP_ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private int currentLabelId = ALL_LABELS;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -66,7 +66,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(dbFacade.getNotesForLabel(TEMP_ALL_LABELS).get(position).getId());
+		mainActivity.onNoteSelected(dbFacade.getNotesForLabel(currentLabelId).get(position).getId());
 	}
 
 	@Override
@@ -74,8 +74,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		return showNoteMenu(i);
 	}
 
-	public boolean showNoteMenu(int position) {
-		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNotesForLabel(TEMP_ALL_LABELS).get(position);
+	private boolean showNoteMenu(int position) {
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 
 		// Show available actions for note
 		new AlertDialog.Builder(mainActivity).
@@ -89,11 +89,30 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onDatabaseChanged() {
-		if (listeningDatabase && listAdapter != null) {
+		if (listeningDatabase) {
+			updateListView();
+		}
+	}
+
+	public void showNotesForLabel(int labelId) {
+		if (labelId == ALL_LABELS || labelId >= 1) {
+			currentLabelId = labelId;
+			updateListView();
+		} else {
+			throw new IllegalArgumentException("Wrong label id value: " + labelId);
+		}
+	}
+
+	public void showAllNotes() {
+		showNotesForLabel(ALL_LABELS);
+	}
+
+	private void updateListView() {
+		if (mainActivity != null) {
 			mainActivity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (listeningDatabase && listAdapter != null) {
+					if (listAdapter != null) {
 						listAdapter.notifyDataSetChanged();
 					}
 				}
@@ -171,7 +190,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private int [] labelsColors;
 
 		public NotesListAdapter() {
-			super(mainActivity, 0, dbFacade.getNotesForLabel(TEMP_ALL_LABELS));
+			super(mainActivity, 0, dbFacade.getNotesForLabel(currentLabelId));
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
@@ -184,7 +203,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(TEMP_ALL_LABELS).get(position);
+			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(getTitleForNote(entry));
@@ -203,7 +222,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public int getCount() {
-			return dbFacade.getNotesForLabelCount(TEMP_ALL_LABELS);
+			return dbFacade.getNotesForLabelCount(currentLabelId);
 		}
 
 	}

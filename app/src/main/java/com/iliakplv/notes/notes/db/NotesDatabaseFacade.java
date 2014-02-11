@@ -68,13 +68,10 @@ public class NotesDatabaseFacade {
 					(needToRefresh ? "NOT " : "") + "actual");
 		}
 		if (needToRefresh) {
-			if (labelId == ALL_LABELS) {
-				lastFetchedNotesList =
-						 (List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetAllNotes, null);
-			} else {
-				lastFetchedNotesList =
-						(List<NotesDatabaseEntry>) performDatabaseTransaction(TransactionType.GetNotesForLabel, labelId);
-			}
+			final TransactionType selectTransaction =
+					labelId == ALL_LABELS ? TransactionType.GetAllNotes : TransactionType.GetNotesForLabel;
+			lastFetchedNotesList =
+					(List<NotesDatabaseEntry>) performDatabaseTransaction(selectTransaction, labelId);
 			lastFetchedNotesListLabelId = labelId;
 			lastFetchedNotesListSize = lastFetchedNotesList.size();
 			lastFetchedNotesListActual = true;

@@ -25,6 +25,8 @@ public class MainActivity extends Activity
 	private int currentNoteId = NO_DETAILS;
 	private boolean listeningExistingNote = false;
 
+	private NotesListFragment notesListFragment;
+	private NoteDetailsFragment noteDetailsFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
 
@@ -41,10 +43,10 @@ public class MainActivity extends Activity
 		setupNavigationDrawer();
 
 		if (savedInstanceState == null) {
-			final NotesListFragment noteListFragment = new NotesListFragment();
-			noteListFragment.setArguments(getIntent().getExtras());
+			notesListFragment = new NotesListFragment();
+			notesListFragment.setArguments(getIntent().getExtras());
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.fragment_container, noteListFragment);
+			ft.add(R.id.fragment_container, notesListFragment);
 			ft.commit();
 		} else {
 			onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
@@ -65,6 +67,15 @@ public class MainActivity extends Activity
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		onSectionAttached(position + 1);
+
+		// TODO implement
+		if (notesListFragment != null) {
+			if (position == 0) {
+				notesListFragment.showAllNotes();
+			} else {
+				notesListFragment.showNotesForLabel(position + 1);
+			}
+		}
 	}
 
 	public void onSectionAttached(int number) {
@@ -99,13 +110,13 @@ public class MainActivity extends Activity
 		onDetailsChanged(noteId);
 
 		if (isDetailsShown()) {
-			final NoteDetailsFragment newNoteDetailsFragment = new NoteDetailsFragment();
+			noteDetailsFragment = new NoteDetailsFragment();
 			final Bundle args = new Bundle();
 			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-			newNoteDetailsFragment.setArguments(args);
+			noteDetailsFragment.setArguments(args);
 
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, newNoteDetailsFragment);
+			ft.replace(R.id.fragment_container, noteDetailsFragment);
 			ft.addToBackStack(null);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
