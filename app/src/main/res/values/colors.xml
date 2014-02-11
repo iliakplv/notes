@@ -6,7 +6,7 @@
 	<color name="note_list_item_title">#ff000000</color>
 	<color name="note_list_item_subtitle">#ff6a6a6a</color>
 
-	<color name="navigation_drawer_background">#ee404040</color>
+	<color name="navigation_drawer_background">#e0404040</color>
 
 
 	<color name="note_details_title">#ff6a6a6a</color>
