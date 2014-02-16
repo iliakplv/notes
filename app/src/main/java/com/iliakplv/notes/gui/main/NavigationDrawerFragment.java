@@ -20,27 +20,30 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 
 public class NavigationDrawerFragment extends Fragment {
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    private NavigationDrawerListener listener;
+	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+    private MainActivity mainActivity;
 
-    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
+    private ListView labelsListView;
+    private View fragmentContainerView;
 
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerListView;
-    private View mFragmentContainerView;
-
-    private int mCurrentSelectedPosition = 0;
-    private boolean mFromSavedInstanceState;
-    private boolean mUserLearnedDrawer;
+    private int currentSelectedPosition = 0;
+    private boolean fromSavedInstanceState;
+    private boolean userLearnedDrawer;
 
 
     public NavigationDrawerFragment() {
@@ -51,14 +54,14 @@ public class NavigationDrawerFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+        userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
         if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
+            currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+            fromSavedInstanceState = true;
         }
 
-        selectItem(mCurrentSelectedPosition);
+//      TODO  selectItem(currentSelectedPosition);
     }
 
     @Override
@@ -68,46 +71,42 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        labelsListView = (ListView) inflater.inflate(
                 R.layout.navigation_drawer, container, false);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
+
+	    labelsListView.setAdapter(new LabelsListAdapter());
+	    labelsListView.addHeaderView(inflater.inflate(R.layout.label_list_item, container, false));
+	    labelsListView.addFooterView(inflater.inflate(R.layout.label_list_item, container, false));
+
+        labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+	        @Override
+	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		        selectItem(position);
+	        }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        "All notes",
-                        "Label 1",
-                        "Label 2"
-                }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+
+//      TODO  labelsListView.setItemChecked(currentSelectedPosition, true);
+        return labelsListView;
     }
 
     public boolean isDrawerOpen() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
+        return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-        mFragmentContainerView = getActivity().findViewById(fragmentId);
-        mDrawerLayout = drawerLayout;
+        fragmentContainerView = getActivity().findViewById(fragmentId);
+        this.drawerLayout = drawerLayout;
 
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(
+        drawerToggle = new ActionBarDrawerToggle(
                 getActivity(),
-                mDrawerLayout,
+		        NavigationDrawerFragment.this.drawerLayout,
                 R.drawable.ic_drawer,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
@@ -129,8 +128,8 @@ public class NavigationDrawerFragment extends Fragment {
                     return;
                 }
 
-                if (!mUserLearnedDrawer) {
-                    mUserLearnedDrawer = true;
+                if (!userLearnedDrawer) {
+                    userLearnedDrawer = true;
                     SharedPreferences sp = PreferenceManager
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
@@ -140,30 +139,30 @@ public class NavigationDrawerFragment extends Fragment {
             }
         };
 
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
+        if (!userLearnedDrawer && !fromSavedInstanceState) {
+            this.drawerLayout.openDrawer(fragmentContainerView);
         }
 
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToggle.syncState();
-            }
+        this.drawerLayout.post(new Runnable() {
+	        @Override
+	        public void run() {
+		        drawerToggle.syncState();
+	        }
         });
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        this.drawerLayout.setDrawerListener(drawerToggle);
     }
 
     private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
+        currentSelectedPosition = position;
+        if (labelsListView != null) {
+            labelsListView.setItemChecked(position, true);
         }
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(fragmentContainerView);
         }
-        if (listener != null) {
-            listener.onNavigationDrawerItemSelected(position);
+        if (mainActivity != null) {
+            mainActivity.onNavigationDrawerItemSelected(position);
         }
     }
 
@@ -171,7 +170,7 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            listener = (NavigationDrawerListener) activity;
+            mainActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerListener.");
         }
@@ -180,24 +179,24 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        mainActivity = null;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+        outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (mDrawerLayout != null && isDrawerOpen()) {
+        if (drawerLayout != null && isDrawerOpen()) {
             inflater.inflate(R.menu.drawer, menu);
             showGlobalContextActionBar();
         }
@@ -206,7 +205,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -242,6 +241,41 @@ public class NavigationDrawerFragment extends Fragment {
 	 *
 	 * *******************************************
 	 */
+
+	private class LabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+
+
+		private int [] labelsColors;
+
+		public LabelsListAdapter() {
+			super(mainActivity, 0, dbFacade.getAllLabels());
+			labelsColors = getResources().getIntArray(R.array.label_colors);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final View view;
+			if (convertView != null) {
+				view = convertView;
+			} else {
+				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item, parent, false);
+			}
+
+			final NotesDatabaseEntry<Label> entry = dbFacade.getAllLabels().get(position);
+			final View color = view.findViewById(R.id.label_color);
+			final TextView name = (TextView) view.findViewById(R.id.label_name);
+			name.setText(entry.getEntry().getName());
+			color.setBackgroundColor(labelsColors[entry.getEntry().getColor()]);
+
+			return view;
+		}
+
+		@Override
+		public int getCount() {
+			return dbFacade.getAllLabels().size();
+		}
+
+	}
 
     public static interface NavigationDrawerListener {
 
