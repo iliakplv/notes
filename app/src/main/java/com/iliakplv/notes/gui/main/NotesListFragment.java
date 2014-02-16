@@ -172,9 +172,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	/**
 	 * ******************************************
-	 * <p/>
+	 *
 	 * Inner classes
-	 * <p/>
+	 *
 	 * *******************************************
 	 */
 
