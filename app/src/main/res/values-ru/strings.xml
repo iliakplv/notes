@@ -7,6 +7,7 @@
 	<string name="navigation_drawer_close">Скрыть навигацию</string>
 
 	<string name="common_ok">OK</string>
+	<string name="common_save">Сохранить</string>
 	<string name="common_cancel">Отмена</string>
 	<string name="common_yes">Да</string>
 	<string name="common_no">Нет</string>
@@ -26,8 +27,9 @@
 	<string name="note_details_body_hint">Текст</string>
 
 	<string name="labels_drawer_all_notes">Все заметки</string>
+	<string name="labels_drawer_add_label">Новая метка</string>
 
 	<string name="label_title_hint">Метка</string>
-	<string name="label_edit_color_select">Выберите цвет метки</string>
+	<string name="label_edit_color_select">Цвет метки</string>
 
 </resources>

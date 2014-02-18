@@ -3,7 +3,10 @@ package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,9 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
@@ -35,6 +41,18 @@ public class NavigationDrawerFragment extends Fragment {
 
 	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 	public static final int ALL_LABELS_HEADER_POSITION = 0;
+
+	private static final int[] COLORS_CHECKBOXES_IDS = {
+			R.id.color_1,
+			R.id.color_2,
+			R.id.color_3,
+			R.id.color_4,
+			R.id.color_5,
+			R.id.color_6,
+			R.id.color_7,
+			R.id.color_8
+	};
+
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
     private MainActivity mainActivity;
@@ -80,7 +98,9 @@ public class NavigationDrawerFragment extends Fragment {
 
 	    labelsListView.setAdapter(new LabelsListAdapter());
 	    labelsListView.addHeaderView(inflater.inflate(R.layout.label_list_item, container, false));
-
+	    final View addNewLabelItem = inflater.inflate(R.layout.label_list_item, container, false);
+	    ((TextView) addNewLabelItem.findViewById(R.id.label_name)).setText(R.string.labels_drawer_add_label);
+	    labelsListView.addFooterView(addNewLabelItem);
         labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -164,11 +184,56 @@ public class NavigationDrawerFragment extends Fragment {
             drawerLayout.closeDrawer(fragmentContainerView);
         }
         if (mainActivity != null) {
-            mainActivity.onSelectedLabelId(position == ALL_LABELS_HEADER_POSITION ?
-		            ALL_LABELS :
-		            dbFacade.getAllLabels().get(position - 1).getId());
+	        if (position == labelsListView.getCount() - 1) {
+
+		        // Last position (Add label)
+		        // TODO refactor this
+
+		        // color selection
+		        final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		        final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
+		        final LabelEditDialogCheckBoxListener checkBoxListener =
+				        new LabelEditDialogCheckBoxListener((CheckBox) labelDialogView.findViewById(COLORS_CHECKBOXES_IDS[0]));
+		        for (int  id : COLORS_CHECKBOXES_IDS) {
+			        labelDialogView.findViewById(id).setOnClickListener(checkBoxListener);
+		        }
+
+		        // label edit dialog
+		        new AlertDialog.Builder(mainActivity)
+				        .setView(labelDialogView)
+				        .setPositiveButton(R.string.common_save, new DialogInterface.OnClickListener() {
+					        @Override
+					        public void onClick(DialogInterface dialogInterface, int i) {
+						        final String labelName = ((EditText) labelDialogView.findViewById(R.id.label_name)).getText().toString();
+						        NotesApplication.executeInBackground(new Runnable() {
+							        @Override
+							        public void run() {
+								        NotesDatabaseFacade.getInstance().insertLabel(new Label(labelName, getIndexOfSelectedColor(labelDialogView)));
+							        }
+						        });
+					        }
+				        })
+				        .setNegativeButton(R.string.common_cancel, null)
+				        .create()
+				        .show();
+
+
+	        } else {
+                mainActivity.onSelectedLabelId(position == ALL_LABELS_HEADER_POSITION ?
+		                ALL_LABELS :
+		                dbFacade.getAllLabels().get(position - 1).getId());
+	        }
         }
     }
+
+	private int getIndexOfSelectedColor(View labelEditDialogView) {
+		for (int i = 0; i < COLORS_CHECKBOXES_IDS.length; i++) {
+			if (((CheckBox) labelEditDialogView.findViewById(COLORS_CHECKBOXES_IDS[i])).isChecked()) {
+				return i;
+			}
+		}
+		return 0;
+	}
 
     @Override
     public void onAttach(Activity activity) {
@@ -265,7 +330,7 @@ public class NavigationDrawerFragment extends Fragment {
 				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry<Label> entry = dbFacade.getAllLabels().get(position);
+			final NotesDatabaseEntry<com.iliakplv.notes.notes.Label> entry = dbFacade.getAllLabels().get(position);
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
 			name.setText(entry.getEntry().getName());
@@ -279,6 +344,21 @@ public class NavigationDrawerFragment extends Fragment {
 			return dbFacade.getAllLabels().size();
 		}
 
+	}
+
+	private class LabelEditDialogCheckBoxListener implements View.OnClickListener {
+
+		private CheckBox currentSelectedCheckBox;
+
+		public LabelEditDialogCheckBoxListener(CheckBox selectedCheckBox) {
+			currentSelectedCheckBox = selectedCheckBox;
+		}
+
+		@Override
+		public void onClick(View newSelectedCheckBox) {
+			currentSelectedCheckBox.setChecked(false);
+			currentSelectedCheckBox = (CheckBox) newSelectedCheckBox;
+		}
 	}
 
     public static interface NavigationDrawerListener {

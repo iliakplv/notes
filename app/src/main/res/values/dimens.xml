@@ -25,5 +25,6 @@
 	<dimen name="label_edit_select_color_text_size">18sp</dimen>
 	<dimen name="label_edit_select_color_text_bottom_margin">12dp</dimen>
 	<dimen name="label_edit_radio_button_side_margin">5dp</dimen>
+	<dimen name="label_edit_radio_button_bottom_margin">24dp</dimen>
 
 </resources>
