@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -93,14 +94,21 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        labelsListView = (ListView) inflater.inflate(
-                R.layout.navigation_drawer, container, false);
-
+        labelsListView = (ListView) inflater.inflate(R.layout.navigation_drawer, container, false);
 	    labelsListView.setAdapter(new LabelsListAdapter());
-	    labelsListView.addHeaderView(inflater.inflate(R.layout.label_list_item, container, false));
+
+	    // header
+	    final View allLabelsItem = inflater.inflate(R.layout.label_list_item, container, false);
+	    ((TextView) allLabelsItem.findViewById(R.id.label_name)).setTypeface(null, Typeface.BOLD);
+	    allLabelsItem.findViewById(R.id.label_color).setVisibility(View.GONE);
+	    labelsListView.addHeaderView(allLabelsItem);
+
+	    // footer
 	    final View addNewLabelItem = inflater.inflate(R.layout.label_list_item, container, false);
 	    ((TextView) addNewLabelItem.findViewById(R.id.label_name)).setText(R.string.labels_drawer_add_label);
+	    addNewLabelItem.findViewById(R.id.label_color).setVisibility(View.GONE);
 	    labelsListView.addFooterView(addNewLabelItem);
+
         labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

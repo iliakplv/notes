@@ -13,8 +13,6 @@
 	<color name="note_details_body">#ff000000</color>
 
 
-	<color name="label_color_all_labels">#ffbbbbbb</color>
-
 	<color name="label_color_default">#ffffffff</color>
 	<color name="label_color_red">#ffe14f4f</color>
 	<color name="label_color_orange">#ffff9710</color>

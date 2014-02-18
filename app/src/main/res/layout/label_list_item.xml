@@ -7,16 +7,20 @@
 
 	<View
 		android:id="@+id/label_color"
-		android:layout_margin="12dp"
+		android:layout_marginTop="12dp"
+		android:layout_marginBottom="12dp"
+		android:layout_marginLeft="12dp"
 		android:layout_width="24dp"
 		android:layout_height="24dp"
-		android:background="@color/label_color_all_labels"/>
+		android:background="@color/label_color_default"/>
 
 	<TextView
 		android:id="@+id/label_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="12dp"
+		android:layout_marginBottom="12dp"
+		android:layout_marginLeft="12dp"
 		android:textSize="18sp"
 		android:textColor="#ffff"
 		android:text="@string/labels_drawer_all_notes"
