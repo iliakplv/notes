@@ -33,6 +33,9 @@ public class NavigationDrawerFragment extends Fragment {
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
+	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	public static final int ALL_LABELS_HEADER_POSITION = 0;
+
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
     private MainActivity mainActivity;
 
@@ -162,7 +165,9 @@ public class NavigationDrawerFragment extends Fragment {
             drawerLayout.closeDrawer(fragmentContainerView);
         }
         if (mainActivity != null) {
-            mainActivity.onNavigationDrawerItemSelected(position);
+            mainActivity.onSelectedLabelId(position == ALL_LABELS_HEADER_POSITION ?
+		            ALL_LABELS :
+		            dbFacade.getAllLabels().get(position - 1).getId());
         }
     }
 
@@ -279,7 +284,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     public static interface NavigationDrawerListener {
 
-        void onNavigationDrawerItemSelected(int position);
+        void onSelectedLabelId(int id);
 
     }
 }

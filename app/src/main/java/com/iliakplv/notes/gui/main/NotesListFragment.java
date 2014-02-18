@@ -103,10 +103,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-	public void showAllNotes() {
-		showNotesForLabel(ALL_LABELS);
-	}
-
 	private void updateListView() {
 		if (mainActivity != null) {
 			mainActivity.runOnUiThread(new Runnable() {

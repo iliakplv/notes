@@ -65,16 +65,11 @@ public class MainActivity extends Activity
 	}
 
 	@Override
-	public void onNavigationDrawerItemSelected(int position) {
-		onSectionAttached(position + 1);
+	public void onSelectedLabelId(int labelId) {
+		onSectionAttached(labelId + 1);
 
-		// TODO implement
 		if (notesListFragment != null) {
-			if (position == 0) {
-				notesListFragment.showAllNotes();
-			} else {
-				notesListFragment.showNotesForLabel(position + 1);
-			}
+			notesListFragment.showNotesForLabel(labelId);
 		}
 	}
 
