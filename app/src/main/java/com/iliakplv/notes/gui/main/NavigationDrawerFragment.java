@@ -80,7 +80,6 @@ public class NavigationDrawerFragment extends Fragment {
 
 	    labelsListView.setAdapter(new LabelsListAdapter());
 	    labelsListView.addHeaderView(inflater.inflate(R.layout.label_list_item, container, false));
-	    labelsListView.addFooterView(inflater.inflate(R.layout.label_list_item, container, false));
 
         labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        @Override

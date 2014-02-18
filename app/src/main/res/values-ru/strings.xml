@@ -25,6 +25,8 @@
 	<string name="note_details_title_hint">Заголовок</string>
 	<string name="note_details_body_hint">Текст</string>
 
+	<string name="labels_drawer_all_notes">Все заметки</string>
+
 	<string name="label_title_hint">Метка</string>
 	<string name="label_edit_color_select">Выберите цвет метки</string>
 

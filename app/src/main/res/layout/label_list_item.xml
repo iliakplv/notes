@@ -10,7 +10,7 @@
 		android:layout_margin="12dp"
 		android:layout_width="24dp"
 		android:layout_height="24dp"
-		android:background="@color/label_color_default"/>
+		android:background="@color/label_color_all_labels"/>
 
 	<TextView
 		android:id="@+id/label_name"
@@ -19,7 +19,7 @@
 		android:layout_marginTop="12dp"
 		android:textSize="18sp"
 		android:textColor="#ffff"
-		android:text="Label name"
+		android:text="@string/labels_drawer_all_notes"
 		android:lines="1"/>
 
 </LinearLayout>
