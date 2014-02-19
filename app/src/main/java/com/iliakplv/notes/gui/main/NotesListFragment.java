@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
@@ -214,11 +215,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			subtitle.setText(getBodyForNote(entry.getEntry()));
 
 			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
-			final int labelsCount = Math.min(LABELS_IDS.length, labelEntries.size());
-			for (int i = 0; i < labelsCount; i++) {
+			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final View labelView = view.findViewById(LABELS_IDS[i]);
-				labelView.setBackgroundColor(labelsColors[labelEntries.get(i).getEntry().getColor()]);
-				labelView.setVisibility(View.VISIBLE);
+				if (i < labelEntries.size()) {
+					labelView.setBackgroundColor(labelsColors[labelEntries.get(i).getEntry().getColor()]);
+					labelView.setVisibility(View.VISIBLE);
+				} else {
+					labelView.setVisibility(View.GONE);
+				}
 			}
 
 			return view;
@@ -318,8 +322,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private final int noteId;
 		private final List<NotesDatabaseEntry<Label>> allLabels;
 		private final boolean[] currentLabels;
-		// TODO refactor this
-		private final CheckBox[] checkBoxes;
+		private final boolean[] selectedLabels;
 
 		public NoteLabelsListAdapter(int noteId) {
 			super(mainActivity, 0, dbFacade.getAllLabels());
@@ -330,10 +333,12 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			final Set<Integer> currentNoteLabelsIds = dbFacade.getLabelsIdsForNote(noteId);
 			currentLabels = new boolean[allLabels.size()];
+			selectedLabels = new boolean[allLabels.size()];
 			for (int i = 0; i < currentLabels.length; i++) {
-				currentLabels[i] = currentNoteLabelsIds.contains(allLabels.get(i).getId());
+				final boolean selected = currentNoteLabelsIds.contains(allLabels.get(i).getId());
+				currentLabels[i] = selected;
+				selectedLabels[i] = selected;
 			}
-			checkBoxes = new CheckBox[allLabels.size()];
 		}
 
 		@Override
@@ -342,7 +347,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			final View view;
 			if (convertView != null) {
 				view = convertView;
@@ -357,9 +362,15 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			name.setText(label.getName());
 			color.setBackgroundColor(labelsColors[label.getColor()]);
 
-			final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-			checkBoxes[position] = checkBox;
+			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);
 			checkBox.setChecked(currentLabels[position]);
+			// TODO refactor this
+			checkBox.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					selectedLabels[position] = ((CheckBox) v).isChecked();
+				}
+			});
 
 			return view;
 		}
@@ -370,9 +381,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			for (int i = 0; i < allLabels.size(); i++) {
 				final int labelId = allLabels.get(i).getId();
-				if (!currentLabels[i] && checkBoxes[i].isChecked()) {
+				if (!currentLabels[i] && selectedLabels[i]) {
 					labelsIdsToAdd.add(labelId);
-				} else if (currentLabels[i] && !checkBoxes[i].isChecked()) {
+				} else if (currentLabels[i] && !selectedLabels[i]) {
 					labelsIdsToDelete.add(labelId);
 				}
 			}
