@@ -29,6 +29,10 @@
 	<string name="labels_drawer_all_notes">Все заметки</string>
 	<string name="labels_drawer_add_label">Новая метка</string>
 
+	<string name="label_action_edit">Изменить</string>
+	<string name="label_action_delete">Удалить</string>
+	<string name="label_action_delete_confirm_dialog_text">Удалить эту метку?</string>
+
 	<string name="label_title_hint">Метка</string>
 	<string name="label_edit_color_select">Цвет метки</string>
 

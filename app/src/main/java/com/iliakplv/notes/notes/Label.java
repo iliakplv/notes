@@ -6,7 +6,7 @@ import com.iliakplv.notes.utils.StringUtils;
 
 public class Label {
 
-	private static final int DEFAULT_COLOR_INDEX = 0;
+	public static final int DEFAULT_COLOR_INDEX = 0;
 
 	private String name;
 	private int color;

@@ -34,11 +34,13 @@ import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
+import java.util.List;
+
 
 public class NavigationDrawerFragment extends Fragment {
 
-    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 	public static final int ALL_LABELS_HEADER_POSITION = 0;
@@ -56,183 +58,232 @@ public class NavigationDrawerFragment extends Fragment {
 
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-    private MainActivity mainActivity;
+	private MainActivity mainActivity;
 
-    private ActionBarDrawerToggle drawerToggle;
-    private DrawerLayout drawerLayout;
-    private ListView labelsListView;
-    private View fragmentContainerView;
+	private ActionBarDrawerToggle drawerToggle;
+	private DrawerLayout drawerLayout;
+	private View fragmentContainerView;
+	private ListView labelsListView;
+	private LabelsListAdapter labelsListAdapter;
 
-    private int currentSelectedPosition = 0;
-    private boolean fromSavedInstanceState;
-    private boolean userLearnedDrawer;
-
-
-    public NavigationDrawerFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
-        if (savedInstanceState != null) {
-            currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            fromSavedInstanceState = true;
-        }
-
-//      TODO  selectItem(currentSelectedPosition);
-    }
-
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        labelsListView = (ListView) inflater.inflate(R.layout.navigation_drawer, container, false);
-	    labelsListView.setAdapter(new LabelsListAdapter());
-
-	    // header
-	    final View allLabelsItem = inflater.inflate(R.layout.label_list_item, container, false);
-	    ((TextView) allLabelsItem.findViewById(R.id.label_name)).setTypeface(null, Typeface.BOLD);
-	    allLabelsItem.findViewById(R.id.label_color).setVisibility(View.GONE);
-	    labelsListView.addHeaderView(allLabelsItem);
-
-	    // footer
-	    final View addNewLabelItem = inflater.inflate(R.layout.label_list_item, container, false);
-	    ((TextView) addNewLabelItem.findViewById(R.id.label_name)).setText(R.string.labels_drawer_add_label);
-	    addNewLabelItem.findViewById(R.id.label_color).setVisibility(View.GONE);
-	    labelsListView.addFooterView(addNewLabelItem);
-
-        labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-	        @Override
-	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		        selectItem(position);
-	        }
-        });
-
-//      TODO  labelsListView.setItemChecked(currentSelectedPosition, true);
-        return labelsListView;
-    }
-
-    public boolean isDrawerOpen() {
-        return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
-    }
-
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-        fragmentContainerView = getActivity().findViewById(fragmentId);
-        this.drawerLayout = drawerLayout;
-
-        this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-
-        drawerToggle = new ActionBarDrawerToggle(
-                getActivity(),
-		        NavigationDrawerFragment.this.drawerLayout,
-                R.drawable.ic_drawer,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        ) {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                if (!isAdded()) {
-                    return;
-                }
-
-                getActivity().invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                if (!isAdded()) {
-                    return;
-                }
-
-                if (!userLearnedDrawer) {
-                    userLearnedDrawer = true;
-                    SharedPreferences sp = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity());
-                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
-                }
-
-                getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-            }
-        };
-
-        if (!userLearnedDrawer && !fromSavedInstanceState) {
-            this.drawerLayout.openDrawer(fragmentContainerView);
-        }
-
-        this.drawerLayout.post(new Runnable() {
-	        @Override
-	        public void run() {
-		        drawerToggle.syncState();
-	        }
-        });
-
-        this.drawerLayout.setDrawerListener(drawerToggle);
-    }
-
-    private void selectItem(int position) {
-        currentSelectedPosition = position;
-        if (labelsListView != null) {
-            labelsListView.setItemChecked(position, true);
-        }
-        if (drawerLayout != null) {
-            drawerLayout.closeDrawer(fragmentContainerView);
-        }
-        if (mainActivity != null) {
-	        if (position == labelsListView.getCount() - 1) {
-
-		        // Last position (Add label)
-		        // TODO refactor this
-
-		        // color selection
-		        final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		        final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
-		        final LabelEditDialogCheckBoxListener checkBoxListener =
-				        new LabelEditDialogCheckBoxListener((CheckBox) labelDialogView.findViewById(COLORS_CHECKBOXES_IDS[0]));
-		        for (int  id : COLORS_CHECKBOXES_IDS) {
-			        labelDialogView.findViewById(id).setOnClickListener(checkBoxListener);
-		        }
-
-		        // label edit dialog
-		        new AlertDialog.Builder(mainActivity)
-				        .setView(labelDialogView)
-				        .setPositiveButton(R.string.common_save, new DialogInterface.OnClickListener() {
-					        @Override
-					        public void onClick(DialogInterface dialogInterface, int i) {
-						        final String labelName = ((EditText) labelDialogView.findViewById(R.id.label_name)).getText().toString();
-						        NotesApplication.executeInBackground(new Runnable() {
-							        @Override
-							        public void run() {
-								        NotesDatabaseFacade.getInstance().insertLabel(new Label(labelName, getIndexOfSelectedColor(labelDialogView)));
-							        }
-						        });
-					        }
-				        })
-				        .setNegativeButton(R.string.common_cancel, null)
-				        .create()
-				        .show();
+	// TODO use it to save state
+	private int currentSelectedPosition = ALL_LABELS_HEADER_POSITION;
+	private boolean fromSavedInstanceState;
+	private boolean userLearnedDrawer;
 
 
-	        } else {
-                mainActivity.onSelectedLabelId(position == ALL_LABELS_HEADER_POSITION ?
-		                ALL_LABELS :
-		                dbFacade.getAllLabels().get(position - 1).getId());
-	        }
-        }
-    }
+	public NavigationDrawerFragment() {
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+
+		if (savedInstanceState != null) {
+			currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			fromSavedInstanceState = true;
+		}
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		labelsListView = (ListView) inflater.inflate(R.layout.navigation_drawer, container, false);
+		labelsListAdapter = new LabelsListAdapter();
+		labelsListView.setAdapter(labelsListAdapter);
+
+		// header
+		final View allLabelsItem = inflater.inflate(R.layout.label_list_item, container, false);
+		((TextView) allLabelsItem.findViewById(R.id.label_name)).setTypeface(null, Typeface.BOLD);
+		allLabelsItem.findViewById(R.id.label_color).setVisibility(View.GONE);
+		labelsListView.addHeaderView(allLabelsItem);
+
+		// footer
+		final View addNewLabelItem = inflater.inflate(R.layout.label_list_item, container, false);
+		((TextView) addNewLabelItem.findViewById(R.id.label_name)).setText(R.string.labels_drawer_add_label);
+		addNewLabelItem.findViewById(R.id.label_color).setVisibility(View.GONE);
+		labelsListView.addFooterView(addNewLabelItem);
+
+		// click listener
+		labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				selectItem(position);
+			}
+		});
+
+		// long click listener
+		labelsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+				final List<NotesDatabaseEntry<Label>> labels = dbFacade.getAllLabels();
+				final int labelItemIndex = position - 1;
+
+				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
+					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
+					new AlertDialog.Builder(mainActivity).
+							setTitle(labelEntry.getEntry().getName()).
+							setItems(R.array.label_actions, new LabelActionDialogClickListener(labelEntry)).
+							setNegativeButton(R.string.common_cancel, null).
+							create().show();
+
+				}
+				return true;
+			}
+
+		});
+
+		return labelsListView;
+	}
+
+	public boolean isDrawerOpen() {
+		return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
+	}
+
+	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+		fragmentContainerView = getActivity().findViewById(fragmentId);
+		this.drawerLayout = drawerLayout;
+
+		this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+
+		drawerToggle = new ActionBarDrawerToggle(
+				getActivity(),
+				NavigationDrawerFragment.this.drawerLayout,
+				R.drawable.ic_drawer,
+				R.string.navigation_drawer_open,
+				R.string.navigation_drawer_close
+		) {
+			@Override
+			public void onDrawerClosed(View drawerView) {
+				super.onDrawerClosed(drawerView);
+				if (!isAdded()) {
+					return;
+				}
+
+				getActivity().invalidateOptionsMenu();
+			}
+
+			@Override
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				if (!isAdded()) {
+					return;
+				}
+
+				if (!userLearnedDrawer) {
+					userLearnedDrawer = true;
+					SharedPreferences sp = PreferenceManager
+							.getDefaultSharedPreferences(getActivity());
+					sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+				}
+
+				getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+			}
+		};
+
+		if (!userLearnedDrawer && !fromSavedInstanceState) {
+			this.drawerLayout.openDrawer(fragmentContainerView);
+		}
+
+		this.drawerLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				drawerToggle.syncState();
+			}
+		});
+
+		this.drawerLayout.setDrawerListener(drawerToggle);
+	}
+
+	private void selectItem(int position) {
+		currentSelectedPosition = position;
+		if (mainActivity != null) {
+			if (position == labelsListView.getCount() - 1) {
+				showLabelEditDialog(null);
+			} else {
+				if (drawerLayout != null) {
+					drawerLayout.closeDrawer(fragmentContainerView);
+				}
+
+				final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
+				final int labelId;
+				final String newTitle;
+				if (position == ALL_LABELS_HEADER_POSITION) {
+					labelId = ALL_LABELS;
+					newTitle = getString(R.string.labels_drawer_all_notes);
+				} else {
+					NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
+					labelId = labelEntry.getId();
+					newTitle = labelEntry.getEntry().getName();
+				}
+
+				// TODO doesn't work after rotation
+				mainActivity.onSelectedLabel(labelId, newTitle);
+			}
+		}
+	}
+
+	private void showLabelEditDialog(final NotesDatabaseEntry<Label> labelToEdit) {
+		final boolean editMode = labelToEdit != null; // if null - create mode
+
+		final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
+
+		// label name
+		if (editMode) {
+			((TextView) labelDialogView.findViewById(R.id.label_name)).setText(labelToEdit.getEntry().getName());
+		}
+
+		// label color
+		final int selectedColor = editMode ? labelToEdit.getEntry().getColor() : Label.DEFAULT_COLOR_INDEX;
+		final LabelEditDialogCheckBoxListener checkBoxListener =
+				new LabelEditDialogCheckBoxListener((CheckBox) labelDialogView.findViewById(COLORS_CHECKBOXES_IDS[selectedColor]));
+		for (int id : COLORS_CHECKBOXES_IDS) {
+			labelDialogView.findViewById(id).setOnClickListener(checkBoxListener);
+		}
+
+		// dialog creation
+		new AlertDialog.Builder(mainActivity)
+				.setView(labelDialogView)
+				.setPositiveButton(R.string.common_save, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						final String labelName = ((EditText) labelDialogView.findViewById(R.id.label_name)).getText().toString();
+						NotesApplication.executeInBackground(new Runnable() {
+							@Override
+							public void run() {
+								final Label newLabel = new Label(labelName, getIndexOfSelectedColor(labelDialogView));
+								if (editMode) {
+									dbFacade.updateLabel(labelToEdit.getId(), newLabel);
+								} else {
+									dbFacade.insertLabel(newLabel);
+								}
+								mainActivity.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										labelsListAdapter.notifyDataSetChanged();
+									}
+								});
+							}
+						});
+					}
+				})
+				.setNegativeButton(R.string.common_cancel, null)
+				.create().show();
+	}
 
 	private int getIndexOfSelectedColor(View labelEditDialogView) {
 		for (int i = 0; i < COLORS_CHECKBOXES_IDS.length; i++) {
@@ -243,48 +294,48 @@ public class NavigationDrawerFragment extends Fragment {
 		return 0;
 	}
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mainActivity = (MainActivity) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerListener.");
-        }
-    }
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mainActivity = (MainActivity) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException("Activity must implement NavigationDrawerListener.");
+		}
+	}
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mainActivity = null;
-    }
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mainActivity = null;
+	}
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition);
-    }
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition);
+	}
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (drawerLayout != null && isDrawerOpen()) {
-            inflater.inflate(R.menu.drawer, menu);
-            showGlobalContextActionBar();
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		if (drawerLayout != null && isDrawerOpen()) {
+			inflater.inflate(R.menu.drawer, menu);
+			showGlobalContextActionBar();
+		}
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 
 //	    if (item.getItemId() == R.id.show_bookmarks) {
 //
@@ -296,33 +347,32 @@ public class NavigationDrawerFragment extends Fragment {
 //		    return true;
 //	    }
 
-        return super.onOptionsItemSelected(item);
-    }
+		return super.onOptionsItemSelected(item);
+	}
 
-    private void showGlobalContextActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
-    }
+	private void showGlobalContextActionBar() {
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setTitle(R.string.app_name);
+	}
 
-    private ActionBar getActionBar() {
-        return getActivity().getActionBar();
-    }
+	private ActionBar getActionBar() {
+		return getActivity().getActionBar();
+	}
 
 
 	/**
 	 * ******************************************
-	 *
+	 * <p/>
 	 * Inner classes
-	 *
+	 * <p/>
 	 * *******************************************
 	 */
 
 	private class LabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
 
-
-		private int [] labelsColors;
+		private int[] labelsColors;
 
 		public LabelsListAdapter() {
 			super(mainActivity, 0, dbFacade.getAllLabels());
@@ -354,12 +404,64 @@ public class NavigationDrawerFragment extends Fragment {
 
 	}
 
+	private class LabelActionDialogClickListener implements DialogInterface.OnClickListener {
+
+		private final int EDIT_INDEX = 0;
+		private final int DELETE_INDEX = 1;
+
+		private NotesDatabaseEntry<Label> labelEntry;
+
+		public LabelActionDialogClickListener(NotesDatabaseEntry<Label> labelEntry) {
+			if (labelEntry == null) {
+				throw new NullPointerException("Label entry is null");
+			}
+			this.labelEntry = labelEntry;
+		}
+
+		@Override
+		public void onClick(DialogInterface dialogInterface, int i) {
+			switch (i) {
+				case EDIT_INDEX:
+					showLabelEditDialog(labelEntry);
+					break;
+				case DELETE_INDEX:
+					showDeleteDialog();
+					break;
+			}
+		}
+
+		private void showDeleteDialog() {
+			new AlertDialog.Builder(mainActivity).
+					setTitle(labelEntry.getEntry().getName()).
+					setMessage("\n" + getString(R.string.label_action_delete_confirm_dialog_text) + "\n").
+					setNegativeButton(R.string.common_no, null).
+					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							NotesApplication.executeInBackground(new Runnable() {
+								@Override
+								public void run() {
+									dbFacade.deleteLabel(labelEntry.getId());
+									mainActivity.runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+											labelsListAdapter.notifyDataSetChanged();
+										}
+									});
+								}
+							});
+						}
+					}).create().show();
+		}
+	}
+
 	private class LabelEditDialogCheckBoxListener implements View.OnClickListener {
 
 		private CheckBox currentSelectedCheckBox;
 
 		public LabelEditDialogCheckBoxListener(CheckBox selectedCheckBox) {
 			currentSelectedCheckBox = selectedCheckBox;
+			currentSelectedCheckBox.setChecked(true);
 		}
 
 		@Override
@@ -369,9 +471,9 @@ public class NavigationDrawerFragment extends Fragment {
 		}
 	}
 
-    public static interface NavigationDrawerListener {
+	public static interface NavigationDrawerListener {
 
-        void onSelectedLabelId(int id);
+		void onSelectedLabel(int id, String newTitle);
 
-    }
+	}
 }

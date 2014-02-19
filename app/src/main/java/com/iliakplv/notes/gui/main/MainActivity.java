@@ -65,25 +65,10 @@ public class MainActivity extends Activity
 	}
 
 	@Override
-	public void onSelectedLabelId(int labelId) {
-		onSectionAttached(labelId + 1);
-
+	public void onSelectedLabel(int labelId, String newTitle) {
+		title = newTitle;
 		if (notesListFragment != null) {
 			notesListFragment.showNotesForLabel(labelId);
-		}
-	}
-
-	public void onSectionAttached(int number) {
-		switch (number) {
-			case 1:
-				title = "All notes";
-				break;
-			case 2:
-				title = "Label 1";
-				break;
-			case 3:
-				title = "Label 2";
-				break;
 		}
 	}
 
