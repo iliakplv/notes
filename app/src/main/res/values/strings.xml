@@ -17,6 +17,7 @@
 
 	<string name="empty_note_placeholder">Note</string>
 
+	<string name="note_action_labels">Change labels</string>
 	<string name="note_action_info">Note Info</string>
 	<string name="note_info_created">Created: %s</string>
 	<string name="note_info_modified">Modified: %s</string>

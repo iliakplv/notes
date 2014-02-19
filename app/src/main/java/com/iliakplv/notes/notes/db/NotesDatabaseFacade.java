@@ -8,6 +8,7 @@ import com.iliakplv.notes.notes.Label;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Author: Ilya Kopylov
@@ -125,6 +126,10 @@ public class NotesDatabaseFacade {
 		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
+	public Set<Integer> getLabelsIdsForNote(int noteId) {
+		return (Set<Integer>) performDatabaseTransaction(TransactionType.GetLabelsIdsForNote, noteId);
+	}
+
 	public synchronized int insertLabelToNote(int noteId, int labelId) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
 	}
@@ -182,6 +187,10 @@ public class NotesDatabaseFacade {
 			case GetLabelsForNote:
 				noteId = (Integer) args[0];
 				result = adapter.getLabelsForNote(noteId);
+				break;
+			case GetLabelsIdsForNote:
+				noteId = (Integer) args[0];
+				result = adapter.getLabelsIdsForNote(noteId);
 				break;
 			case GetNotesForLabel:
 				labelId = (Integer) args[0];
@@ -346,6 +355,7 @@ public class NotesDatabaseFacade {
 		DeleteLabel,
 
 		GetLabelsForNote,
+		GetLabelsIdsForNote,
 		GetNotesForLabel,
 		InsertLabelToNote,
 		DeleteLabelFromNote

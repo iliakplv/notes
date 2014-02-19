@@ -17,6 +17,7 @@
 
 	<string name="empty_note_placeholder">Заметка</string>
 
+	<string name="note_action_labels">Изменить метки</string>
 	<string name="note_action_info">Свойства</string>
 	<string name="note_info_created">Создана: %s</string>
 	<string name="note_info_modified">Изменена: %s</string>

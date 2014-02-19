@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
@@ -22,6 +23,7 @@ import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Author: Ilya Kopylov
@@ -225,8 +227,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 
-		private final int INFO_INDEX = 0;
-		private final int DELETE_INDEX = 1;
+		private final int LABELS_INDEX = 0;
+		private final int INFO_INDEX = 1;
+		private final int DELETE_INDEX = 2;
 
 		private NotesDatabaseEntry<AbstractNote> noteEntry;
 
@@ -240,6 +243,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		@Override
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
+				case LABELS_INDEX:
+					showLabelsDialog();
+					break;
 				case INFO_INDEX:
 					showNoteInfo();
 					break;
@@ -287,6 +293,62 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
 		}
+
+		private void showLabelsDialog() {
+			final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
+			final Set<Integer> noteLabelsIds = dbFacade.getLabelsIdsForNote(noteEntry.getId());
+
+			// TODO implement
+			new AlertDialog.Builder(mainActivity)
+					.setTitle(getTitleForNote(noteEntry))
+					.setAdapter(new NoteLabelsListAdapter(allLabels, noteLabelsIds), null)
+					.setPositiveButton(R.string.common_ok, null)
+					.setNegativeButton(R.string.common_cancel, null)
+					.create().show();
+		}
+	}
+
+	private class NoteLabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+
+		private int[] labelsColors;
+		private List<NotesDatabaseEntry<Label>> allLabels;
+		private Set<Integer> noteLabelsIds;
+
+		public NoteLabelsListAdapter(List<NotesDatabaseEntry<Label>> allLabels, Set<Integer> noteLabelsIds) {
+			super(mainActivity, 0, dbFacade.getAllLabels());
+			labelsColors = getResources().getIntArray(R.array.label_colors);
+			this.allLabels = allLabels;
+			this.noteLabelsIds = noteLabelsIds;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final View view;
+			if (convertView != null) {
+				view = convertView;
+			} else {
+				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item_checkbox, parent, false);
+			}
+
+			final NotesDatabaseEntry<com.iliakplv.notes.notes.Label> entry = allLabels.get(position);
+			final View color = view.findViewById(R.id.label_color);
+			final TextView name = (TextView) view.findViewById(R.id.label_name);
+			name.setText(entry.getEntry().getName());
+			color.setBackgroundColor(labelsColors[entry.getEntry().getColor()]);
+
+			if (noteLabelsIds.contains(entry.getId())) {
+				final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+				checkBox.setChecked(true);
+			}
+
+			return view;
+		}
+
+		@Override
+		public int getCount() {
+			return dbFacade.getAllLabels().size();
+		}
+
 	}
 
 }

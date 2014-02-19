@@ -13,7 +13,9 @@ import com.iliakplv.notes.notes.TextNote;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Author: Ilya Kopylov
@@ -191,15 +193,8 @@ class NotesDatabaseAdapter {
 	// notes_labels queries
 
 	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
-		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
-				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
-				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
-				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ")" +
-				" ORDER BY " + KEY_ID + " DESC;";
-		Cursor cursor = db.rawQuery(query, null);
-
+		final Cursor cursor = getLabelsForNoteCursor(noteId);
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
-
 		if (cursor.moveToFirst()) {
 			do {
 				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
@@ -207,8 +202,27 @@ class NotesDatabaseAdapter {
 				result.add(entry);
 			} while (cursor.moveToNext());
 		}
-
 		return result;
+	}
+
+	Set<Integer> getLabelsIdsForNote(int noteId) {
+		final Cursor cursor = getLabelsForNoteCursor(noteId);
+		Set<Integer> result = new HashSet<Integer>();
+		if (cursor.moveToFirst()) {
+			do {
+				result.add(cursor.getInt(KEY_ID_COLUMN));
+			} while (cursor.moveToNext());
+		}
+		return result;
+	}
+
+	private Cursor getLabelsForNoteCursor(int noteId) {
+		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
+				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
+				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
+				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ")" +
+				" ORDER BY " + KEY_ID + " DESC;";
+		return db.rawQuery(query, null);
 	}
 
 	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
