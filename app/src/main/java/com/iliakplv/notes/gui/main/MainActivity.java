@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
@@ -116,8 +117,18 @@ public class MainActivity extends Activity
 	}
 
 	public void createNewNote() {
-		// TODO consider moving this to background thread
-		onNoteSelected(NotesDatabaseFacade.getInstance().insertNote(new TextNote()));
+		NotesApplication.executeInBackground(new Runnable() {
+			@Override
+			public void run() {
+				final int newNoteId = NotesDatabaseFacade.getInstance().insertNote(new TextNote());
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onNoteSelected(newNoteId);
+					}
+				});
+			}
+		});
 	}
 
 
