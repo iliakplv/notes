@@ -27,7 +27,7 @@
 	<string name="note_details_body_hint">Text</string>
 
 	<string name="labels_drawer_all_notes">All notes</string>
-	<string name="labels_drawer_add_label">Add label</string>
+	<string name="labels_drawer_add_label">New label</string>
 
 	<string name="label_action_edit">Edit</string>
 	<string name="label_action_delete">Delete</string>
