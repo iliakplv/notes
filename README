@@ -1,4 +1,4 @@
-There are many notepad apps for Android. But this one is better.
+There are lots of notepads for Android. But this one is better.
 
 ----------------------------------------------------------------
 
@@ -25,4 +25,4 @@ Planned features
 ----------------------------------------------------------------
 
 Application core is in the <project>/app directory.
-Use Gradle to build. Gradle Wrapper provided.
+Just use Gradle to build. Gradle Wrapper provided.
