@@ -2,19 +2,27 @@ There are many notepad apps for Android. But this one is better.
 
 ----------------------------------------------------------------
 
-Application core is under <project>/app directory
+Current features
+
+  - Notes
+
+  - Labels with names and colors
+
+  - Navigation
 
 
-Required dependencies:
+Planned features
 
-[lib project] Android Support v7 appcompat (r18)
-	<project>/appcompat
+  - Export/Import using external storage
 
-[lib] Android Support v4 (r18)
-	<project>/appcompat/libs/android-support-v4.jar
+  - Sync with cloud service (Dropbox or another)
 
-[lib] Joda-Time (v2.3)
-	<project>/app/libs/joda-time-2.3.jar
+  - Archive old notes
+
+  - Notes/Labels search with suggest
 
 
-Or simply use Gradle to build it!
+----------------------------------------------------------------
+
+Application core is in the <project>/app directory.
+Use Gradle to build. Gradle Wrapper provided.

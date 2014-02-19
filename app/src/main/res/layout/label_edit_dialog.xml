@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="10dp">
+
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center"
+		android:layout_marginBottom="@dimen/label_edit_title_bottom_margin">
+
+		<EditText
+			style="@style/LabelEditTitle"
+			android:id="@+id/label_name"
+			android:hint="@string/label_title_hint"/>
+
+	</LinearLayout>
+
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_marginBottom="@dimen/label_edit_select_color_text_bottom_margin"
+			android:textSize="@dimen/label_edit_select_color_text_size"
+			android:text="@string/label_edit_color_select"/>
+
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center"
+			android:layout_marginBottom="5dp">
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:layout_marginLeft="0dp"
+				android:id="@+id/color_1"
+				android:background="@color/label_color_default"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_2"
+				android:background="@color/label_color_red"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_3"
+				android:background="@color/label_color_orange"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_4"
+				android:background="@color/label_color_yellow"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center"
+			android:layout_marginBottom="@dimen/label_edit_radio_button_bottom_margin">
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:layout_marginLeft="0dp"
+				android:id="@+id/color_5"
+				android:background="@color/label_color_green"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_6"
+				android:background="@color/label_color_light_blue"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_7"
+				android:background="@color/label_color_dark_blue"/>
+
+			<CheckBox
+				style="@style/LabelEditColorCheckBox"
+				android:id="@+id/color_8"
+				android:background="@color/label_color_purple"/>
+
+		</LinearLayout>
+
+</LinearLayout>

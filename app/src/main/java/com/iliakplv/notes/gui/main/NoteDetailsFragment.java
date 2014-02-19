@@ -1,8 +1,8 @@
 package com.iliakplv.notes.gui.main;
 
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +28,8 @@ public class NoteDetailsFragment extends Fragment {
 
 	private int noteId = MainActivity.NO_DETAILS;
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-	private NotesDatabaseEntry noteEntry;
+	private NotesDatabaseEntry<AbstractNote> noteEntry;
 
-	private View dualPaneDetails;
-	private View dualPaneSeparator;
 	private EditText title;
 	private EditText body;
 
@@ -64,24 +62,11 @@ public class NoteDetailsFragment extends Fragment {
 		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
 		final boolean gotNoteToShow = noteEntry != null;
 
-		dualPaneDetails = getActivity().findViewById(R.id.note_details_fragment);
-		dualPaneSeparator = getActivity().findViewById(R.id.dual_pane_fragments_separator);
-		showDetailsPane(gotNoteToShow);
 		if (gotNoteToShow) {
-			final AbstractNote note = noteEntry.getNote();
+			final AbstractNote note = noteEntry.getEntry();
 			title.setHint(NotesListFragment.getTitleForNote(TextNote.EMPTY, noteEntry.getId()));
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
-		}
-	}
-
-	private void showDetailsPane(boolean show) {
-		final int visibility = show ? View.VISIBLE : View.GONE;
-		if (dualPaneDetails != null) {
-			dualPaneDetails.setVisibility(visibility);
-		}
-		if (dualPaneSeparator != null) {
-			dualPaneSeparator.setVisibility(visibility);
 		}
 	}
 
@@ -106,7 +91,7 @@ public class NoteDetailsFragment extends Fragment {
 		if (noteEntry != null) {
 			final String newTitle = title.getText().toString();
 			final String newBody = body.getText().toString();
-			final AbstractNote currentNote = noteEntry.getNote();
+			final AbstractNote currentNote = noteEntry.getEntry();
 			if (!StringUtils.equals(currentNote.getBody(), newBody) ||
 					!StringUtils.equals(currentNote.getTitle(), newTitle)) {
 				currentNote.setTitle(newTitle);

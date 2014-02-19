@@ -1,33 +1,25 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
-    }
-}
-
 apply plugin: 'android'
-
-repositories {
-    mavenCentral()
-}
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
-
-	dependencies {
-		compile project(":appcompat")
-	}
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 18
+        minSdkVersion 14
+        targetSdkVersion 19
+	    versionCode 3
+	    versionName "1.9"
 
 	    testPackageName "com.iliakplv.notes.tests"
 	    testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
+
+	buildTypes {
+		release {
+			runProguard false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+		}
+	}
 
 	testOptions {
 		resultsDir = "$project.buildDir/tests"
@@ -35,7 +27,6 @@ android {
 }
 
 dependencies {
-	compile files('../appcompat/libs/android-support-v4.jar')
-	compile files('../appcompat/libs/android-support-v7-appcompat.jar')
-	compile files('libs/joda-time-2.3.jar')
+	compile 'com.android.support:support-v4:+'
+	compile "joda-time:joda-time:2.3"
 }

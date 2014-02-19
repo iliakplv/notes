@@ -3,48 +3,38 @@
 
 	<string name="app_name">Заметки</string>
 
-
-	<!--
-		Common
-	-->
+	<string name="navigation_drawer_open">Показать навигацию</string>
+	<string name="navigation_drawer_close">Скрыть навигацию</string>
 
 	<string name="common_ok">OK</string>
+	<string name="common_save">Сохранить</string>
 	<string name="common_cancel">Отмена</string>
 	<string name="common_yes">Да</string>
 	<string name="common_no">Нет</string>
 
-
-	<!--
-		Action Bar
-	-->
-
 	<string name="action_bar_add">Новая заметка</string>
-
-
-	<!--
-		Notes List
-	-->
+	<string name="action_settings">Настройки</string>
 
 	<string name="empty_note_placeholder">Заметка</string>
 
-
-	<!--
-		Note Actions
-	-->
-
+	<string name="note_action_labels">Изменить метки</string>
 	<string name="note_action_info">Свойства</string>
 	<string name="note_info_created">Создана: %s</string>
 	<string name="note_info_modified">Изменена: %s</string>
 	<string name="note_action_delete">Удалить</string>
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
 
-
-	<!--
-		Note Details
-	-->
-
 	<string name="note_details_title_hint">Заголовок</string>
 	<string name="note_details_body_hint">Текст</string>
 
+	<string name="labels_drawer_all_notes">Все заметки</string>
+	<string name="labels_drawer_add_label">Новая метка</string>
+
+	<string name="label_action_edit">Изменить</string>
+	<string name="label_action_delete">Удалить</string>
+	<string name="label_action_delete_confirm_dialog_text">Удалить эту метку?</string>
+
+	<string name="label_title_hint">Метка</string>
+	<string name="label_edit_color_select">Цвет метки</string>
 
 </resources>

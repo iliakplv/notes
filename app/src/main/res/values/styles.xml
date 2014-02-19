@@ -32,7 +32,7 @@
 	</style>
 
 	<style name="NoteListItemText" parent="android:Widget.TextView">
-		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:lines">1</item>
 	</style>
@@ -48,15 +48,13 @@
 		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
 	</style>
 
-
-	<!--
-		Separator
-	-->
-
-	<style name="NoteFragmentsSeparator">
-		<item name="android:layout_width">@dimen/note_fragments_separator</item>
-		<item name="android:layout_height">match_parent</item>
-		<item name="android:background">@color/note_fragments_separator</item>
+	<style name="NoteDetailsLabel">
+		<item name="android:gravity">right|top</item>
+		<item name="android:layout_width">@dimen/note_list_item_label_width</item>
+		<item name="android:layout_height">@dimen/note_list_item_label_height</item>
+		<item name="android:layout_marginLeft">@dimen/note_list_item_label_margin_left</item>
+		<item name="android:layout_marginTop">@dimen/note_list_item_label_margin_top</item>
+		<item name="android:visibility">gone</item>
 	</style>
 
 
@@ -89,5 +87,23 @@
 		<item name="android:hint">@string/note_details_body_hint</item>
 	</style>
 
+
+	<!--
+		Label edit
+	-->
+
+	<style name="LabelEditTitle" parent="android:Widget.TextView">
+		<item name="android:layout_width">@dimen/label_edit_title_width</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
+		<item name="android:lines">1</item>
+	</style>
+
+	<style name="LabelEditColorCheckBox">
+		<item name="android:layout_width">56dp</item>
+		<item name="android:layout_height">48dp</item>
+		<item name="android:layout_marginLeft">@dimen/label_edit_radio_button_side_margin</item>
+	</style>
 
 </resources>

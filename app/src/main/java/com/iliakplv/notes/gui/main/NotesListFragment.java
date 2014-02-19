@@ -2,23 +2,30 @@ package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Author: Ilya Kopylov
@@ -31,6 +38,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
 	private boolean listeningDatabase = false;
+
+	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private int currentLabelId = ALL_LABELS;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -49,10 +59,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onResume() {
 		super.onResume();
-		// TODO [ui] list view choice mode
-		if (getFragmentManager().findFragmentById(R.id.note_details_fragment) != null) { // Dual pane layout
-			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		}
 		startListeningDatabase();
 	}
 
@@ -64,8 +70,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(dbFacade.getAllNotes().get(position).getId());
-		getListView().setItemChecked(position, true);
+		mainActivity.onNoteSelected(dbFacade.getNotesForLabel(currentLabelId).get(position).getId());
 	}
 
 	@Override
@@ -73,11 +78,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		return showNoteMenu(i);
 	}
 
-	public boolean showNoteMenu(int position) {
-		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getAllNotes().get(position);
+	private boolean showNoteMenu(int position) {
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 
 		// Show available actions for note
-		new AlertDialog.Builder(getActivity()).
+		new AlertDialog.Builder(mainActivity).
 				setTitle(getTitleForNote(selectedNoteEntry)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.common_cancel, null).
@@ -88,11 +93,26 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onDatabaseChanged() {
-		if (listeningDatabase && listAdapter != null) {
-			getActivity().runOnUiThread(new Runnable() {
+		if (listeningDatabase) {
+			updateListView();
+		}
+	}
+
+	public void showNotesForLabel(int labelId) {
+		if (labelId == ALL_LABELS || labelId >= 1) {
+			currentLabelId = labelId;
+			updateListView();
+		} else {
+			throw new IllegalArgumentException("Wrong label id value: " + labelId);
+		}
+	}
+
+	private void updateListView() {
+		if (mainActivity != null) {
+			mainActivity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (listeningDatabase && listAdapter != null) {
+					if (listAdapter != null) {
 						listAdapter.notifyDataSetChanged();
 					}
 				}
@@ -117,8 +137,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	// List item texts
 
-	public static String getTitleForNote(NotesDatabaseEntry entry) {
-		return getTitleForNote(entry.getNote(), entry.getId());
+	public static String getTitleForNote(NotesDatabaseEntry<AbstractNote> entry) {
+		return getTitleForNote(entry.getEntry(), entry.getId());
 	}
 
 	public static String getTitleForNote(AbstractNote note, int number) {
@@ -152,16 +172,31 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	/**
 	 * ******************************************
-	 * <p/>
+	 *
 	 * Inner classes
-	 * <p/>
+	 *
 	 * *******************************************
 	 */
 
 	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
 
+		private final int[] LABELS_IDS = {
+				R.id.label_1,
+				R.id.label_2,
+				R.id.label_3,
+				R.id.label_4,
+				R.id.label_5};
+
+		private int [] labelsColors;
+
 		public NotesListAdapter() {
-			super(NotesListFragment.this.getActivity(), 0, dbFacade.getAllNotes());
+			super(mainActivity, 0, dbFacade.getNotesForLabel(currentLabelId));
+			labelsColors = getResources().getIntArray(R.array.label_colors);
+		}
+
+		@Override
+		public int getCount() {
+			return dbFacade.getNotesForLabelCount(currentLabelId);
 		}
 
 		@Override
@@ -173,34 +208,34 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry entry = dbFacade.getAllNotes().get(position);
+			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(getTitleForNote(entry));
-			subtitle.setText(getBodyForNote(entry.getNote()));
+			subtitle.setText(getBodyForNote(entry.getEntry()));
 
-//			final boolean selected = getListView().isItemChecked(position);
-//			final int titleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_title;
-//			final int subtitleColor = selected ? R.color.note_list_item_selected : R.color.note_list_item_subtitle;
-//			title.setTextColor(getResources().getColor(titleColor));
-//			subtitle.setTextColor(getResources().getColor(subtitleColor));
+			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
+			for (int i = 0; i < LABELS_IDS.length; i++) {
+				final View labelView = view.findViewById(LABELS_IDS[i]);
+				if (i < labelEntries.size()) {
+					labelView.setBackgroundColor(labelsColors[labelEntries.get(i).getEntry().getColor()]);
+					labelView.setVisibility(View.VISIBLE);
+				} else {
+					labelView.setVisibility(View.GONE);
+				}
+			}
 
 			return view;
 		}
-
-		@Override
-		public int getCount() {
-			return dbFacade.getNotesCount();
-		}
-
 	}
 
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 
-		private final int INFO_INDEX = 0;
-		private final int DELETE_INDEX = 1;
+		private final int LABELS_INDEX = 0;
+		private final int INFO_INDEX = 1;
+		private final int DELETE_INDEX = 2;
 
-		private NotesDatabaseEntry noteEntry;
+		private NotesDatabaseEntry<AbstractNote> noteEntry;
 
 		public NoteActionDialogClickListener(NotesDatabaseEntry noteEntry) {
 			if (noteEntry == null) {
@@ -212,6 +247,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		@Override
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
+				case LABELS_INDEX:
+					showNoteLabelsDialog();
+					break;
 				case INFO_INDEX:
 					showNoteInfo();
 					break;
@@ -222,19 +260,19 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		private void showDeleteDialog() {
-			new AlertDialog.Builder(getActivity()).
+			new AlertDialog.Builder(mainActivity).
 					setTitle(getTitleForNote(noteEntry)).
 					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							new Thread(new Runnable() {
+							NotesApplication.executeInBackground(new Runnable() {
 								@Override
 								public void run() {
 									NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
 								}
-							}).start();
+							});
 						}
 					}).create().show();
 		}
@@ -242,23 +280,125 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private void showNoteInfo() {
 			final String timeFormat = "HH:mm";
 
-			final DateTime created = noteEntry.getNote().getCreateTime();
+			final DateTime created = noteEntry.getEntry().getCreateTime();
 			final String createdString = created.toLocalDate().toString() + " " +
 					created.toLocalTime().toString(timeFormat);
 
-			final DateTime changed = noteEntry.getNote().getChangeTime();
+			final DateTime changed = noteEntry.getEntry().getChangeTime();
 			final String changedString = changed.toLocalDate().toString() + " " +
 					changed.toLocalTime().toString(timeFormat);
 
 			final String info = "\n" + getString(R.string.note_info_created, createdString) +
 					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
 
-			new AlertDialog.Builder(getActivity()).
+			new AlertDialog.Builder(mainActivity).
 					setTitle(getTitleForNote(noteEntry)).
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
 		}
+
+		private void showNoteLabelsDialog() {
+
+			final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteEntry.getId());
+			new AlertDialog.Builder(mainActivity)
+					.setTitle(getTitleForNote(noteEntry))
+					.setAdapter(labelsAdapter, null)
+					.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							labelsAdapter.applyNoteLabelsChanges();
+						}
+					})
+					.setNegativeButton(R.string.common_cancel, null)
+					.create().show();
+		}
 	}
 
+	private class NoteLabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+
+		private final int[] labelsColors;
+
+		private final int noteId;
+		private final List<NotesDatabaseEntry<Label>> allLabels;
+		private final boolean[] currentLabels;
+		private final boolean[] selectedLabels;
+
+		public NoteLabelsListAdapter(int noteId) {
+			super(mainActivity, 0, dbFacade.getAllLabels());
+			labelsColors = getResources().getIntArray(R.array.label_colors);
+
+			this.noteId = noteId;
+			this.allLabels = dbFacade.getAllLabels();
+
+			final Set<Integer> currentNoteLabelsIds = dbFacade.getLabelsIdsForNote(noteId);
+			currentLabels = new boolean[allLabels.size()];
+			selectedLabels = new boolean[allLabels.size()];
+			for (int i = 0; i < currentLabels.length; i++) {
+				final boolean selected = currentNoteLabelsIds.contains(allLabels.get(i).getId());
+				currentLabels[i] = selected;
+				selectedLabels[i] = selected;
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return allLabels.size();
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			final View view;
+			if (convertView != null) {
+				view = convertView;
+			} else {
+				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item_checkbox, parent, false);
+			}
+
+			final View color = view.findViewById(R.id.label_color);
+			final TextView name = (TextView) view.findViewById(R.id.label_name);
+
+			final Label label = allLabels.get(position).getEntry();
+			name.setText(label.getName());
+			color.setBackgroundColor(labelsColors[label.getColor()]);
+
+			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);
+			checkBox.setChecked(currentLabels[position]);
+			// TODO refactor this
+			checkBox.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					selectedLabels[position] = ((CheckBox) v).isChecked();
+				}
+			});
+
+			return view;
+		}
+
+		public void applyNoteLabelsChanges() {
+			final Set<Integer> labelsIdsToAdd = new HashSet<Integer>();
+			final Set<Integer> labelsIdsToDelete = new HashSet<Integer>();
+
+			for (int i = 0; i < allLabels.size(); i++) {
+				final int labelId = allLabels.get(i).getId();
+				if (!currentLabels[i] && selectedLabels[i]) {
+					labelsIdsToAdd.add(labelId);
+				} else if (currentLabels[i] && !selectedLabels[i]) {
+					labelsIdsToDelete.add(labelId);
+				}
+			}
+
+			NotesApplication.executeInBackground(new Runnable() {
+				@Override
+				public void run() {
+					for (int labelId : labelsIdsToDelete) {
+						dbFacade.deleteLabelFromNote(noteId, labelId);
+					}
+					for (int labelId : labelsIdsToAdd) {
+						dbFacade.insertLabelToNote(noteId, labelId);
+					}
+				}
+			});
+		}
+	}
 }

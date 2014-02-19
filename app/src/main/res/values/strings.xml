@@ -3,48 +3,38 @@
 
 	<string name="app_name">Notes</string>
 
-
-	<!--
-		Common
-	-->
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
 
 	<string name="common_ok">OK</string>
+	<string name="common_save">Save</string>
 	<string name="common_cancel">Cancel</string>
 	<string name="common_yes">Yes</string>
 	<string name="common_no">No</string>
 
-
-	<!--
-		Action Bar
-	-->
-
 	<string name="action_bar_add">New note</string>
-
-
-	<!--
-		Notes List
-	-->
+	<string name="action_settings">Settings</string>
 
 	<string name="empty_note_placeholder">Note</string>
 
-
-	<!--
-		Note Actions
-	-->
-
+	<string name="note_action_labels">Change labels</string>
 	<string name="note_action_info">Note Info</string>
 	<string name="note_info_created">Created: %s</string>
 	<string name="note_info_modified">Modified: %s</string>
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
 
-
-	<!--
-		Note Details
-	-->
-
 	<string name="note_details_title_hint">Title</string>
 	<string name="note_details_body_hint">Text</string>
 
+	<string name="labels_drawer_all_notes">All notes</string>
+	<string name="labels_drawer_add_label">New label</string>
+
+	<string name="label_action_edit">Edit</string>
+	<string name="label_action_delete">Delete</string>
+	<string name="label_action_delete_confirm_dialog_text">Delete this label?</string>
+
+	<string name="label_title_hint">Label name</string>
+	<string name="label_edit_color_select">Label color</string>
 
 </resources>
