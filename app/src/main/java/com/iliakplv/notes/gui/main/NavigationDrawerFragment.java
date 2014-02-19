@@ -97,8 +97,6 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		labelsListView = (ListView) inflater.inflate(R.layout.navigation_drawer, container, false);
-		labelsListAdapter = new LabelsListAdapter();
-		labelsListView.setAdapter(labelsListAdapter);
 
 		// header
 		final View allLabelsItem = inflater.inflate(R.layout.label_list_item, container, false);
@@ -111,6 +109,10 @@ public class NavigationDrawerFragment extends Fragment {
 		((TextView) addNewLabelItem.findViewById(R.id.label_name)).setText(R.string.labels_drawer_add_label);
 		addNewLabelItem.findViewById(R.id.label_color).setVisibility(View.GONE);
 		labelsListView.addFooterView(addNewLabelItem);
+
+		// adapter
+		labelsListAdapter = new LabelsListAdapter();
+		labelsListView.setAdapter(labelsListAdapter);
 
 		// click listener
 		labelsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
