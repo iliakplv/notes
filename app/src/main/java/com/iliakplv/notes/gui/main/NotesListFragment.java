@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
@@ -22,6 +23,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -298,11 +300,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
 			final Set<Integer> noteLabelsIds = dbFacade.getLabelsIdsForNote(noteEntry.getId());
 
-			// TODO implement
+
+			final NoteLabelsListAdapter labelsAdapter =
+					new NoteLabelsListAdapter(noteEntry.getId(), allLabels, noteLabelsIds);
 			new AlertDialog.Builder(mainActivity)
 					.setTitle(getTitleForNote(noteEntry))
-					.setAdapter(new NoteLabelsListAdapter(allLabels, noteLabelsIds), null)
-					.setPositiveButton(R.string.common_ok, null)
+					.setAdapter(labelsAdapter, null)
+					.setPositiveButton(R.string.common_ok, new LabelsDialogSaveListener(labelsAdapter))
 					.setNegativeButton(R.string.common_cancel, null)
 					.create().show();
 		}
@@ -311,14 +315,21 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private class NoteLabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
 
 		private int[] labelsColors;
-		private List<NotesDatabaseEntry<Label>> allLabels;
-		private Set<Integer> noteLabelsIds;
 
-		public NoteLabelsListAdapter(List<NotesDatabaseEntry<Label>> allLabels, Set<Integer> noteLabelsIds) {
+		private final List<NotesDatabaseEntry<Label>> allLabels;
+		private final int noteId;
+		private final Set<Integer> noteLabelsIds;
+		private final Set<Integer> newNoteLabelsIds;
+
+		public NoteLabelsListAdapter(int noteId, List<NotesDatabaseEntry<Label>> allLabels, Set<Integer> noteLabelsIds) {
 			super(mainActivity, 0, dbFacade.getAllLabels());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
+
 			this.allLabels = allLabels;
+			this.noteId = noteId;
 			this.noteLabelsIds = noteLabelsIds;
+			newNoteLabelsIds = new HashSet<Integer>();
+			newNoteLabelsIds.addAll(noteLabelsIds);
 		}
 
 		@Override
@@ -339,16 +350,79 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			if (noteLabelsIds.contains(entry.getId())) {
 				final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkBox.setChecked(true);
+				checkBox.setOnCheckedChangeListener(new LabelsDialogCheckboxListener(entry.getId(), newNoteLabelsIds));
 			}
 
 			return view;
 		}
+
 
 		@Override
 		public int getCount() {
 			return dbFacade.getAllLabels().size();
 		}
 
+		public void updateNoteLabels() {
+			final Set<Integer> labelsIdsToAdd = new HashSet<Integer>();
+			final Set<Integer> labelsIdsToDelete = new HashSet<Integer>();
+
+			for (NotesDatabaseEntry<Label> labelEntry : allLabels) {
+				final int labelId = labelEntry.getId();
+				if (newNoteLabelsIds.contains(labelId) && !noteLabelsIds.contains(labelId)) {
+					labelsIdsToAdd.add(labelId);
+				} else if (!newNoteLabelsIds.contains(labelId) && noteLabelsIds.contains(labelId)) {
+					labelsIdsToDelete.add(labelId);
+				}
+			}
+
+			NotesApplication.executeInBackground(new Runnable() {
+				@Override
+				public void run() {
+					for (int labelId : labelsIdsToAdd) {
+						dbFacade.insertLabelToNote(noteId, labelId);
+					}
+					for (int labelId : labelsIdsToDelete) {
+						dbFacade.deleteLabelFromNote(noteId, labelId);
+					}
+				}
+			});
+		}
+
+	}
+
+	private class LabelsDialogCheckboxListener implements CompoundButton.OnCheckedChangeListener {
+
+		final private int labelId;
+		private final Set<Integer> newNoteLabelsIds;
+
+		private LabelsDialogCheckboxListener(int labelId, Set<Integer> newNoteLabelsIds) {
+			this.labelId = labelId;
+			this.newNoteLabelsIds = newNoteLabelsIds;
+		}
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (isChecked) {
+				newNoteLabelsIds.add(labelId);
+			} else {
+				newNoteLabelsIds.remove(labelId);
+			}
+
+		}
+	}
+
+	private class LabelsDialogSaveListener implements DialogInterface.OnClickListener {
+
+		private NoteLabelsListAdapter adapter;
+
+		private LabelsDialogSaveListener(NoteLabelsListAdapter adapter) {
+			this.adapter = adapter;
+		}
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			adapter.updateNoteLabels();
+		}
 	}
 
 }
