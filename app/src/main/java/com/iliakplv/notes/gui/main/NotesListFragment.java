@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
@@ -301,6 +303,12 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		private void showNoteLabelsDialog() {
+
+			// TODO implement label creation in NoteLabelsDialog
+			if(dbFacade.getAllLabels().size() == 0) {
+				Toast.makeText(mainActivity, "No labels created...", Toast.LENGTH_SHORT).show();
+				return;
+			}
 
 			final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteEntry.getId());
 			new AlertDialog.Builder(mainActivity)
