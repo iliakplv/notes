@@ -104,7 +104,8 @@ public class MainActivity extends Activity
 	}
 
 	private void onDetailsChanged(int newNoteId) {
-		currentNoteId = newNoteId;
+		setNoteId(newNoteId); // call this method first
+
 		invalidateOptionsMenu();
 
 		// subscribe/unsubscribe to note changes
@@ -155,7 +156,11 @@ public class MainActivity extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!navigationDrawerFragment.isDrawerOpen()) {
-			getMenuInflater().inflate(R.menu.main, menu);
+			if (isDetailsShown()) {
+				getMenuInflater().inflate(R.menu.note, menu);
+			} else {
+				getMenuInflater().inflate(R.menu.main, menu);
+			}
 			restoreActionBar();
 			return true;
 		}
@@ -191,6 +196,10 @@ public class MainActivity extends Activity
 	@Override
 	public int getNoteId() {
 		return currentNoteId;
+	}
+
+	private void setNoteId(int id) {
+		currentNoteId = id;
 	}
 
 	private void startListeningNote() {
