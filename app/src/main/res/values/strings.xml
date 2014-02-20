@@ -37,4 +37,13 @@
 	<string name="label_title_hint">Label name</string>
 	<string name="label_edit_color_select">Label color</string>
 
+	<string name="color_default">white</string>
+	<string name="color_red">red</string>
+	<string name="color_orange">orange</string>
+	<string name="color_yellow">yellow</string>
+	<string name="color_green">green</string>
+	<string name="color_light_blue">light blue</string>
+	<string name="color_dark_blue">dark blue</string>
+	<string name="color_purple">purple</string>
+
 </resources>

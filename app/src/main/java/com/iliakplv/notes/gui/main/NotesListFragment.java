@@ -153,7 +153,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final String suffix = (number > 1) ? " " + String.valueOf(number) : "";
 			return NotesApplication.getContext().getString(R.string.empty_note_placeholder) + suffix;
 		}
-}
+	}
 
 	public static String getBodyForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
@@ -222,9 +222,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				if (i < labelEntries.size()) {
 					final Label label = labelEntries.get(i).getEntry();
 					labelView.setBackgroundColor(labelsColors[label.getColor()]);
-					labelView.setText(!StringUtils.isNullOrEmpty(label.getName()) ?
-							label.getName().substring(0, 1).toUpperCase() :
-							"");
+					labelView.setText(getLetterForLabelName(label.getName()));
 					labelView.setVisibility(View.VISIBLE);
 				} else {
 					labelView.setVisibility(View.GONE);
@@ -232,6 +230,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			return view;
+		}
+
+		private String getLetterForLabelName(String name) {
+			return StringUtils.isNullOrEmpty(name) ? "" : name.substring(0, 1).toUpperCase();
 		}
 	}
 
@@ -365,7 +367,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
 
 			final Label label = allLabels.get(position).getEntry();
-			name.setText(label.getName());
+			name.setText(NavigationDrawerFragment.getTitleForLabel(label));
 			color.setBackgroundColor(labelsColors[label.getColor()]);
 
 			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);

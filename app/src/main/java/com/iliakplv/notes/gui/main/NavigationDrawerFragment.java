@@ -30,9 +30,11 @@ import android.widget.TextView;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.List;
 
@@ -55,6 +57,9 @@ public class NavigationDrawerFragment extends Fragment {
 			R.id.color_7,
 			R.id.color_8
 	};
+
+	private static final String[] COLORS_NAMES =
+			NotesApplication.getContext().getResources().getStringArray(R.array.label_colors_names);
 
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
@@ -133,7 +138,7 @@ public class NavigationDrawerFragment extends Fragment {
 				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
 					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
 					new AlertDialog.Builder(mainActivity).
-							setTitle(labelEntry.getEntry().getName()).
+							setTitle(getTitleForLabel(labelEntry.getEntry())).
 							setItems(R.array.label_actions, new LabelActionDialogClickListener(labelEntry)).
 							setNegativeButton(R.string.common_cancel, null).
 							create().show();
@@ -229,7 +234,7 @@ public class NavigationDrawerFragment extends Fragment {
 				} else {
 					NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
 					labelId = labelEntry.getId();
-					newTitle = labelEntry.getEntry().getName();
+					newTitle = getTitleForLabel(labelEntry.getEntry());
 				}
 
 				// TODO doesn't work after rotation
@@ -363,6 +368,14 @@ public class NavigationDrawerFragment extends Fragment {
 		return getActivity().getActionBar();
 	}
 
+	public static String getTitleForLabel(Label label) {
+		if (!StringUtils.isNullOrEmpty(label.getName())) {
+			return label.getName();
+		} else {
+			return "(" + COLORS_NAMES[label.getColor()] + ")";
+		}
+	}
+
 
 	/**
 	 * ******************************************
@@ -390,10 +403,10 @@ public class NavigationDrawerFragment extends Fragment {
 				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry<com.iliakplv.notes.notes.Label> entry = dbFacade.getAllLabels().get(position);
+			final NotesDatabaseEntry<Label> entry = dbFacade.getAllLabels().get(position);
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
-			name.setText(entry.getEntry().getName());
+			name.setText(getTitleForLabel(entry.getEntry()));
 			color.setBackgroundColor(labelsColors[entry.getEntry().getColor()]);
 
 			return view;
@@ -434,7 +447,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 		private void showDeleteDialog() {
 			new AlertDialog.Builder(mainActivity).
-					setTitle(labelEntry.getEntry().getName()).
+					setTitle(getTitleForLabel(labelEntry.getEntry())).
 					setMessage("\n" + getString(R.string.label_action_delete_confirm_dialog_text) + "\n").
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {

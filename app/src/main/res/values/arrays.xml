@@ -12,6 +12,11 @@
 		<item>@string/label_action_delete</item>
 	</array>
 
+
+	<!--
+		NB! Sizes of next two arrays must be equal!
+	-->
+
 	<array name="label_colors">
 		<item>@color/label_color_default</item>
 		<item>@color/label_color_red</item>
@@ -21,6 +26,17 @@
 		<item>@color/label_color_light_blue</item>
 		<item>@color/label_color_dark_blue</item>
 		<item>@color/label_color_purple</item>
+	</array>
+
+	<array name="label_colors_names">
+		<item>@string/color_default</item>
+		<item>@string/color_red</item>
+		<item>@string/color_orange</item>
+		<item>@string/color_yellow</item>
+		<item>@string/color_green</item>
+		<item>@string/color_light_blue</item>
+		<item>@string/color_dark_blue</item>
+		<item>@string/color_purple</item>
 	</array>
 
 </resources>
