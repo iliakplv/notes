@@ -223,7 +223,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					final Label label = labelEntries.get(i).getEntry();
 					labelView.setBackgroundColor(labelsColors[label.getColor()]);
 					labelView.setText(!StringUtils.isNullOrEmpty(label.getName()) ?
-							label.getName().substring(0, 1) :
+							label.getName().substring(0, 1).toUpperCase() :
 							"");
 					labelView.setVisibility(View.VISIBLE);
 				} else {
