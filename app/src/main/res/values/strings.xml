@@ -42,8 +42,8 @@
 	<string name="color_orange">orange</string>
 	<string name="color_yellow">yellow</string>
 	<string name="color_green">green</string>
-	<string name="color_light_blue">light blue</string>
-	<string name="color_dark_blue">dark blue</string>
+	<string name="color_blue">blue</string>
 	<string name="color_purple">purple</string>
+	<string name="color_grey">grey</string>
 
 </resources>

@@ -42,8 +42,8 @@
 	<string name="color_orange">оранжевый</string>
 	<string name="color_yellow">желтый</string>
 	<string name="color_green">зеленый</string>
-	<string name="color_light_blue">голубой</string>
-	<string name="color_dark_blue">синий</string>
+	<string name="color_blue">синий</string>
 	<string name="color_purple">фиолетовый</string>
+	<string name="color_grey">серый</string>
 
 </resources>

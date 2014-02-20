@@ -23,9 +23,9 @@
 		<item>@color/label_color_orange</item>
 		<item>@color/label_color_yellow</item>
 		<item>@color/label_color_green</item>
-		<item>@color/label_color_light_blue</item>
-		<item>@color/label_color_dark_blue</item>
+		<item>@color/label_color_blue</item>
 		<item>@color/label_color_purple</item>
+		<item>@color/label_color_grey</item>
 	</array>
 
 	<array name="label_colors_names">
@@ -34,9 +34,9 @@
 		<item>@string/color_orange</item>
 		<item>@string/color_yellow</item>
 		<item>@string/color_green</item>
-		<item>@string/color_light_blue</item>
-		<item>@string/color_dark_blue</item>
+		<item>@string/color_blue</item>
 		<item>@string/color_purple</item>
+		<item>@string/color_grey</item>
 	</array>
 
 </resources>
