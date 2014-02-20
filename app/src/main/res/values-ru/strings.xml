@@ -15,7 +15,7 @@
 	<string name="action_bar_add">Новая заметка</string>
 	<string name="action_settings">Настройки</string>
 
-	<string name="empty_note_placeholder">Заметка</string>
+	<string name="empty_note_placeholder">(пустая заметка)</string>
 
 	<string name="note_action_labels">Изменить метки</string>
 	<string name="note_action_info">Свойства</string>

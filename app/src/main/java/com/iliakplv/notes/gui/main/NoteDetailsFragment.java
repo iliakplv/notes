@@ -11,7 +11,6 @@ import android.widget.EditText;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
-import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
@@ -64,7 +63,6 @@ public class NoteDetailsFragment extends Fragment {
 
 		if (gotNoteToShow) {
 			final AbstractNote note = noteEntry.getEntry();
-			title.setHint(NotesListFragment.getTitleForNote(TextNote.EMPTY, noteEntry.getId()));
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
 		}

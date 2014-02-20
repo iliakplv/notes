@@ -15,7 +15,7 @@
 	<string name="action_bar_add">New note</string>
 	<string name="action_settings">Settings</string>
 
-	<string name="empty_note_placeholder">Note</string>
+	<string name="empty_note_placeholder">(empty note)</string>
 
 	<string name="note_action_labels">Change labels</string>
 	<string name="note_action_info">Note Info</string>

@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.iliakplv.notes.NotesApplication;
@@ -83,7 +82,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		// Show available actions for note
 		new AlertDialog.Builder(mainActivity).
-				setTitle(getTitleForNote(selectedNoteEntry)).
+				setTitle(getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.common_cancel, null).
 				create().show();
@@ -137,11 +136,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	// List item texts
 
-	public static String getTitleForNote(NotesDatabaseEntry<AbstractNote> entry) {
-		return getTitleForNote(entry.getEntry(), entry.getId());
-	}
-
-	public static String getTitleForNote(AbstractNote note, int number) {
+	public static String getTitleForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
 		final String originalBody = note.getBody();
 
@@ -150,12 +145,11 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		} else if (!StringUtils.isBlank(originalBody)) {
 			return originalBody;
 		} else {
-			final String suffix = (number > 1) ? " " + String.valueOf(number) : "";
-			return NotesApplication.getContext().getString(R.string.empty_note_placeholder) + suffix;
+			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
 		}
 	}
 
-	public static String getBodyForNote(AbstractNote note) {
+	public static String getSubtitleForNote(AbstractNote note) {
 		final String originalTitle = note.getTitle();
 		final String originalBody = note.getBody();
 
@@ -212,8 +206,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-			title.setText(getTitleForNote(entry));
-			subtitle.setText(getBodyForNote(entry.getEntry()));
+			title.setText(getTitleForNote(entry.getEntry()));
+			subtitle.setText(getSubtitleForNote(entry.getEntry()));
 
 			// labels
 			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
@@ -269,7 +263,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		private void showDeleteDialog() {
 			new AlertDialog.Builder(mainActivity).
-					setTitle(getTitleForNote(noteEntry)).
+					setTitle(getTitleForNote(noteEntry.getEntry())).
 					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -300,7 +294,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
 
 			new AlertDialog.Builder(mainActivity).
-					setTitle(getTitleForNote(noteEntry)).
+					setTitle(getTitleForNote(noteEntry.getEntry())).
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
@@ -310,7 +304,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteEntry.getId());
 			new AlertDialog.Builder(mainActivity)
-					.setTitle(getTitleForNote(noteEntry))
+					.setTitle(getTitleForNote(noteEntry.getEntry()))
 					.setAdapter(labelsAdapter, null)
 					.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 						@Override
