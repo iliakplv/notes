@@ -48,12 +48,13 @@
 		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
 	</style>
 
-	<style name="NoteDetailsLabel">
+	<style name="NoteDetailsLabel" parent="android:Widget.TextView">
 		<item name="android:gravity">right|top</item>
 		<item name="android:layout_width">@dimen/note_list_item_label_width</item>
 		<item name="android:layout_height">@dimen/note_list_item_label_height</item>
 		<item name="android:layout_marginLeft">@dimen/note_list_item_label_margin_left</item>
-		<item name="android:layout_marginTop">@dimen/note_list_item_label_margin_top</item>
+		<item name="android:textSize">@dimen/note_list_item_label_letter_text_size</item>
+		<item name="android:textColor">@color/note_list_item_label_letter_color</item>
 		<item name="android:visibility">gone</item>
 	</style>
 

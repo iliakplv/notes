@@ -13,24 +13,24 @@
 			android:layout_weight="1"
 			style="@style/NoteListItemText.Title"/>
 
-		<View
+		<TextView
 			android:id="@+id/label_5"
 			style="@style/NoteDetailsLabel"
 			android:layout_marginLeft="@dimen/note_list_item_label_margin_left_from_title"/>
 
-		<View
+		<TextView
 			android:id="@+id/label_4"
 			style="@style/NoteDetailsLabel"/>
 
-		<View
+		<TextView
 			android:id="@+id/label_3"
 			style="@style/NoteDetailsLabel"/>
 
-		<View
+		<TextView
 			android:id="@+id/label_2"
 			style="@style/NoteDetailsLabel"/>
 
-		<View
+		<TextView
 			android:id="@+id/label_1"
 			style="@style/NoteDetailsLabel"/>
 	</LinearLayout>

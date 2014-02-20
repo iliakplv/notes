@@ -5,13 +5,12 @@
 
 	<color name="note_list_item_title">#ff000000</color>
 	<color name="note_list_item_subtitle">#ff6a6a6a</color>
+	<color name="note_list_item_label_letter_color">#ff000000</color>
 
 	<color name="navigation_drawer_background">#e0404040</color>
 
-
 	<color name="note_details_title">#ff6a6a6a</color>
 	<color name="note_details_body">#ff000000</color>
-
 
 	<color name="label_color_default">#ffffffff</color>
 	<color name="label_color_red">#ffe14f4f</color>

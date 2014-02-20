@@ -208,17 +208,23 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				view = LayoutInflater.from(getContext()).inflate(R.layout.note_list_item, parent, false);
 			}
 
+			// texts
 			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(getTitleForNote(entry));
 			subtitle.setText(getBodyForNote(entry.getEntry()));
 
+			// labels
 			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
 			for (int i = 0; i < LABELS_IDS.length; i++) {
-				final View labelView = view.findViewById(LABELS_IDS[i]);
+				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
 				if (i < labelEntries.size()) {
-					labelView.setBackgroundColor(labelsColors[labelEntries.get(i).getEntry().getColor()]);
+					final Label label = labelEntries.get(i).getEntry();
+					labelView.setBackgroundColor(labelsColors[label.getColor()]);
+					labelView.setText(!StringUtils.isNullOrEmpty(label.getName()) ?
+							label.getName().substring(0, 1) :
+							"");
 					labelView.setVisibility(View.VISIBLE);
 				} else {
 					labelView.setVisibility(View.GONE);
