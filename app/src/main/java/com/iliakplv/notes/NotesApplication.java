@@ -18,7 +18,7 @@ public class NotesApplication extends Application {
 
 	private static Context context;
 
-	private static final int THREAD_KEEP_ALIVE_TIME_SECONDS = 1;
+	private static final int NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS = 1;
 	private static ThreadPoolExecutor executor;
 
 	@Override
@@ -36,7 +36,7 @@ public class NotesApplication extends Application {
 		}
 		executor = new ThreadPoolExecutor(processors,
 				processors,
-				THREAD_KEEP_ALIVE_TIME_SECONDS,
+				NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS,
 				TimeUnit.SECONDS,
 				new LinkedBlockingQueue<Runnable>());
 	}
