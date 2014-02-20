@@ -23,11 +23,10 @@ public class MainActivity extends Activity
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
 
-	private int currentNoteId = NO_DETAILS;
+	private volatile int currentNoteId = NO_DETAILS;
 	private boolean listeningExistingNote = false;
 
 	private NotesListFragment notesListFragment;
-	private NoteDetailsFragment noteDetailsFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
 
@@ -91,7 +90,7 @@ public class MainActivity extends Activity
 		onDetailsChanged(noteId);
 
 		if (isDetailsShown()) {
-			noteDetailsFragment = new NoteDetailsFragment();
+			final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
 			final Bundle args = new Bundle();
 			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
 			noteDetailsFragment.setArguments(args);
