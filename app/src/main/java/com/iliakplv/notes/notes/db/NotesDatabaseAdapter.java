@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
 
 import org.joda.time.DateTime;
@@ -103,7 +104,7 @@ class NotesDatabaseAdapter {
 	// notes queries
 
 	NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final List<NotesDatabaseEntry<AbstractNote>> list = notesQuery(id);
+		final List<NotesDatabaseEntry<AbstractNote>> list = notesQuery(id, null);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -112,12 +113,12 @@ class NotesDatabaseAdapter {
 	}
 
 	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() { // TODO sort
-		return notesQuery(ALL_ENTRIES);
+		return notesQuery(ALL_ENTRIES, NotesUtils.NoteSortOrder.ChangeDateDescending);
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id) {
+	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id, NotesUtils.NoteSortOrder order) {
 		Cursor cursor = db.query(NOTES_TABLE, NOTES_PROJECTION,
-				whereClauseForId(id), null, null, null, null);
+				whereClauseForId(id), null, null, null, sortOrderClause(order));
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
 
@@ -133,6 +134,29 @@ class NotesDatabaseAdapter {
 		}
 
 		return result;
+	}
+
+	private static String sortOrderClause(NotesUtils.NoteSortOrder order) {
+		if (order == null) {
+			return null;
+		}
+		switch (order) {
+			case TitleOrBody:
+				return NOTES_NAME; // TODO
+
+			case CreateDateAscending:
+				return NOTES_CREATE_DATE + " ASC";
+			case CreateDateDescending:
+				return NOTES_CREATE_DATE + " DESC";
+
+			case ChangeDateAscending:
+				return NOTES_CHANGE_DATE + " ASC";
+			case ChangeDateDescending:
+				return NOTES_CHANGE_DATE + " DESC";
+
+			default:
+				throw new IllegalArgumentException("Unsupported sort order: " + order.toString());
+		}
 	}
 
 
@@ -224,12 +248,12 @@ class NotesDatabaseAdapter {
 		return db.rawQuery(query, null);
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) { // TODO sort
+	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ")" +
-				" ORDER BY " + KEY_ID + " ASC;";
+				" ORDER BY " + sortOrderClause(NotesUtils.NoteSortOrder.ChangeDateDescending) + ";";  // TODO sort
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
