@@ -19,6 +19,7 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
@@ -84,7 +85,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		// Show available actions for note
 		new AlertDialog.Builder(mainActivity).
-				setTitle(getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
+				setTitle(NotesUtils.getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
 				setNegativeButton(R.string.common_cancel, null).
 				create().show();
@@ -136,36 +137,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 
-	// List item texts
-
-	public static String getTitleForNote(AbstractNote note) {
-		final String originalTitle = note.getTitle();
-		final String originalBody = note.getBody();
-
-		if (!StringUtils.isBlank(originalTitle)) {
-			return originalTitle;
-		} else if (!StringUtils.isBlank(originalBody)) {
-			return originalBody;
-		} else {
-			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
-		}
-	}
-
-	public static String getSubtitleForNote(AbstractNote note) {
-		final String originalTitle = note.getTitle();
-		final String originalBody = note.getBody();
-
-		if (!StringUtils.isBlank(originalTitle)) {
-			// title not blank - show body under the title
-			return originalBody;
-		} else {
-			// title blank - body or placeholder will be shown as a title
-			// don't show body
-			return "";
-		}
-	}
-
-
 	/**
 	 * ******************************************
 	 *
@@ -208,8 +179,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-			title.setText(getTitleForNote(entry.getEntry()));
-			subtitle.setText(getSubtitleForNote(entry.getEntry()));
+			title.setText(NotesUtils.getTitleForNote(entry.getEntry()));
+			subtitle.setText(NotesUtils.getSubtitleForNote(entry.getEntry()));
 
 			// labels
 			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
@@ -265,7 +236,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		private void showDeleteDialog() {
 			new AlertDialog.Builder(mainActivity).
-					setTitle(getTitleForNote(noteEntry.getEntry())).
+					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
 					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -296,7 +267,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
 
 			new AlertDialog.Builder(mainActivity).
-					setTitle(getTitleForNote(noteEntry.getEntry())).
+					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
@@ -312,7 +283,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteEntry.getId());
 			new AlertDialog.Builder(mainActivity)
-					.setTitle(getTitleForNote(noteEntry.getEntry()))
+					.setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry()))
 					.setAdapter(labelsAdapter, null)
 					.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 						@Override
@@ -369,7 +340,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
 
 			final Label label = allLabels.get(position).getEntry();
-			name.setText(NavigationDrawerFragment.getTitleForLabel(label));
+			name.setText(NotesUtils.getTitleForLabel(label));
 			color.setBackgroundColor(labelsColors[label.getColor()]);
 
 			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);
