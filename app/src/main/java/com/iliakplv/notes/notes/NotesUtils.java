@@ -21,34 +21,29 @@ public final class NotesUtils {
 
 
 	public static String getTitleForNote(AbstractNote note) {
-		final String originalTitle = note.getTitle();
-		final String originalBody = note.getBody();
-
-		if (!StringUtils.isBlank(originalTitle)) {
-			return originalTitle;
-		} else if (!StringUtils.isBlank(originalBody)) {
-			return originalBody;
-		} else {
+		if (!isNoteTitleEmpty(note)) {
+			return note.getTitle();
+		} else if (isNoteEmpty(note)) {
 			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+		} else {
+			return NotesApplication.getContext().getString(R.string.empty_note_title_placeholder);
 		}
 	}
 
-	public static String getSubtitleForNote(AbstractNote note) {
-		final String originalTitle = note.getTitle();
-		final String originalBody = note.getBody();
+	public static boolean isNoteTitleEmpty(AbstractNote note) {
+		return StringUtils.isBlank(note.getTitle());
+	}
 
-		if (!StringUtils.isBlank(originalTitle)) {
-			// title not blank - show body under the title
-			return originalBody;
-		} else {
-			// title blank - body or placeholder will be shown as a title
-			// don't show body
-			return "";
-		}
+	public static boolean isNoteBodyEmpty(AbstractNote note) {
+		return StringUtils.isBlank(note.getBody());
+	}
+
+	public static boolean isNoteEmpty(AbstractNote note) {
+		return isNoteTitleEmpty(note) && isNoteBodyEmpty(note);
 	}
 
 	public static String getTitleForLabel(Label label) {
-		if (!StringUtils.isNullOrEmpty(label.getName())) {
+		if (!StringUtils.isBlank(label.getName())) {
 			return label.getName();
 		} else {
 			return "(" + COLORS_NAMES[label.getColor()] + ")";

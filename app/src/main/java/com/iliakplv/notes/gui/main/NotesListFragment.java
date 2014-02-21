@@ -180,7 +180,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(NotesUtils.getTitleForNote(entry.getEntry()));
-			subtitle.setText(NotesUtils.getSubtitleForNote(entry.getEntry()));
+			if (NotesUtils.isNoteTitleEmpty(entry.getEntry())) {
+				title.setTextColor(getResources().getColor(R.color.note_list_item_title_placeholder));
+			}
+			subtitle.setText(entry.getEntry().getBody());
 
 			// labels
 			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());

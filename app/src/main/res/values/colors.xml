@@ -4,6 +4,7 @@
 
 
 	<color name="note_list_item_title">#ff000000</color>
+	<color name="note_list_item_title_placeholder">#ff8d8d8d</color>
 	<color name="note_list_item_subtitle">#ff6a6a6a</color>
 	<color name="note_list_item_label_letter_color">#ff000000</color>
 

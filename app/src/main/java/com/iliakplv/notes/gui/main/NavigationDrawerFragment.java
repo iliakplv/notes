@@ -394,8 +394,10 @@ public class NavigationDrawerFragment extends Fragment {
 			final NotesDatabaseEntry<Label> entry = dbFacade.getAllLabels().get(position);
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
+			final int labelColor = labelsColors[entry.getEntry().getColor()];
 			name.setText(NotesUtils.getTitleForLabel(entry.getEntry()));
-			color.setBackgroundColor(labelsColors[entry.getEntry().getColor()]);
+			name.setTextColor(labelColor);
+			color.setBackgroundColor(labelColor);
 
 			return view;
 		}
