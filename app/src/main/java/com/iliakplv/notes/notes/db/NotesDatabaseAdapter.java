@@ -111,7 +111,7 @@ class NotesDatabaseAdapter {
 		}
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
+	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() { // TODO sort
 		return notesQuery(ALL_ENTRIES);
 	}
 
@@ -153,7 +153,7 @@ class NotesDatabaseAdapter {
 
 	// labels queries
 
-	List<NotesDatabaseEntry<Label>> getAllLabels() {
+	List<NotesDatabaseEntry<Label>> getAllLabels() { // sorted by name
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
 				null, null, null, null, LABELS_NAME);
 
@@ -188,8 +188,8 @@ class NotesDatabaseAdapter {
 
 	// notes_labels queries
 
-	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
-		final Cursor cursor = getLabelsForNoteCursor(noteId);
+	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) { // sorted by label name
+		final Cursor cursor = getLabelsForNoteCursor(noteId, true);
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
 		if (cursor.moveToFirst()) {
 			do {
@@ -202,7 +202,7 @@ class NotesDatabaseAdapter {
 	}
 
 	Set<Integer> getLabelsIdsForNote(int noteId) {
-		final Cursor cursor = getLabelsForNoteCursor(noteId);
+		final Cursor cursor = getLabelsForNoteCursor(noteId, false);
 		Set<Integer> result = new HashSet<Integer>();
 		if (cursor.moveToFirst()) {
 			do {
@@ -212,16 +212,19 @@ class NotesDatabaseAdapter {
 		return result;
 	}
 
-	private Cursor getLabelsForNoteCursor(int noteId) {
+	private Cursor getLabelsForNoteCursor(int noteId, boolean orderByName) {
+		final String orderSuffix = orderByName ?
+				" ORDER BY " + LABELS_NAME:
+				"";
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ")" +
-				" ORDER BY " + KEY_ID + " DESC;";
+				orderSuffix + ";";
 		return db.rawQuery(query, null);
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) { // TODO sort
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
