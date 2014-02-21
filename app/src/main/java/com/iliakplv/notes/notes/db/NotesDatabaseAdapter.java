@@ -154,12 +154,8 @@ class NotesDatabaseAdapter {
 	// labels queries
 
 	List<NotesDatabaseEntry<Label>> getAllLabels() {
-		return labelsQuery(ALL_ENTRIES);
-	}
-
-	private List<NotesDatabaseEntry<Label>> labelsQuery(int id) {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
-				whereClauseForId(id), null, null, null, null);
+				null, null, null, null, null);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
 
