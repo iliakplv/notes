@@ -181,7 +181,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(NotesUtils.getTitleForNote(entry.getEntry()));
 			if (NotesUtils.isNoteTitleEmpty(entry.getEntry())) {
-				title.setTextColor(getResources().getColor(R.color.note_list_item_title_placeholder));
+				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
+				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
 			}
 			subtitle.setText(entry.getEntry().getBody());
 

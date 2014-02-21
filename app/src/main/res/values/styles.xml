@@ -38,13 +38,13 @@
 	</style>
 
 	<style name="NoteListItemText.Title">
-		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
 		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
 		<item name="android:layout_marginBottom">@dimen/note_list_item_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteListItemText.Subtitle">
-		<item name="android:textColor">@color/note_list_item_subtitle</item>
+		<item name="android:textColor">@color/note_list_item_grey</item>
 		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
 	</style>
 
@@ -96,7 +96,7 @@
 	<style name="LabelEditTitle" parent="android:Widget.TextView">
 		<item name="android:layout_width">@dimen/label_edit_title_width</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
 		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
 		<item name="android:lines">1</item>
 	</style>
