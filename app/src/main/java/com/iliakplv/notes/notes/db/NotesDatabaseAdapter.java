@@ -155,7 +155,7 @@ class NotesDatabaseAdapter {
 
 	List<NotesDatabaseEntry<Label>> getAllLabels() {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
-				null, null, null, null, null);
+				null, null, null, null, LABELS_NAME);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
 
