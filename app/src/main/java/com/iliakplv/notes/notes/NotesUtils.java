@@ -31,11 +31,11 @@ public final class NotesUtils {
 	}
 
 	public static boolean isNoteTitleEmpty(AbstractNote note) {
-		return StringUtils.isBlank(note.getTitle());
+		return StringUtils.isNullOrEmpty(note.getTitle());
 	}
 
 	public static boolean isNoteBodyEmpty(AbstractNote note) {
-		return StringUtils.isBlank(note.getBody());
+		return StringUtils.isNullOrEmpty(note.getBody());
 	}
 
 	public static boolean isNoteEmpty(AbstractNote note) {
@@ -43,7 +43,7 @@ public final class NotesUtils {
 	}
 
 	public static String getTitleForLabel(Label label) {
-		if (!StringUtils.isBlank(label.getName())) {
+		if (!StringUtils.isNullOrEmpty(label.getName())) {
 			return label.getName();
 		} else {
 			return "(" + COLORS_NAMES[label.getColor()] + ")";
