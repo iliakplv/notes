@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
@@ -25,9 +27,8 @@ public class NoteDetailsFragment extends Fragment {
 
 	final static String ARG_NOTE_ID = "note_id";
 
-	private int noteId = MainActivity.NO_DETAILS;
+	private int noteId = MainActivity.NEW_NOTE;
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-	private NotesDatabaseEntry<AbstractNote> noteEntry;
 
 	private EditText title;
 	private EditText body;
@@ -42,27 +43,39 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) {
+			noteId = savedInstanceState.getInt(ARG_NOTE_ID);
+		}
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
+		}
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final Bundle args = getArguments();
-		if (args != null) {
-			noteId = args.getInt(ARG_NOTE_ID);
+
+		if (noteId == MainActivity.NEW_NOTE) {
+			// Not restored from savedInstanceState in onCreate()
+			if (args != null) {
+				noteId = args.getInt(ARG_NOTE_ID);
+			}
 		}
-		updateNoteDetailsView(noteId);
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "onStart() call. Note id = " + noteId);
+		}
+
+		updateNoteDetailsView();
 	}
 
 
-	public void updateNoteDetailsView(int noteId) {
-		// try save changes on previously shown note
-		trySaveCurrentNote();
-
-		// show new note
-		this.noteId = noteId;
-		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
-		final boolean gotNoteToShow = noteEntry != null;
-
+	public void updateNoteDetailsView() {
+		final boolean gotNoteToShow = noteId > 0 && dbFacade.getNote(noteId) != null;
 		if (gotNoteToShow) {
-			final AbstractNote note = noteEntry.getEntry();
+			final AbstractNote note = dbFacade.getNote(noteId).getEntry();
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
 		}
@@ -71,43 +84,65 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		// try save changes
 		trySaveCurrentNote();
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		if (BuildConfig.DEBUG) {
+			Log.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
+		}
 		outState.putInt(ARG_NOTE_ID, noteId);
 	}
 
 	private void trySaveCurrentNote() {
 		final String LOG_PREFIX = "trySaveCurrentNote(): ";
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, LOG_PREFIX + "call");
-		}
-		if (noteEntry != null) {
-			final String newTitle = title.getText().toString();
-			final String newBody = body.getText().toString();
-			final AbstractNote currentNote = noteEntry.getEntry();
-			if (!StringUtils.equals(currentNote.getBody(), newBody) ||
-					!StringUtils.equals(currentNote.getTitle(), newTitle)) {
-				currentNote.setTitle(newTitle);
-				currentNote.setBody(newBody);
-				currentNote.updateChangeTime();
-				final boolean updated = dbFacade.updateNote(noteEntry.getId(), currentNote);
+
+		final String newTitle = title.getText().toString();
+		final String newBody = body.getText().toString();
+
+		if (noteId == MainActivity.NEW_NOTE) {
+			// insert new note if not empty
+			if (!StringUtils.isNullOrEmpty(newTitle) ||
+					!StringUtils.isNullOrEmpty(newBody)) {
+				// (perform on UI thread)
+				noteId = dbFacade.insertNote(new TextNote(newTitle, newBody));
 				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database " + (updated ? "" : "NOT ") + "updated");
+					Log.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 				}
 			} else {
 				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "Note data unchanged. End");
+					Log.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
 				}
 			}
 		} else {
-			if (BuildConfig.DEBUG) {
-				Log.d(LOG_TAG, LOG_PREFIX + "Note entry is null. End");
+			final NotesDatabaseEntry<AbstractNote> noteEntry = dbFacade.getNote(noteId);
+			if (noteEntry != null) {
+				final AbstractNote currentNote = noteEntry.getEntry();
+
+				// update current note if changed
+				if (!StringUtils.equals(currentNote.getBody(), newBody) ||
+						!StringUtils.equals(currentNote.getTitle(), newTitle)) {
+					currentNote.setTitle(newTitle);
+					currentNote.setBody(newBody);
+					currentNote.updateChangeTime();
+					final boolean updated = dbFacade.updateNote(noteId, currentNote);
+					if (BuildConfig.DEBUG) {
+						Log.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database "
+								+ (updated ? "" : "NOT (!) ") + "updated.");
+					}
+				} else {
+					if (BuildConfig.DEBUG) {
+						Log.d(LOG_TAG, LOG_PREFIX + "Note data unchanged.");
+					}
+				}
+			} else {
+				if (BuildConfig.DEBUG) {
+					Log.d(LOG_TAG, LOG_PREFIX + "Note entry is null (!)");
+				}
 			}
 		}
 	}
+
 }

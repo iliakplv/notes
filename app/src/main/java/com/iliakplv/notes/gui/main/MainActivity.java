@@ -20,10 +20,10 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
-	public static final int NO_DETAILS = 0;
+	public static final int NO_DETAILS = -1;
+	public static final int NEW_NOTE = 0;
 
 	private volatile int currentNoteId = NO_DETAILS;
-	private boolean listeningExistingNote = false;
 
 	private NotesListFragment notesListFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
@@ -32,6 +32,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private boolean isDetailsShown() {
 		return currentNoteId != NO_DETAILS;
+	}
+
+	public void setCurrentNoteId(int noteId) {
+		currentNoteId = noteId;
 	}
 
 	@Override
@@ -101,23 +105,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void onDetailsChanged(int newNoteId) {
-		currentNoteId = newNoteId;
+		setCurrentNoteId(newNoteId);
 		invalidateOptionsMenu();
 	}
 
 	public void createNewNote() {
-		NotesApplication.executeInBackground(new Runnable() {
-			@Override
-			public void run() {
-				final int newNoteId = NotesDatabaseFacade.getInstance().insertNote(new TextNote());
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						onNoteSelected(newNoteId);
-					}
-				});
-			}
-		});
+		onNoteSelected(NEW_NOTE);
 	}
 
 
