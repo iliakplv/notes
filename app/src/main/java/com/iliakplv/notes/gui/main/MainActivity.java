@@ -8,10 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 /**
  * Author: Ilya Kopylov
@@ -19,11 +16,10 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  */
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
-	private static final String ARG_CURRENT_NOTE_ID = "current_note_id"; // TODO replace with boolean isDetailsShown
-	public static final int NO_DETAILS = -1;
+	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
 	public static final int NEW_NOTE = 0;
 
-	private volatile int currentNoteId = NO_DETAILS; // TODO replace with boolean isDetailsShown
+	private volatile boolean detailsShown = false;
 
 	private NotesListFragment notesListFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
@@ -31,12 +27,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 
 	private boolean isDetailsShown() {
-		return currentNoteId != NO_DETAILS;
+		return detailsShown;
 	}
 
-	public void setCurrentNoteId(int noteId) {
-		currentNoteId = noteId;
+	public void setDetailsShown(boolean shown) {
+		detailsShown = shown;
+		invalidateOptionsMenu();
 	}
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +50,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			ft.add(R.id.fragment_container, notesListFragment);
 			ft.commit();
 		} else {
-			onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
+			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
 		}
 
 	}
@@ -75,33 +73,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		}
 	}
 
-	public void restoreActionBar() {
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(title);
-	}
-
 	public void onNoteSelected(int noteId) {
-		onDetailsChanged(noteId);
+		setDetailsShown(true);
 
-		if (isDetailsShown()) {
-			final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
-			final Bundle args = new Bundle();
-			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-			noteDetailsFragment.setArguments(args);
+		final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
+		final Bundle args = new Bundle();
+		args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+		noteDetailsFragment.setArguments(args);
 
-			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, noteDetailsFragment);
-			ft.addToBackStack(null);
-			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			ft.commit();
-		}
-	}
-
-	private void onDetailsChanged(int newNoteId) {
-		setCurrentNoteId(newNoteId);
-		invalidateOptionsMenu();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.fragment_container, noteDetailsFragment);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		ft.commit();
 	}
 
 	public void createNewNote() {
@@ -111,13 +95,13 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(ARG_CURRENT_NOTE_ID, currentNoteId);
+		outState.putBoolean(ARG_DETAILS_SHOWN, detailsShown);
 	}
 
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		onDetailsChanged(NO_DETAILS);
+		setDetailsShown(false);
 	}
 
 
@@ -135,6 +119,13 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	private void restoreActionBar() {
+		final ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setTitle(title);
 	}
 
 	@Override
