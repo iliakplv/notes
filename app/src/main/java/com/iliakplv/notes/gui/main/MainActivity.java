@@ -17,8 +17,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  * Author: Ilya Kopylov
  * Date:  16.08.2013
  */
-public class MainActivity extends Activity
-		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerListener {
+public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
 	public static final int NO_DETAILS = 0;
@@ -82,9 +81,7 @@ public class MainActivity extends Activity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startListeningNote();
 	}
-
 
 	public void onNoteSelected(int noteId) {
 		onDetailsChanged(noteId);
@@ -104,16 +101,8 @@ public class MainActivity extends Activity
 	}
 
 	private void onDetailsChanged(int newNoteId) {
-		setNoteId(newNoteId); // call this method first
-
+		currentNoteId = newNoteId;
 		invalidateOptionsMenu();
-
-		// subscribe/unsubscribe to note changes
-		if (isDetailsShown()) {
-			startListeningNote();
-		} else {
-			stopListeningNote();
-		}
 	}
 
 	public void createNewNote() {
@@ -135,7 +124,6 @@ public class MainActivity extends Activity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		stopListeningNote();
 	}
 
 	@Override
@@ -174,45 +162,5 @@ public class MainActivity extends Activity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-
-	// listener
-
-	@Override
-	public void onNoteChanged() {
-		if (listeningExistingNote) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (listeningExistingNote) {
-						onNoteSelected(currentNoteId);
-					}
-				}
-			});
-		}
-	}
-
-	@Override
-	public int getNoteId() {
-		return currentNoteId;
-	}
-
-	private void setNoteId(int id) {
-		currentNoteId = id;
-	}
-
-	private void startListeningNote() {
-		if (!listeningExistingNote && isDetailsShown()) {
-			NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
-			listeningExistingNote = true;
-		}
-	}
-
-	private void stopListeningNote() {
-		if (listeningExistingNote) {
-			NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
-			listeningExistingNote = false;
-		}
 	}
 }
