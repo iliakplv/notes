@@ -234,7 +234,7 @@ public class NavigationDrawerFragment extends Fragment {
 				}
 
 				// TODO doesn't work after rotation
-				mainActivity.onSelectedLabel(labelId, newTitle);
+				mainActivity.onLabelSelected(labelId, newTitle);
 			}
 		}
 	}
@@ -478,7 +478,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 	public static interface NavigationDrawerListener {
 
-		void onSelectedLabel(int id, String newTitle);
+		void onLabelSelected(int id, String newTitle);
 
 	}
 }

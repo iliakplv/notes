@@ -19,11 +19,11 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
  */
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
-	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
+	private static final String ARG_CURRENT_NOTE_ID = "current_note_id"; // TODO replace with boolean isDetailsShown
 	public static final int NO_DETAILS = -1;
 	public static final int NEW_NOTE = 0;
 
-	private volatile int currentNoteId = NO_DETAILS;
+	private volatile int currentNoteId = NO_DETAILS; // TODO replace with boolean isDetailsShown
 
 	private NotesListFragment notesListFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	@Override
-	public void onSelectedLabel(int labelId, String newTitle) {
+	public void onLabelSelected(int labelId, String newTitle) {
 		title = newTitle;
 		if (notesListFragment != null) {
 			notesListFragment.showNotesForLabel(labelId);
@@ -80,11 +80,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(title);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
 	}
 
 	public void onNoteSelected(int noteId) {
@@ -111,12 +106,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	public void createNewNote() {
 		onNoteSelected(NEW_NOTE);
-	}
-
-
-	@Override
-	protected void onPause() {
-		super.onPause();
 	}
 
 	@Override
