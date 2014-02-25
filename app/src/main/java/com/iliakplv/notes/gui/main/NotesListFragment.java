@@ -279,7 +279,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		private void showNoteLabelsDialog() {
 
-			// TODO implement label creation in NoteLabelsDialog
+			// TODO [low] implement label creation in NoteLabelsDialog
 			if(dbFacade.getAllLabels().size() == 0) {
 				Toast.makeText(mainActivity, "No labels created...", Toast.LENGTH_SHORT).show();
 				return;
@@ -349,7 +349,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);
 			checkBox.setChecked(currentLabels[position]);
-			// TODO refactor this
+			// TODO [low] refactor this
 			checkBox.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
