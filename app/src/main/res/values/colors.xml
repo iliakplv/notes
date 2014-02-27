@@ -5,7 +5,7 @@
 
 	<color name="note_list_item_black">#ff000000</color>
 	<color name="note_list_item_grey">#ff6a6a6a</color>
-	<color name="note_list_item_placeholder">#ff8d8d8d</color>
+	<color name="note_list_item_placeholder">#ffa2a2a2</color>
 	<color name="note_list_item_label_letter_color">#ff000000</color>
 
 	<color name="navigation_drawer_background">#e0404040</color>
@@ -21,5 +21,7 @@
 	<color name="label_color_blue">#ff3d829d</color>
 	<color name="label_color_purple">#ffc173d5</color>
 	<color name="label_color_grey">#ff848484</color>
+
+	<color name="color_transparent">#00000000</color>
 
 </resources>

@@ -25,6 +25,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -183,11 +184,16 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			if (NotesUtils.isNoteTitleEmpty(entry.getEntry())) {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
 				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
+			} else {
+				title.setTextColor(getResources().getColor(R.color.note_list_item_black));
+				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_grey));
 			}
 			subtitle.setText(entry.getEntry().getBody());
 
 			// labels
-			final List<NotesDatabaseEntry<Label>> labelEntries = dbFacade.getLabelsForNote(entry.getId());
+			List<NotesDatabaseEntry<Label>> labelEntries = currentLabelId == ALL_LABELS ?
+					dbFacade.getLabelsForNote(entry.getId()) :
+					dbFacade.getLabel(currentLabelId);
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
 				if (i < labelEntries.size()) {

@@ -103,6 +103,10 @@ public class NotesDatabaseFacade {
 
 	// labels
 
+	public List<NotesDatabaseEntry<Label>> getLabel(int id) {
+		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabel, id);
+	}
+
 	public List<NotesDatabaseEntry<Label>> getAllLabels() {
 		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetAllLabels);
 	}
@@ -168,6 +172,10 @@ public class NotesDatabaseFacade {
 				result = adapter.deleteNote(noteId);
 				break;
 
+			case GetLabel:
+				labelId = (Integer) args[0];
+				result = adapter.getLabel(labelId);
+				break;
 			case GetAllLabels:
 				result = adapter.getAllLabels();
 				break;
@@ -349,6 +357,7 @@ public class NotesDatabaseFacade {
 		UpdateNote,
 		DeleteNote,
 
+		GetLabel,
 		GetAllLabels,
 		InsertLabel,
 		UpdateLabel,

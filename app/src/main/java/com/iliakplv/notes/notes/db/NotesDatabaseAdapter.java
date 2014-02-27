@@ -177,9 +177,17 @@ class NotesDatabaseAdapter {
 
 	// labels queries
 
+	List<NotesDatabaseEntry<Label>> getLabel(int id) { // returns list with one label
+		return labelsQuery(id);
+	}
+
 	List<NotesDatabaseEntry<Label>> getAllLabels() { // sorted by name
+		return labelsQuery(ALL_ENTRIES);
+	}
+
+	private List<NotesDatabaseEntry<Label>> labelsQuery(int id) {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
-				null, null, null, null, LABELS_NAME);
+				whereClauseForId(id), null, null, null, LABELS_NAME);
 
 		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
 
