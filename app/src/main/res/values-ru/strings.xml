@@ -47,4 +47,6 @@
 	<string name="color_purple">фиолетовый</string>
 	<string name="color_grey">серый</string>
 
+	<string name="more_labels">…</string>
+
 </resources>

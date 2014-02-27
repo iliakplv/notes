@@ -47,4 +47,6 @@
 	<string name="color_purple">purple</string>
 	<string name="color_grey">grey</string>
 
+	<string name="more_labels">…</string>
+
 </resources>

@@ -14,13 +14,9 @@
 			style="@style/NoteListItemText.Title"/>
 
 		<TextView
-			android:id="@+id/label_5"
+			android:id="@+id/label_4"
 			style="@style/NoteDetailsLabel"
 			android:layout_marginLeft="@dimen/note_list_item_label_margin_left_from_title"/>
-
-		<TextView
-			android:id="@+id/label_4"
-			style="@style/NoteDetailsLabel"/>
 
 		<TextView
 			android:id="@+id/label_3"
@@ -33,6 +29,12 @@
 		<TextView
 			android:id="@+id/label_1"
 			style="@style/NoteDetailsLabel"/>
+
+		<TextView
+			android:id="@+id/more_labels"
+			style="@style/NoteDetailsLabel"
+			android:text="@string/more_labels"
+			android:background="@color/color_transparent"/>
 	</LinearLayout>
 
 	<TextView

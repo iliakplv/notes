@@ -25,7 +25,6 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -152,8 +151,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				R.id.label_1,
 				R.id.label_2,
 				R.id.label_3,
-				R.id.label_4,
-				R.id.label_5};
+				R.id.label_4};
 
 		private int [] labelsColors;
 
@@ -191,9 +189,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			subtitle.setText(entry.getEntry().getBody());
 
 			// labels
-			List<NotesDatabaseEntry<Label>> labelEntries = currentLabelId == ALL_LABELS ?
-					dbFacade.getLabelsForNote(entry.getId()) :
-					dbFacade.getLabel(currentLabelId);
+			final boolean showingNotesForAllLabels = currentLabelId == ALL_LABELS;
+			List<NotesDatabaseEntry<Label>> labelEntries = showingNotesForAllLabels ?
+					dbFacade.getLabelsForNote(entry.getId()) : // show all labels for this note
+					dbFacade.getLabel(currentLabelId); // show only selected label for this note
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
 				if (i < labelEntries.size()) {
@@ -204,6 +203,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				} else {
 					labelView.setVisibility(View.GONE);
 				}
+			}
+			// show [...] sign
+			// if showing notes for selected label or
+			// if not enough space to show all labels
+			if (!showingNotesForAllLabels || labelEntries.size() > LABELS_IDS.length) {
+				view.findViewById(R.id.more_labels).setVisibility(View.VISIBLE);
+			} else {
+				view.findViewById(R.id.more_labels).setVisibility(View.GONE);
 			}
 
 			return view;
