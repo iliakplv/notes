@@ -67,8 +67,7 @@ public class NavigationDrawerFragment extends Fragment {
 	private ListView labelsListView;
 	private LabelsListAdapter labelsListAdapter;
 
-	// TODO use it to save state
-	private int currentSelectedPosition = ALL_LABELS_HEADER_POSITION;
+	private int currentSelectedPosition;
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
 
@@ -84,7 +83,8 @@ public class NavigationDrawerFragment extends Fragment {
 		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
 		if (savedInstanceState != null) {
-			currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			currentSelectedPosition =
+					savedInstanceState.getInt(STATE_SELECTED_POSITION, ALL_LABELS_HEADER_POSITION);
 			fromSavedInstanceState = true;
 		}
 	}
@@ -146,6 +146,14 @@ public class NavigationDrawerFragment extends Fragment {
 		});
 
 		return labelsListView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (fromSavedInstanceState) {
+			selectItem(currentSelectedPosition);
+		}
 	}
 
 	public boolean isDrawerOpen() {
@@ -233,7 +241,6 @@ public class NavigationDrawerFragment extends Fragment {
 					newTitle = NotesUtils.getTitleForLabel(labelEntry.getEntry());
 				}
 
-				// TODO doesn't work after rotation
 				mainActivity.onLabelSelected(labelId, newTitle);
 			}
 		}
@@ -339,17 +346,6 @@ public class NavigationDrawerFragment extends Fragment {
 		if (drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
-
-//	    if (item.getItemId() == R.id.show_bookmarks) {
-//
-//		    FragmentManager fragmentManager = getFragmentManager();
-//		    fragmentManager.beginTransaction()
-//				    .replace(R.id.container,new BookmarksListFragment())
-//				    .commit();
-//
-//		    return true;
-//	    }
-
 		return super.onOptionsItemSelected(item);
 	}
 

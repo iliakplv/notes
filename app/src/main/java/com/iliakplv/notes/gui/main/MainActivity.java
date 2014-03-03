@@ -17,11 +17,11 @@ import com.iliakplv.notes.R;
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
+	private static final String LIST_FRAGMENT_TAG = "notes_list_fragment";
 	public static final int NEW_NOTE = 0;
 
 	private volatile boolean detailsShown = false;
 
-	private NotesListFragment notesListFragment;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
 
@@ -44,10 +44,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		setupNavigationDrawer();
 
 		if (savedInstanceState == null) {
-			notesListFragment = new NotesListFragment();
+			final NotesListFragment notesListFragment = new NotesListFragment();
 			notesListFragment.setArguments(getIntent().getExtras());
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.fragment_container, notesListFragment);
+			ft.add(R.id.fragment_container, notesListFragment, LIST_FRAGMENT_TAG);
 			ft.commit();
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
@@ -68,8 +68,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	public void onLabelSelected(int labelId, String newTitle) {
 		title = newTitle;
-		if (notesListFragment != null) {
-			notesListFragment.showNotesForLabel(labelId);
+		final NotesListFragment noteListFragment =
+				(NotesListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+		if (noteListFragment != null) {
+			noteListFragment.showNotesForLabel(labelId);
 		}
 	}
 
