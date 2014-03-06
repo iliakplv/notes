@@ -6,6 +6,11 @@
 		android:icon="@drawable/ic_menu_add"
 		android:showAsAction="always"/>
 
+	<item android:id="@+id/action_sort"
+	      android:title="@string/action_sort"
+	      android:icon="@drawable/ic_menu_sort_by_size"
+	      android:showAsAction="ifRoom" />
+
 	<item android:id="@+id/action_settings"
 	      android:title="@string/action_settings"
 	      android:orderInCategory="100"

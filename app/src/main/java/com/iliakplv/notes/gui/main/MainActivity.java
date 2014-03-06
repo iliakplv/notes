@@ -113,9 +113,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!navigationDrawerFragment.isDrawerOpen()) {
 			if (isDetailsShown()) {
-				getMenuInflater().inflate(R.menu.note, menu);
+				getMenuInflater().inflate(R.menu.note_menu, menu);
 			} else {
-				getMenuInflater().inflate(R.menu.main, menu);
+				getMenuInflater().inflate(R.menu.main_menu, menu);
+				// TODO add SubMenu
 			}
 			restoreActionBar();
 			return true;
@@ -132,9 +133,24 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_add) {
-			createNewNote();
-			return true;
+		final int itemId = item.getItemId();
+		switch (itemId) {
+
+			// in list
+			case R.id.action_add:
+				createNewNote();
+				return true;
+			case R.id.action_sort:
+				// TODO implement
+				return true;
+
+			// in details
+			case R.id.action_labels:
+				// TODO implement
+				return true;
+			case R.id.action_settings:
+				// TODO implement
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

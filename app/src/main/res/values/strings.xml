@@ -13,7 +13,14 @@
 	<string name="common_no">No</string>
 
 	<string name="action_bar_add">New note</string>
+	<string name="action_bar_labels">Change labels</string>
 	<string name="action_settings">Settings</string>
+
+	<string name="action_sort">Sort</string>
+	<string name="action_sort_by_title">By title</string>
+	<string name="action_sort_by_create_asc">By creation (old first)</string>
+	<string name="action_sort_by_create_desc">By creation (new first)</string>
+	<string name="action_sort_by_change">By changing</string>
 
 	<string name="empty_note_title_placeholder">(no title)</string>
 	<string name="empty_note_placeholder">(empty note)</string>
