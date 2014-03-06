@@ -113,7 +113,7 @@ class NotesDatabaseAdapter {
 	}
 
 	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() { // TODO sort
-		return notesQuery(ALL_ENTRIES, NotesUtils.NoteSortOrder.TitleOrBody);
+		return notesQuery(ALL_ENTRIES, NotesUtils.NoteSortOrder.Title);
 	}
 
 	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id, NotesUtils.NoteSortOrder order) {
@@ -141,7 +141,7 @@ class NotesDatabaseAdapter {
 			return null;
 		}
 		switch (order) {
-			case TitleOrBody:
+			case Title:
 				return NOTES_NAME;
 
 			case CreateDateAscending:
@@ -149,9 +149,7 @@ class NotesDatabaseAdapter {
 			case CreateDateDescending:
 				return NOTES_CREATE_DATE + " DESC";
 
-			case ChangeDateAscending:
-				return NOTES_CHANGE_DATE + " ASC";
-			case ChangeDateDescending:
+			case ChangeDate:
 				return NOTES_CHANGE_DATE + " DESC";
 
 			default:
@@ -261,7 +259,7 @@ class NotesDatabaseAdapter {
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ")" +
-				" ORDER BY " + sortOrderClause(NotesUtils.NoteSortOrder.TitleOrBody) + ";";  // TODO sort
+				" ORDER BY " + sortOrderClause(NotesUtils.NoteSortOrder.Title) + ";";  // TODO sort
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();

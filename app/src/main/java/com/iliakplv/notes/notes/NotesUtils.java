@@ -8,11 +8,10 @@ import com.iliakplv.notes.utils.StringUtils;
 public final class NotesUtils {
 
 	public static enum NoteSortOrder {
-		TitleOrBody,
+		Title,
 		CreateDateAscending,
 		CreateDateDescending,
-		ChangeDateAscending,
-		ChangeDateDescending
+		ChangeDate
 	}
 
 
