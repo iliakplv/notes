@@ -116,7 +116,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				getMenuInflater().inflate(R.menu.note_menu, menu);
 			} else {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
-				// TODO add SubMenu
+				// TODO sort submenu
 			}
 			restoreActionBar();
 			return true;
@@ -141,7 +141,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				createNewNote();
 				return true;
 			case R.id.action_sort:
-				// TODO implement
+				// TODO sort submenu
 				return true;
 
 			// menu in details
