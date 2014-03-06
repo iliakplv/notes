@@ -5,6 +5,7 @@ import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.NotesUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,9 @@ public class NotesDatabaseFacade {
 	private volatile boolean lastFetchedNotesListActual = false;
 	private volatile int lastFetchedNotesListSize = 0;
 
+	// list sort
+	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
+
 	// note cache
 	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
 	private volatile int lastFetchedNoteEntryId = INVALID_ID;
@@ -36,7 +40,7 @@ public class NotesDatabaseFacade {
 
 	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
-	private List<NoteChangeListener> noteListeners;
+	private List<NoteChangeListener> noteListeners; // actually not used TODO consider to remove
 
 
 	private NotesDatabaseFacade() {}
@@ -47,6 +51,18 @@ public class NotesDatabaseFacade {
 
 
 	// notes
+
+	public NotesUtils.NoteSortOrder getNotesSortOrder() {
+		return notesSortOrder;
+	}
+
+	public void setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
+		if (this.notesSortOrder != notesSortOrder) {
+			this.notesSortOrder = notesSortOrder;
+			lastFetchedNotesListActual = false;
+			notifyDatabaseListeners();
+		}
+	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
 		final boolean needToRefresh = lastFetchedNoteEntryId != id || !lastFetchedNoteEntryActual;
@@ -157,7 +173,7 @@ public class NotesDatabaseFacade {
 				result = adapter.getNote(noteId);
 				break;
 			case GetAllNotes:
-				result = adapter.getAllNotes();
+				result = adapter.getAllNotes(notesSortOrder);
 				break;
 			case InsertNote:
 				result = adapter.insertNote((AbstractNote) args[0]);
@@ -202,7 +218,7 @@ public class NotesDatabaseFacade {
 				break;
 			case GetNotesForLabel:
 				labelId = (Integer) args[0];
-				result = adapter.getNotesForLabel(labelId);
+				result = adapter.getNotesForLabel(labelId, notesSortOrder);
 				break;
 			case InsertLabelToNote:
 				noteId = (Integer) args[0];

@@ -136,7 +136,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final int itemId = item.getItemId();
 		switch (itemId) {
 
-			// in list
+			// menu in list
 			case R.id.action_add:
 				createNewNote();
 				return true;
@@ -144,10 +144,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				// TODO implement
 				return true;
 
-			// in details
+			// menu in details
 			case R.id.action_labels:
 				// TODO implement
 				return true;
+
+			// global menu
 			case R.id.action_settings:
 				// TODO implement
 				return true;

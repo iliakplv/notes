@@ -112,8 +112,8 @@ class NotesDatabaseAdapter {
 		}
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() { // TODO sort
-		return notesQuery(ALL_ENTRIES, NotesUtils.NoteSortOrder.Title);
+	List<NotesDatabaseEntry<AbstractNote>> getAllNotes(NotesUtils.NoteSortOrder order) {
+		return notesQuery(ALL_ENTRIES, order);
 	}
 
 	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id, NotesUtils.NoteSortOrder order) {
@@ -254,12 +254,12 @@ class NotesDatabaseAdapter {
 		return db.rawQuery(query, null);
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId, NotesUtils.NoteSortOrder order) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ")" +
-				" ORDER BY " + sortOrderClause(NotesUtils.NoteSortOrder.Title) + ";";  // TODO sort
+				" ORDER BY " + sortOrderClause(order) + ";";
 		Cursor cursor = db.rawQuery(query, null);
 
 		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
