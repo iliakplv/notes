@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -166,15 +167,22 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 			// menu in details
 			case R.id.action_labels:
-				// TODO implement
+//				TODO implement
 				return true;
 
 			// global menu
 			case R.id.action_settings:
-				// TODO implement
+//				TODO showAppSettings();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void showAppSettings() {
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.fragment_container, new AppSettingsFragment());
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 
 	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
@@ -190,6 +198,24 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		int orderOrdinal = prefs.getInt(PREFS_KEY_SORT_ORDER, -1);
 		if (orderOrdinal != -1) {
 			setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
+		}
+	}
+
+
+	/**
+	 * ******************************************
+	 *
+	 * Inner classes
+	 *
+	 * *******************************************
+	 */
+
+	private static class AppSettingsFragment extends PreferenceFragment {
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.preferences);
 		}
 	}
 }
