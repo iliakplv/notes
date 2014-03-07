@@ -20,7 +20,7 @@
 	<string name="action_sort_by_title">По заголовку</string>
 	<string name="action_sort_by_create_asc">По созданию (сначала старые)</string>
 	<string name="action_sort_by_create_desc">По созданию (сначала новые)</string>
-	<string name="action_sort_by_change">По изменению</string>
+	<string name="action_sort_by_change">По последнему изменению</string>
 
 	<string name="empty_note_title_placeholder">(без заголовка)</string>
 	<string name="empty_note_placeholder">(пустая заметка)</string>

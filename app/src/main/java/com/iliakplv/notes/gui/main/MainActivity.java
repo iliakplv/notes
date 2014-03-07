@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 /**
  * Author: Ilya Kopylov
@@ -20,8 +23,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private static final String LIST_FRAGMENT_TAG = "notes_list_fragment";
 	public static final int NEW_NOTE = 0;
 
-	private volatile boolean detailsShown = false;
+	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
+	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
 
@@ -116,7 +120,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				getMenuInflater().inflate(R.menu.note_menu, menu);
 			} else {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
-				// TODO sort submenu
+				final SubMenu sortTypesMenu =
+						menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
+				getMenuInflater().inflate(R.menu.main_sort_menu, sortTypesMenu);
 			}
 			restoreActionBar();
 			return true;
@@ -140,8 +146,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			case R.id.action_add:
 				createNewNote();
 				return true;
-			case R.id.action_sort:
-				// TODO sort submenu
+
+			// sort types menu
+			case R.id.sort_by_title:
+				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
+				return true;
+			case R.id.sort_by_create_asc:
+				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
+				return true;
+			case R.id.sort_by_create_desc:
+				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
+				return true;
+			case R.id.sort_by_change:
+				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
 				return true;
 
 			// menu in details
