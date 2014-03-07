@@ -21,6 +21,9 @@ public class NotesDatabaseFacade {
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
 	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
+
+	private static final NotesUtils.NoteSortOrder DEFAULT_SORT_ORDER =
+			NotesUtils.NoteSortOrder.Title;
 	private static final int INVALID_ID = -1;
 
 	// list cache
@@ -30,7 +33,7 @@ public class NotesDatabaseFacade {
 	private volatile int lastFetchedNotesListSize = 0;
 
 	// list sort
-	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
+	private volatile NotesUtils.NoteSortOrder notesSortOrder = DEFAULT_SORT_ORDER;
 
 	// note cache
 	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
@@ -55,12 +58,14 @@ public class NotesDatabaseFacade {
 		return notesSortOrder;
 	}
 
-	public void setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
-		if (this.notesSortOrder != notesSortOrder) {
+	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
+		boolean orderChanged = this.notesSortOrder != notesSortOrder;
+		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
 			lastFetchedNotesListActual = false;
 			notifyDatabaseListeners();
 		}
+		return orderChanged;
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {

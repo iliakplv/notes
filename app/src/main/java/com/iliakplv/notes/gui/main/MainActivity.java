@@ -3,6 +3,7 @@ package com.iliakplv.notes.gui.main;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -21,6 +22,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
 	private static final String LIST_FRAGMENT_TAG = "notes_list_fragment";
+	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final int NEW_NOTE = 0;
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
@@ -45,6 +47,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		restoreNotesSortOrder();
 		setupNavigationDrawer();
 
 		if (savedInstanceState == null) {
@@ -120,9 +123,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				getMenuInflater().inflate(R.menu.note_menu, menu);
 			} else {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
-				final SubMenu sortTypesMenu =
+				final SubMenu sortMenu =
 						menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
-				getMenuInflater().inflate(R.menu.main_sort_menu, sortTypesMenu);
+				getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
 			}
 			restoreActionBar();
 			return true;
@@ -147,18 +150,18 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				createNewNote();
 				return true;
 
-			// sort types menu
+			// sort menu
 			case R.id.sort_by_title:
-				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
+				setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
 				return true;
 			case R.id.sort_by_create_asc:
-				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
+				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
 				return true;
 			case R.id.sort_by_create_desc:
-				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
+				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
 				return true;
 			case R.id.sort_by_change:
-				dbFacade.setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
+				setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
 				return true;
 
 			// menu in details
@@ -172,5 +175,21 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
+		if (dbFacade.setNotesSortOrder(order)) {
+			final SharedPreferences.Editor editor = getPreferences(Activity.MODE_PRIVATE).edit();
+			editor.putInt(PREFS_KEY_SORT_ORDER, order.ordinal());
+			editor.commit();
+		}
+	}
+
+	private void restoreNotesSortOrder() {
+		final SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
+		int orderOrdinal = prefs.getInt(PREFS_KEY_SORT_ORDER, -1);
+		if (orderOrdinal != -1) {
+			setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
+		}
 	}
 }
