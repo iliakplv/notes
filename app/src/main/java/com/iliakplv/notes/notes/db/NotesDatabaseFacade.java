@@ -21,10 +21,8 @@ public class NotesDatabaseFacade {
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
 	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
-
-	private static final NotesUtils.NoteSortOrder DEFAULT_SORT_ORDER =
-			NotesUtils.NoteSortOrder.Title;
 	private static final int INVALID_ID = -1;
+
 
 	// list cache
 	private List<NotesDatabaseEntry> lastFetchedNotesList; // List<NotesDatabaseEntry<AbstractNote>>
@@ -33,7 +31,7 @@ public class NotesDatabaseFacade {
 	private volatile int lastFetchedNotesListSize = 0;
 
 	// list sort
-	private volatile NotesUtils.NoteSortOrder notesSortOrder = DEFAULT_SORT_ORDER;
+	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
 
 	// note cache
 	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
@@ -42,21 +40,15 @@ public class NotesDatabaseFacade {
 
 	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
-	private List<NoteChangeListener> noteListeners; // actually not used TODO consider to remove
 
 
 	private NotesDatabaseFacade() {}
-
 	public static NotesDatabaseFacade getInstance() {
 		return instance;
 	}
 
 
 	// notes
-
-	public NotesUtils.NoteSortOrder getNotesSortOrder() {
-		return notesSortOrder;
-	}
 
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
@@ -168,7 +160,7 @@ public class NotesDatabaseFacade {
 		adapter.open();
 
 		Object result;
-		int noteId = INVALID_ID;
+		int noteId;
 		int labelId;
 
 		switch (transactionType) {
@@ -239,23 +231,13 @@ public class NotesDatabaseFacade {
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
-		onTransactionPerformed(transactionType, noteId);
+		onTransactionPerformed(transactionType);
 		return result;
 	}
 
-	private void onTransactionPerformed(TransactionType transactionType, int changedNoteId) {
+	private void onTransactionPerformed(TransactionType transactionType) {
 		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() +") performed");
-		}
-		if (existingNoteModificationTransaction(transactionType)) {
-			if (BuildConfig.DEBUG) {
-				Log.d(LOG_TAG, "Changed note id=" + changedNoteId);
-			}
-			if (changedNoteId != INVALID_ID) {
-				lastFetchedNoteEntryActual = lastFetchedNoteEntryActual &&
-						lastFetchedNoteEntryId != changedNoteId;
-			}
-			notifyNoteListeners(changedNoteId);
+			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 		}
 		if (databaseModificationTransaction(transactionType)) {
 			lastFetchedNotesListActual = false;
@@ -279,21 +261,6 @@ public class NotesDatabaseFacade {
 		}
 	}
 
-	private void notifyNoteListeners(final int changedNoteId) {
-		if (noteListeners != null) {
-			NotesApplication.executeInBackground(new Runnable() {
-				@Override
-				public void run() {
-					for (NoteChangeListener listener : noteListeners) {
-						if (changedNoteId == INVALID_ID || listener.getNoteId() == changedNoteId) {
-							listener.onNoteChanged();
-						}
-					}
-				}
-			});
-		}
-	}
-
 	public boolean addDatabaseChangeListener(DatabaseChangeListener listener) {
 		if (listener == null) {
 			throw new NullPointerException();
@@ -304,26 +271,9 @@ public class NotesDatabaseFacade {
 		return databaseListeners.add(listener);
 	}
 
-	public boolean addNoteChangeListener(NoteChangeListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-		if (noteListeners == null) {
-			noteListeners = new LinkedList<NoteChangeListener>();
-		}
-		return noteListeners.add(listener);
-	}
-
 	public boolean removeDatabaseChangeListener(DatabaseChangeListener listener) {
 		if (databaseListeners != null) {
 			return databaseListeners.remove(listener);
-		}
-		return false;
-	}
-
-	public boolean removeNoteChangeListener(NoteChangeListener listener) {
-		if (noteListeners != null) {
-			return noteListeners.remove(listener);
 		}
 		return false;
 	}
@@ -338,21 +288,6 @@ public class NotesDatabaseFacade {
 			case DeleteNote:
 
 			case InsertLabel:
-			case UpdateLabel:
-			case DeleteLabel:
-
-			case InsertLabelToNote:
-			case DeleteLabelFromNote:
-				return true;
-		}
-		return false;
-	}
-
-	private static boolean existingNoteModificationTransaction(TransactionType transactionType) {
-		switch (transactionType) {
-			case UpdateNote:
-			case DeleteNote:
-
 			case UpdateLabel:
 			case DeleteLabel:
 
@@ -394,25 +329,10 @@ public class NotesDatabaseFacade {
 
 		/**
 		 * Callback for notes database changing
-		 * Called after transaction that affects database entries (insert, update or delete) was performed
-		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
+		 * Called after transaction that affects database entries (insert, update or delete) had performed
+		 * Called from background thread. If you want to refresh UI in this method perform it on UI thread!
 		 */
 		public void onDatabaseChanged();
-	}
-
-	public interface NoteChangeListener {
-
-		/**
-		 * Callback for existing note changing
-		 * Called after changing note that this listener watching
-		 * Called from background thread. If you want to refresh UI in this method do it on UI thread!
-		 */
-		public void onNoteChanged();
-
-		/**
-		 * @return id of note which this listener watching
-		 */
-		public int getNoteId();
 	}
 
 }
