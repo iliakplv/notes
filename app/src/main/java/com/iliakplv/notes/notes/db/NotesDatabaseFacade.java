@@ -18,7 +18,8 @@ import java.util.Set;
 public class NotesDatabaseFacade {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
-	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
+	private static final NotesDatabaseFacade instance = new NotesDatabaseFacade();
+	private static final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 
 	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
 	private static final int INVALID_ID = -1;
@@ -156,13 +157,11 @@ public class NotesDatabaseFacade {
 
 
 	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
-		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
-		adapter.open();
-
 		Object result;
 		int noteId;
 		int labelId;
 
+		adapter.open();
 		switch (transactionType) {
 			case GetNote:
 				noteId = (Integer) args[0];
@@ -231,6 +230,7 @@ public class NotesDatabaseFacade {
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
 		adapter.close();
+
 		onTransactionPerformed(transactionType);
 		return result;
 	}
@@ -277,9 +277,6 @@ public class NotesDatabaseFacade {
 		}
 		return false;
 	}
-
-
-	// Other
 
 	private static boolean databaseModificationTransaction(TransactionType transactionType) {
 		switch (transactionType) {
