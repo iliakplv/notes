@@ -167,9 +167,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				return true;
 
 			// menu in details
-			case R.id.action_labels:
-//				TODO implement
-				return true;
+//			TODO implement
+//			case R.id.action_labels:
+//				return true;
 
 			// global menu
 			case R.id.action_settings:
