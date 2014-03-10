@@ -2,7 +2,10 @@ package com.iliakplv.notes.gui.main;
 
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,11 @@ import com.iliakplv.notes.utils.StringUtils;
 public class NoteDetailsFragment extends Fragment {
 
 	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
+
+	private final static String PREFS_KEY_LINKIFY = "linkify_note_text";
+	private final static int LINKIFY_MASK = Linkify.WEB_URLS |
+			Linkify.EMAIL_ADDRESSES |
+			Linkify.PHONE_NUMBERS;
 
 	final static String ARG_NOTE_ID = "note_id";
 
@@ -78,6 +86,12 @@ public class NoteDetailsFragment extends Fragment {
 			final AbstractNote note = dbFacade.getNote(noteId).getEntry();
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
+
+			final SharedPreferences sp =
+					PreferenceManager.getDefaultSharedPreferences(getActivity());
+			if (sp.getBoolean(PREFS_KEY_LINKIFY, false)) {
+				Linkify.addLinks(body, LINKIFY_MASK);
+			}
 		}
 	}
 

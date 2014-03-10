@@ -56,4 +56,7 @@
 
 	<string name="more_labels">…</string>
 
+	<string name="settings_linkify_title">Ссылки в тексте заметки</string>
+	<string name="settings_linkify_subtitle">Делать ссылки и телефонные номера кликабельными</string>
+
 </resources>

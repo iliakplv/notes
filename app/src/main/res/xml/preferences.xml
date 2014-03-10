@@ -4,9 +4,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<CheckBoxPreference
-		android:key="linkify"
-		android:title="Linkify"
-		android:summary="linkify"/>
+		android:key="linkify_note_text"
+		android:title="@string/settings_linkify_title"
+		android:summary="@string/settings_linkify_subtitle"/>
 
 </PreferenceScreen>
 
