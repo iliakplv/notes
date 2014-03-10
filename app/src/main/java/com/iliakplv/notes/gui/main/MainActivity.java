@@ -3,15 +3,16 @@ package com.iliakplv.notes.gui.main;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
@@ -172,17 +173,15 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 			// global menu
 			case R.id.action_settings:
-//				TODO showAppSettings();
+				showAppSettings();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	public void showAppSettings() {
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.fragment_container, new AppSettingsFragment());
-		ft.addToBackStack(null);
-		ft.commit();
+		final Intent settingsIntent = new Intent(this, SettingsActivity.class);
+		startActivity(settingsIntent);
 	}
 
 	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
@@ -201,21 +200,4 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		}
 	}
 
-
-	/**
-	 * ******************************************
-	 *
-	 * Inner classes
-	 *
-	 * *******************************************
-	 */
-
-	private static class AppSettingsFragment extends PreferenceFragment {
-
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.preferences);
-		}
-	}
 }
