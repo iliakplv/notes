@@ -42,6 +42,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+	private static final String PREF_SHOW_DRAWER_ON_START = "show_drawer_on_start";
 
 	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 	public static final int ALL_LABELS_HEADER_POSITION = 0;
@@ -70,6 +71,7 @@ public class NavigationDrawerFragment extends Fragment {
 	private int currentSelectedPosition;
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
+	private boolean showDrawerOnStart;
 
 
 	public NavigationDrawerFragment() {
@@ -79,9 +81,13 @@ public class NavigationDrawerFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+		showDrawerOnStart = sp.getBoolean(PREF_SHOW_DRAWER_ON_START, false);
 
+		if (!userLearnedDrawer && showDrawerOnStart) {
+			setUserLearnedDrawer();
+		}
 		if (savedInstanceState != null) {
 			currentSelectedPosition =
 					savedInstanceState.getInt(STATE_SELECTED_POSITION, ALL_LABELS_HEADER_POSITION);
@@ -193,19 +199,14 @@ public class NavigationDrawerFragment extends Fragment {
 				if (!isAdded()) {
 					return;
 				}
-
 				if (!userLearnedDrawer) {
-					userLearnedDrawer = true;
-					SharedPreferences sp = PreferenceManager
-							.getDefaultSharedPreferences(getActivity());
-					sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+					setUserLearnedDrawer();
 				}
-
 				getActivity().invalidateOptionsMenu();
 			}
 		};
 
-		if (!userLearnedDrawer && !fromSavedInstanceState) {
+		if (!userLearnedDrawer && !fromSavedInstanceState || showDrawerOnStart) {
 			this.drawerLayout.openDrawer(fragmentContainerView);
 		}
 
@@ -215,8 +216,14 @@ public class NavigationDrawerFragment extends Fragment {
 				drawerToggle.syncState();
 			}
 		});
-
 		this.drawerLayout.setDrawerListener(drawerToggle);
+	}
+
+	private void setUserLearnedDrawer() {
+		userLearnedDrawer = true;
+		final SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
 	}
 
 	private void selectItem(int position) {

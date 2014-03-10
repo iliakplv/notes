@@ -58,5 +58,7 @@
 
 	<string name="settings_linkify_title">Ссылки в тексте заметки</string>
 	<string name="settings_linkify_subtitle">Делать ссылки и телефонные номера кликабельными</string>
+	<string name="settings_show_drawer_title">Начинать с панели навигации</string>
+	<string name="settings_show_drawer_subtitle">Всегда открывать панель навигации при запуске приложения</string>
 
 </resources>

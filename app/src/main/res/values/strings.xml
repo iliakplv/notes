@@ -58,5 +58,7 @@
 
 	<string name="settings_linkify_title">Links in note text</string>
 	<string name="settings_linkify_subtitle">Make URLs and phone numbers clickable</string>
+	<string name="settings_show_drawer_title">Start from navigation</string>
+	<string name="settings_show_drawer_subtitle">Always show navigation panel when app starts</string>
 
 </resources>
