@@ -18,8 +18,7 @@ import java.util.Set;
 public class NotesDatabaseFacade {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
-	private static final NotesDatabaseFacade instance = new NotesDatabaseFacade();
-	private static final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
+	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
 	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
 	private static final int INVALID_ID = -1;
@@ -161,6 +160,7 @@ public class NotesDatabaseFacade {
 		int noteId;
 		int labelId;
 
+		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
 		switch (transactionType) {
 			case GetNote:
