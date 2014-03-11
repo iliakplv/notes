@@ -7,6 +7,8 @@ import com.iliakplv.notes.R;
 
 public class SettingsActivity extends PreferenceActivity {
 
+//	TODO check default values
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
