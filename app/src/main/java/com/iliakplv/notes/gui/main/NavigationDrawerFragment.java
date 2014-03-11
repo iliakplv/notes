@@ -86,6 +86,7 @@ public class NavigationDrawerFragment extends Fragment {
 		showDrawerOnStart = sp.getBoolean(PREF_SHOW_DRAWER_ON_START, false);
 
 		if (!userLearnedDrawer && showDrawerOnStart) {
+			// disable user-learned-drawer behaviour if user have selected to show drawer on start
 			setUserLearnedDrawer();
 		}
 		if (savedInstanceState != null) {
@@ -206,7 +207,7 @@ public class NavigationDrawerFragment extends Fragment {
 			}
 		};
 
-		if (!userLearnedDrawer && !fromSavedInstanceState || showDrawerOnStart) {
+		if (showDrawerOnStart || (!userLearnedDrawer && !fromSavedInstanceState)) {
 			this.drawerLayout.openDrawer(fragmentContainerView);
 		}
 
