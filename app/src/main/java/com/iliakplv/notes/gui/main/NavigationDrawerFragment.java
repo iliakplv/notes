@@ -237,14 +237,14 @@ public class NavigationDrawerFragment extends Fragment {
 					drawerLayout.closeDrawer(fragmentContainerView);
 				}
 
-				final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
 				final int labelId;
 				final String newTitle;
 				if (position == ALL_LABELS_HEADER_POSITION) {
 					labelId = ALL_LABELS;
 					newTitle = getString(R.string.labels_drawer_all_notes);
 				} else {
-					NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
+					final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
+					final NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
 					labelId = labelEntry.getId();
 					newTitle = NotesUtils.getTitleForLabel(labelEntry.getEntry());
 				}
