@@ -5,13 +5,13 @@
 
 	<CheckBoxPreference
 		android:key="linkify_note_text"
-		android:checked="true"
+		android:defaultValue="true"
 		android:title="@string/settings_linkify_title"
 		android:summary="@string/settings_linkify_subtitle"/>
 
 	<CheckBoxPreference
 		android:key="show_drawer_on_start"
-		android:checked="false"
+		android:defaultValue="false"
 		android:title="@string/settings_show_drawer_title"
 		android:summary="@string/settings_show_drawer_subtitle"/>
 

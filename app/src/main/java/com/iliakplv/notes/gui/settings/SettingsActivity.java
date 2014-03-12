@@ -2,17 +2,19 @@ package com.iliakplv.notes.gui.settings;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 import com.iliakplv.notes.R;
 
 public class SettingsActivity extends PreferenceActivity {
 
-//	TODO check default values
+	private static final int PREFERENCES = R.xml.preferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		//noinspection deprecation
+		addPreferencesFromResource(PREFERENCES);
+		PreferenceManager.setDefaultValues(this, PREFERENCES, false);
 	}
-
 }
