@@ -2,7 +2,7 @@ package com.iliakplv.notes.notes.db;
 
 
 /**
- * Autor: Ilya Kopylov
+ * Author: Ilya Kopylov
  * Date:  22.08.2013
  */
 public class NotesDatabaseEntry<T> {
