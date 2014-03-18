@@ -6,7 +6,7 @@
 	<color name="note_list_item_black">#ff000000</color>
 	<color name="note_list_item_grey">#ff6a6a6a</color>
 	<color name="note_list_item_placeholder">#ffa2a2a2</color>
-	<color name="note_list_item_label_letter_color">#ff404040</color>
+	<color name="note_list_item_label_letter_color">#ff202020</color>
 
 	<color name="navigation_drawer_background">#e0404040</color>
 
