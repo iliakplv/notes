@@ -1,9 +1,5 @@
 package com.iliakplv.notes.utils;
 
-/**
- * Author: Ilya Kopylov
- * Date:  22.08.2013
- */
 public final class StringUtils {
 
 	public static String getNotNull(String s) {

@@ -11,10 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: Ilya Kopylov
- * Date: 19.09.2013
- */
 public class NotesDatabaseFacade {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();

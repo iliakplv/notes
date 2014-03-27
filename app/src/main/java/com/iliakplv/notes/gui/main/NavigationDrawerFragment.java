@@ -1,6 +1,5 @@
 package com.iliakplv.notes.gui.main;
 
-
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -36,7 +35,6 @@ import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 import java.util.List;
-
 
 public class NavigationDrawerFragment extends Fragment {
 

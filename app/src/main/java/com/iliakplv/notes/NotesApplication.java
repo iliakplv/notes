@@ -8,10 +8,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Author: Ilya Kopylov
- * Date:  21.08.2013
- */
 public class NotesApplication extends Application {
 
 	private static final String LOG_TAG = NotesApplication.class.getSimpleName();

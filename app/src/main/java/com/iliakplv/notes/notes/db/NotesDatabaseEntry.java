@@ -1,10 +1,5 @@
 package com.iliakplv.notes.notes.db;
 
-
-/**
- * Author: Ilya Kopylov
- * Date:  22.08.2013
- */
 public class NotesDatabaseEntry<T> {
 
 	private T entry;

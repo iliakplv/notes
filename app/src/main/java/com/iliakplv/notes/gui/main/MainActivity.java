@@ -16,10 +16,6 @@ import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
-/**
- * Author: Ilya Kopylov
- * Date:  16.08.2013
- */
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";

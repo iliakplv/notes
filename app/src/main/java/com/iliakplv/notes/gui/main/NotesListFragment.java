@@ -29,10 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: Ilya Kopylov
- * Date:  16.08.2013
- */
 public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
 		NotesDatabaseFacade.DatabaseChangeListener {
 

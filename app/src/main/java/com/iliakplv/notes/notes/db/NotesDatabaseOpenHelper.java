@@ -7,10 +7,6 @@ import android.util.Log;
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.NotesApplication;
 
-/**
- * Author: Ilya Kopylov
- * Date:  21.08.2013
- */
 class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String LOG_TAG = NotesDatabaseOpenHelper.class.getSimpleName();

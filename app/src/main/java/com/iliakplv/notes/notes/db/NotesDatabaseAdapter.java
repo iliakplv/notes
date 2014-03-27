@@ -1,6 +1,5 @@
 package com.iliakplv.notes.notes.db;
 
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,10 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: Ilya Kopylov
- * Date:  21.08.2013
- */
 class NotesDatabaseAdapter {
 
 	// Database

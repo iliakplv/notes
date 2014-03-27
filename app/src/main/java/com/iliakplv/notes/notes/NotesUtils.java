@@ -1,6 +1,5 @@
 package com.iliakplv.notes.notes;
 
-
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.utils.StringUtils;

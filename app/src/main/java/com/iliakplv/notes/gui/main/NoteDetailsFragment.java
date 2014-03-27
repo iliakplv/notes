@@ -1,6 +1,5 @@
 package com.iliakplv.notes.gui.main;
 
-
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,10 +19,6 @@ import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
-/**
- * Author: Ilya Kopylov
- * Date:  16.08.2013
- */
 public class NoteDetailsFragment extends Fragment {
 
 	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();

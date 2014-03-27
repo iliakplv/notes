@@ -1,8 +1,6 @@
 package com.iliakplv.notes.notes;
 
-
 import com.iliakplv.notes.utils.StringUtils;
-
 
 public class Label {
 
