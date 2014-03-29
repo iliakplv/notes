@@ -12,10 +12,6 @@
 		<item name="android:paddingRight">@dimen/main_side_padding</item>
 	</style>
 
-	<style name="MainActivity.DualPane">
-		<item name="android:orientation">horizontal</item>
-	</style>
-
 
 	<!--
 		Notes List
