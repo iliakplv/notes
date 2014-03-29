@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
-public abstract class NoteDialog extends DialogFragment {
+public abstract class AbstractNoteDialog extends DialogFragment {
 
 	public static final String EXTRA_NOTE_ID = "note_id";
 

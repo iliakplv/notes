@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NoteLabelsDialog extends NoteDialog {
+public class NoteLabelsDialog extends AbstractNoteDialog {
 	// TODO save state
 
 	private static final String FRAGMENT_TAG = "note_labels_dialog";

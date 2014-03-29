@@ -16,7 +16,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 import org.joda.time.DateTime;
 
-public class NoteActionsDialog extends NoteDialog {
+public class NoteActionsDialog extends AbstractNoteDialog {
 
 	private static final String FRAGMENT_TAG = "note_actions_dialog";
 
