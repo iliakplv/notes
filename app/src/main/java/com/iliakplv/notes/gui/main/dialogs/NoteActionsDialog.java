@@ -76,6 +76,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 		}
 
 		private void showNoteDeleteDialog() {
+			// TODO implement as DialogFragment
 			new AlertDialog.Builder(activity).
 					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
 					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
@@ -94,6 +95,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 		}
 
 		private void showNoteInfoDialog() {
+			// TODO implement as DialogFragment
 			final String timeFormat = "HH:mm";
 
 			final DateTime created = noteEntry.getEntry().getCreateTime();

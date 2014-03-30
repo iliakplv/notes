@@ -138,6 +138,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
 					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
+					// TODO implement as DialogFragment
 					new AlertDialog.Builder(mainActivity).
 							setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
 							setItems(R.array.label_actions, new LabelActionDialogClickListener(labelEntry)).
@@ -253,6 +254,7 @@ public class NavigationDrawerFragment extends Fragment {
 	}
 
 	private void showLabelEditDialog(final NotesDatabaseEntry<Label> labelToEdit) {
+		// TODO implement as DialogFragment
 		final boolean editMode = labelToEdit != null; // if null - create mode
 
 		final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -438,6 +440,7 @@ public class NavigationDrawerFragment extends Fragment {
 		}
 
 		private void showDeleteDialog() {
+			// TODO implement as DialogFragment
 			new AlertDialog.Builder(mainActivity).
 					setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
 					setMessage("\n" + getString(R.string.label_action_delete_confirm_dialog_text) + "\n").
