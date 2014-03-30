@@ -18,17 +18,26 @@ import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class NoteLabelsDialog extends AbstractNoteDialog {
-	// TODO save state
 
 	private static final String FRAGMENT_TAG = "note_labels_dialog";
 
+	private static final String EXTRA_SELECTED_LABELS = "selected_labels";
+	private boolean[] selectedLabels;
+	private boolean fromSavedInstanceState = false;
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			selectedLabels = savedInstanceState.getBooleanArray(EXTRA_SELECTED_LABELS);
+			fromSavedInstanceState = true;
+		}
+
 		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteId);
 		return new AlertDialog.Builder(activity)
 				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(noteId).getEntry()))
@@ -41,6 +50,12 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 				})
 				.setNegativeButton(R.string.common_cancel, null)
 				.create();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBooleanArray(EXTRA_SELECTED_LABELS, selectedLabels);
 	}
 
 	public static void show(FragmentManager fragmentManager, int noteId) {
@@ -65,7 +80,6 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 		private final int noteId;
 		private final List<NotesDatabaseEntry<Label>> allLabels;
 		private final boolean[] currentLabels;
-		private final boolean[] selectedLabels;
 
 		public NoteLabelsListAdapter(int noteId) {
 			super(activity, 0, dbFacade.getAllLabels());
@@ -76,11 +90,11 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 
 			final Set<Integer> currentNoteLabelsIds = dbFacade.getLabelsIdsForNote(noteId);
 			currentLabels = new boolean[allLabels.size()];
-			selectedLabels = new boolean[allLabels.size()];
 			for (int i = 0; i < currentLabels.length; i++) {
-				final boolean selected = currentNoteLabelsIds.contains(allLabels.get(i).getId());
-				currentLabels[i] = selected;
-				selectedLabels[i] = selected;
+				currentLabels[i] = currentNoteLabelsIds.contains(allLabels.get(i).getId());
+			}
+			if (!fromSavedInstanceState) {
+				selectedLabels = Arrays.copyOf(currentLabels, currentLabels.length);
 			}
 		}
 
@@ -105,8 +119,8 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 			name.setText(NotesUtils.getTitleForLabel(label));
 			color.setBackgroundColor(labelsColors[label.getColor()]);
 
-			final android.widget.CheckBox checkBox = (android.widget.CheckBox) view.findViewById(R.id.checkbox);
-			checkBox.setChecked(currentLabels[position]);
+			final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+			checkBox.setChecked(selectedLabels[position]);
 			// TODO [low] refactor this
 			checkBox.setOnClickListener(new View.OnClickListener() {
 				@Override
