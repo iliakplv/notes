@@ -163,7 +163,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				return true;
 
 			// menu in details
-//			TODO implement
+//			TODO [low] implement showing NoteLabelsDialog
 //			case R.id.action_labels:
 //				return true;
 

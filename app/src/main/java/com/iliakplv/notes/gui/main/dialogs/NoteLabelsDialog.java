@@ -121,7 +121,6 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 
 			final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
 			checkBox.setChecked(selectedLabels[position]);
-			// TODO [low] refactor this
 			checkBox.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

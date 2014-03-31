@@ -16,7 +16,7 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 
-// TODO [fix] (new label) new instance shown on each rotation
+// TODO [fix] !!! new instance shown on each rotation in creation mode !!!
 public class LabelEditDialog extends AbstractLabelDialog {
 
 	public static final int NEW_LABEL = 0;
