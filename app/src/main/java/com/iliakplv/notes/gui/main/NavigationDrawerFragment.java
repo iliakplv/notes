@@ -40,8 +40,9 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 	private static final String PREF_SHOW_DRAWER_ON_START = "show_drawer_on_start";
 
-	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
-	public static final int ALL_LABELS_HEADER_POSITION = 0;
+	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private static final int ALL_LABELS_HEADER_POSITION = 0;
+	private static final int NO_LABEL_SELECTED = -1;
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private MainActivity mainActivity;
@@ -52,7 +53,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	private ListView labelsListView;
 	private LabelsListAdapter labelsListAdapter;
 
-	private int currentSelectedPosition;
+	private int currentSelectedPosition = NO_LABEL_SELECTED;
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
 	private boolean showDrawerOnStart;
@@ -75,7 +76,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		}
 		if (savedInstanceState != null) {
 			currentSelectedPosition =
-					savedInstanceState.getInt(STATE_SELECTED_POSITION, ALL_LABELS_HEADER_POSITION);
+					savedInstanceState.getInt(STATE_SELECTED_POSITION, NO_LABEL_SELECTED);
 			fromSavedInstanceState = true;
 		}
 	}
@@ -143,7 +144,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (fromSavedInstanceState) {
+		if (fromSavedInstanceState && currentSelectedPosition != NO_LABEL_SELECTED) {
 			selectItem(currentSelectedPosition);
 		}
 	}
@@ -213,29 +214,27 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	}
 
 	private void selectItem(int position) {
-		currentSelectedPosition = position;
-		if (mainActivity != null) {
-			if (position == labelsListView.getCount() - 1) {
-				LabelEditDialog.show(getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
-			} else {
-				if (drawerLayout != null) {
-					drawerLayout.closeDrawer(fragmentContainerView);
-				}
-
-				final int labelId;
-				final String newTitle;
-				if (position == ALL_LABELS_HEADER_POSITION) {
-					labelId = ALL_LABELS;
-					newTitle = getString(R.string.labels_drawer_all_notes);
-				} else {
-					final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
-					final NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
-					labelId = labelEntry.getId();
-					newTitle = NotesUtils.getTitleForLabel(labelEntry.getEntry());
-				}
-
-				mainActivity.onLabelSelected(labelId, newTitle);
+		if (position == labelsListView.getCount() - 1) { // "New label" item position
+			LabelEditDialog.show(getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
+		} else {
+			currentSelectedPosition = position;
+			if (drawerLayout != null) {
+				drawerLayout.closeDrawer(fragmentContainerView);
 			}
+
+			final int labelId;
+			final String newTitle;
+			if (position == ALL_LABELS_HEADER_POSITION) {
+				labelId = ALL_LABELS;
+				newTitle = getString(R.string.labels_drawer_all_notes);
+			} else {
+				final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
+				final NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
+				labelId = labelEntry.getId();
+				newTitle = NotesUtils.getTitleForLabel(labelEntry.getEntry());
+			}
+
+			mainActivity.onLabelSelected(labelId, newTitle);
 		}
 	}
 
