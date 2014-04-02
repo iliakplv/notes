@@ -214,8 +214,8 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	}
 
 	private void selectItem(int position) {
-		if (position == labelsListView.getCount() - 1) { // "New label" item position
-			LabelEditDialog.show(getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
+		if (position == labelsListView.getCount() - 1) {
+			createNewLabel();
 		} else {
 			currentSelectedPosition = position;
 			if (drawerLayout != null) {
@@ -236,6 +236,10 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 
 			mainActivity.onLabelSelected(labelId, newTitle);
 		}
+	}
+
+	public void createNewLabel() {
+		LabelEditDialog.show(mainActivity.getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
 	}
 
 	@Override
@@ -369,7 +373,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
 				case EDIT_INDEX:
-					LabelEditDialog.show(getFragmentManager(), labelEntry.getId(), NavigationDrawerFragment.this);
+					LabelEditDialog.show(mainActivity.getFragmentManager(), labelEntry.getId(), NavigationDrawerFragment.this);
 					break;
 				case DELETE_INDEX:
 					showDeleteDialog();

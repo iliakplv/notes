@@ -71,7 +71,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private boolean showNoteActionsDialog(int position) {
 		final int noteId = dbFacade.getNotesForLabel(currentLabelId).get(position).getId();
-		NoteActionsDialog.show(getFragmentManager(), noteId);
+		NoteActionsDialog.show(mainActivity.getFragmentManager(), noteId);
 		return true;
 	}
 

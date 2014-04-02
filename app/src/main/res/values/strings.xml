@@ -31,6 +31,7 @@
 	<string name="note_info_modified">Modified: %s</string>
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
+	<string name="note_action_no_labels_dialog_text">You have no labels.\nCreate new one?</string>
 
 	<string name="note_details_title_hint">Title</string>
 	<string name="note_details_body_hint">Text</string>

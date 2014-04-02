@@ -5,10 +5,10 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
@@ -35,7 +35,6 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 		dialog.setArguments(createArgumentsBundle(noteId));
 		dialog.show(fragmentManager, FRAGMENT_TAG);
 	}
-
 
 	/**
 	 * ******************************************
@@ -79,7 +78,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 			// TODO implement as DialogFragment
 			new AlertDialog.Builder(activity).
 					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage("\n" + getString(R.string.note_action_delete_confirm_dialog_text) + "\n").
+					setMessage(wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
@@ -123,12 +122,25 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 		}
 
 		private void showNoteLabelsDialog() {
-			// TODO [low] implement label creation in NoteLabelsDialog
-			if(dbFacade.getAllLabels().size() == 0) {
-				Toast.makeText(activity, "No labels created...", Toast.LENGTH_SHORT).show();
-				return;
+			final boolean noLabelsCreated = dbFacade.getAllLabels().size() == 0;
+			if(noLabelsCreated) {
+				showNoLabelsCreatedDialog();
+			} else {
+				NoteLabelsDialog.show(activity.getFragmentManager(), noteId);
 			}
-			NoteLabelsDialog.show(activity.getFragmentManager(), noteId);
+		}
+
+		private void showNoLabelsCreatedDialog() {
+			// TODO implement as DialogFragment
+			new AlertDialog.Builder(activity).
+					setMessage(wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
+					setNegativeButton(R.string.common_no, null).
+					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							((MainActivity) activity).createNewLabel();
+						}
+					}).create().show();
 		}
 	}
 }

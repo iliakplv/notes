@@ -99,6 +99,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		onNoteSelected(NEW_NOTE);
 	}
 
+	public void createNewLabel() {
+		navigationDrawerFragment.createNewLabel();
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -166,6 +170,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 //			TODO [low] implement showing NoteLabelsDialog
 //			case R.id.action_labels:
 //				return true;
+
+//			TODO implement sharing
 
 			// global menu
 			case R.id.action_settings:
