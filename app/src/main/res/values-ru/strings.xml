@@ -31,7 +31,7 @@
 	<string name="note_info_modified">Изменена: %s</string>
 	<string name="note_action_delete">Удалить</string>
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
-	<string name="note_action_no_labels_dialog_text">Не создано ни одной метки.\nСоздать новую?</string>
+	<string name="note_action_no_labels_dialog_text">Не создано ни одной метки.\nСоздать новую для этой заметки?</string>
 
 	<string name="note_details_title_hint">Заголовок</string>
 	<string name="note_details_body_hint">Текст</string>

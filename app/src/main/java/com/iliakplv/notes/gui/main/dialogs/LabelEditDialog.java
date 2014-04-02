@@ -22,6 +22,7 @@ public class LabelEditDialog extends AbstractLabelDialog {
 
 	private static final String FRAGMENT_TAG = "label_edit_dialog";
 
+	private static final String EXTRA_NOTE_ID = "note_id";
 	private static final String EXTRA_LABEL_NAME = "label_name";
 	private static final String EXTRA_SELECTED_COLOR = "label_color";
 	private EditText nameEditText;
@@ -66,6 +67,12 @@ public class LabelEditDialog extends AbstractLabelDialog {
 			checkBox.setTag(i);
 		}
 
+		final boolean insertLabelToNote = getArguments() != null &&
+				getArguments().containsKey(EXTRA_NOTE_ID);
+		final int noteId = insertLabelToNote ?
+				getArguments().getInt(EXTRA_NOTE_ID) :
+				0;
+
 		return new AlertDialog.Builder(activity)
 				.setView(labelDialogView)
 				.setPositiveButton(R.string.common_save, new DialogInterface.OnClickListener() {
@@ -80,7 +87,10 @@ public class LabelEditDialog extends AbstractLabelDialog {
 								if (editMode) {
 									dbFacade.updateLabel(labelId, label);
 								} else {
-									dbFacade.insertLabel(label);
+									final int labelId = dbFacade.insertLabel(label);
+									if (insertLabelToNote) {
+										dbFacade.insertLabelToNote(noteId, labelId);
+									}
 								}
 								((LabelEditDialogCallback) getTargetFragment()).onLabelChanged();
 							}
@@ -98,15 +108,30 @@ public class LabelEditDialog extends AbstractLabelDialog {
 		outState.putInt(EXTRA_SELECTED_COLOR, selectedColor);
 	}
 
+	// Show dialog
 	public static void show(FragmentManager fragmentManager, int labelId, Fragment targetFragment) {
+		createDialog(targetFragment, labelId, 0).show(fragmentManager, FRAGMENT_TAG);
+	}
+
+	// Show this dialog for new label creation. Set created label to specified note.
+	public static void showCreateAndSet(FragmentManager fragmentManager, Fragment targetFragment, int noteId) {
+		createDialog(targetFragment, NEW_LABEL, noteId).show(fragmentManager, FRAGMENT_TAG);
+	}
+
+	private static LabelEditDialog createDialog(Fragment targetFragment, int labelId, int noteId) {
 		if (!(targetFragment instanceof LabelEditDialogCallback)) {
 			throw new IllegalArgumentException("Target fragment must implement callback interface");
 		}
 		final LabelEditDialog dialog = new LabelEditDialog();
-		dialog.setArguments(createArgumentsBundle(labelId));
+		final Bundle args = createArgumentsBundle(labelId);
+		if (noteId > 0) {
+			args.putInt(EXTRA_NOTE_ID, noteId);
+		}
+		dialog.setArguments(args);
 		dialog.setTargetFragment(targetFragment, 0);
-		dialog.show(fragmentManager, FRAGMENT_TAG);
+		return dialog;
 	}
+
 
 
 	/**

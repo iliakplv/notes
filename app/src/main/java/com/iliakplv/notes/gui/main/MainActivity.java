@@ -99,8 +99,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		onNoteSelected(NEW_NOTE);
 	}
 
-	public void createNewLabel() {
-		navigationDrawerFragment.createNewLabel();
+	public void createNewLabelForNote(int noteId) {
+		navigationDrawerFragment.createNewLabelForNote(noteId);
 	}
 
 	@Override

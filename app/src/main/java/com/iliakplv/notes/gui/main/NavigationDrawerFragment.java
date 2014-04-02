@@ -242,6 +242,10 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		LabelEditDialog.show(mainActivity.getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
 	}
 
+	public void createNewLabelForNote(int noteId) {
+		LabelEditDialog.showCreateAndSet(mainActivity.getFragmentManager(), this, noteId);
+	}
+
 	@Override
 	public void onLabelChanged() {
 		mainActivity.runOnUiThread(new Runnable() {

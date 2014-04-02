@@ -133,12 +133,13 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 		private void showNoLabelsCreatedDialog() {
 			// TODO implement as DialogFragment
 			new AlertDialog.Builder(activity).
+					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
 					setMessage(wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							((MainActivity) activity).createNewLabel();
+							((MainActivity) activity).createNewLabelForNote(noteId);
 						}
 					}).create().show();
 		}
