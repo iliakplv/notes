@@ -98,22 +98,28 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 			// TODO implement as DialogFragment
 			final String timeFormat = "HH:mm";
 
-			final DateTime created = noteEntry.getEntry().getCreateTime();
-			final String createdString = created.toLocalDate().toString() + " " +
-					created.toLocalTime().toString(timeFormat);
+			final DateTime createTime = noteEntry.getEntry().getCreateTime();
+			final DateTime changeTime = noteEntry.getEntry().getChangeTime();
 
-			final DateTime changed = noteEntry.getEntry().getChangeTime();
-			final String changedString = changed.toLocalDate().toString() + " " +
-					changed.toLocalTime().toString(timeFormat);
+			final String createdString = createTime.toLocalDate().toString() + " " +
+					createTime.toLocalTime().toString(timeFormat);
+			String info = wrapWithEmptyLines(getString(R.string.note_info_created, createdString));
 
-			final String info = "\n" + getString(R.string.note_info_created, createdString) +
-					"\n\n" + getString(R.string.note_info_modified, changedString) + "\n";
+			if (!createTime.equals(changeTime)) {
+				final String changedString = changeTime.toLocalDate().toString() + " " +
+						changeTime.toLocalTime().toString(timeFormat);
+				info += wrapWithEmptyLines(getString(R.string.note_info_modified, changedString));
+			}
 
 			new AlertDialog.Builder(activity).
 					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
+		}
+
+		private String wrapWithEmptyLines(String string) {
+			return "\n" + string + "\n";
 		}
 
 		private void showNoteLabelsDialog() {
