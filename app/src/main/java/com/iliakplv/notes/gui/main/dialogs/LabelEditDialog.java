@@ -133,7 +133,7 @@ public class LabelEditDialog extends AbstractLabelDialog {
 		}
 	}
 
-	public interface LabelEditDialogCallback {
+	public static interface LabelEditDialogCallback {
 		public void onLabelChanged();
 	}
 }
