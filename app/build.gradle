@@ -19,7 +19,6 @@ android {
 	buildTypes {
 		debug {
 			runProguard false
-//			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 			zipAlign true
 			debuggable true
 		}
@@ -33,7 +32,7 @@ android {
 	}
 
 	testOptions {
-		resultsDir = '$project.buildDir/tests'
+		resultsDir = "$project.buildDir/tests"
 	}
 
 	signingConfigs {
@@ -47,7 +46,22 @@ android {
 	}
 }
 
+task nativeLibsToJar(type: Zip) {
+	destinationDir file("$buildDir/native-libs")
+	baseName 'native-libs'
+	extension 'jar'
+	from fileTree(dir: 'libs', include: '**/*.so')
+	into 'lib/'
+}
+
+tasks.withType(Compile) {
+	compileTask -> compileTask.dependsOn(nativeLibsToJar)
+}
+
 dependencies {
 	compile 'com.android.support:support-v4:+'
 	compile 'joda-time:joda-time:2.3'
+
+	compile files('libs/dropbox-sync-sdk-android.jar')
+	compile files("$buildDir/native-libs/native-libs.jar")
 }
