@@ -6,6 +6,10 @@ import com.iliakplv.notes.utils.StringUtils;
 
 public final class NotesUtils {
 
+	private NotesUtils() {
+		throw new AssertionError("Instance creation not allowed!");
+	}
+
 	public static enum NoteSortOrder {
 		Title,
 		CreateDateAscending,

@@ -13,6 +13,7 @@ import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
 
@@ -78,7 +79,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 			// TODO implement as DialogFragment
 			new AlertDialog.Builder(activity).
 					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage(wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
+					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
@@ -102,12 +103,12 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 
 			final String createdString = createTime.toLocalDate().toString() + " " +
 					createTime.toLocalTime().toString(timeFormat);
-			String info = wrapWithEmptyLines(getString(R.string.note_info_created, createdString));
+			String info = StringUtils.wrapWithEmptyLines(getString(R.string.note_info_created, createdString));
 
 			if (!createTime.equals(changeTime)) {
 				final String changedString = changeTime.toLocalDate().toString() + " " +
 						changeTime.toLocalTime().toString(timeFormat);
-				info += wrapWithEmptyLines(getString(R.string.note_info_modified, changedString));
+				info += StringUtils.wrapWithEmptyLines(getString(R.string.note_info_modified, changedString));
 			}
 
 			new AlertDialog.Builder(activity).
@@ -115,10 +116,6 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 					setMessage(info).
 					setNegativeButton(R.string.common_ok, null).
 					create().show();
-		}
-
-		private String wrapWithEmptyLines(String string) {
-			return "\n" + string + "\n";
 		}
 
 		private void showNoteLabelsDialog() {
@@ -134,7 +131,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 			// TODO implement as DialogFragment
 			new AlertDialog.Builder(activity).
 					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage(wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
+					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override

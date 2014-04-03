@@ -2,12 +2,20 @@ package com.iliakplv.notes.utils;
 
 public final class StringUtils {
 
+	private StringUtils() {
+		throw new AssertionError("Instance creation not allowed!");
+	}
+
 	public static String getNotNull(String s) {
 		return s != null ? s : "";
 	}
 
 	public static boolean isNullOrEmpty(String s) {
 		return s == null || s.length() == 0;
+	}
+
+	public static String wrapWithEmptyLines(String string) {
+		return "\n" + string + "\n";
 	}
 
 	public static boolean equals(String s1, String s2) {
