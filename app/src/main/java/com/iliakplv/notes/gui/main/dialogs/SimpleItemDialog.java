@@ -121,7 +121,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createLabelActionsDialog() {
-		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id).get(0);
+		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
 				setItems(R.array.label_actions, new LabelActionDialogClickListener()).
@@ -130,7 +130,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createLabelDeleteDialog() {
-		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id).get(0);
+		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.label_action_delete_confirm_dialog_text))).

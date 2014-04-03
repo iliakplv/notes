@@ -170,8 +170,9 @@ class NotesDatabaseAdapter {
 
 	// labels queries
 
-	List<NotesDatabaseEntry<Label>> getLabel(int id) { // returns list with one label
-		return labelsQuery(id);
+	NotesDatabaseEntry<Label> getLabel(int id) { // returns list with one label
+		final List<NotesDatabaseEntry<Label>> labels = labelsQuery(id);
+		return labels.isEmpty() ? null : labels.get(0);
 	}
 
 	List<NotesDatabaseEntry<Label>> getAllLabels() { // sorted by name

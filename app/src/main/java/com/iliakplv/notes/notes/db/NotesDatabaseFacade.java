@@ -111,8 +111,8 @@ public class NotesDatabaseFacade {
 
 	// labels
 
-	public List<NotesDatabaseEntry<Label>> getLabel(int id) {
-		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabel, id);
+	public NotesDatabaseEntry<Label> getLabel(int id) {
+		return (NotesDatabaseEntry<Label>) performDatabaseTransaction(TransactionType.GetLabel, id);
 	}
 
 	public List<NotesDatabaseEntry<Label>> getAllLabels() {

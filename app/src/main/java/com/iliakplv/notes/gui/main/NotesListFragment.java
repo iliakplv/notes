@@ -20,6 +20,7 @@ import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
@@ -174,9 +175,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 			// labels
 			final boolean showingNotesForAllLabels = currentLabelId == ALL_LABELS;
-			List<NotesDatabaseEntry<Label>> labelEntries = showingNotesForAllLabels ?
-					dbFacade.getLabelsForNote(entry.getId()) : // show all labels for this note
-					dbFacade.getLabel(currentLabelId); // show only selected label for this note
+			final List<NotesDatabaseEntry<Label>> labelEntries;
+			if (showingNotesForAllLabels) {
+				labelEntries = dbFacade.getLabelsForNote(entry.getId());
+			} else {
+				labelEntries = new ArrayList<NotesDatabaseEntry<Label>>(1);
+				labelEntries.add(dbFacade.getLabel(currentLabelId));
+			}
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
 				if (i < labelEntries.size()) {
