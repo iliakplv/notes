@@ -17,13 +17,13 @@ import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
 
-public class NoteActionsDialog extends AbstractNoteDialog {
+public class NoteActionsDialog extends AbstractItemDialog {
 
 	private static final String FRAGMENT_TAG = "note_actions_dialog";
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNote(noteId);
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNote(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener(selectedNoteEntry)).
@@ -123,7 +123,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 			if(noLabelsCreated) {
 				showNoLabelsCreatedDialog();
 			} else {
-				NoteLabelsDialog.show(activity.getFragmentManager(), noteId);
+				NoteLabelsDialog.show(activity.getFragmentManager(), id);
 			}
 		}
 
@@ -136,7 +136,7 @@ public class NoteActionsDialog extends AbstractNoteDialog {
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							((MainActivity) activity).createNewLabelForNote(noteId);
+							((MainActivity) activity).createNewLabelForNote(id);
 						}
 					}).create().show();
 		}

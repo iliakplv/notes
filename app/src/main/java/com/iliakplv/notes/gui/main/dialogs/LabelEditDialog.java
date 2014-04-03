@@ -16,7 +16,7 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 
-public class LabelEditDialog extends AbstractLabelDialog {
+public class LabelEditDialog extends AbstractItemDialog {
 
 	public static final int NEW_LABEL = 0;
 
@@ -44,11 +44,11 @@ public class LabelEditDialog extends AbstractLabelDialog {
 		final LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
 
-		final boolean editMode = labelId != NEW_LABEL;
+		final boolean editMode = id != NEW_LABEL;
 		final boolean fromSavedInstanceState = savedInstanceState != null;
 
 		final Label label = editMode ?
-				dbFacade.getLabel(labelId).get(0).getEntry() :
+				dbFacade.getLabel(id).get(0).getEntry() :
 				new Label("", Label.DEFAULT_COLOR_INDEX);
 		final String labelName = fromSavedInstanceState ?
 				savedInstanceState.getString(EXTRA_LABEL_NAME) :
@@ -85,7 +85,7 @@ public class LabelEditDialog extends AbstractLabelDialog {
 								label.setName(labelName);
 								label.setColor(selectedColor);
 								if (editMode) {
-									dbFacade.updateLabel(labelId, label);
+									dbFacade.updateLabel(id, label);
 								} else {
 									final int labelId = dbFacade.insertLabel(label);
 									if (insertLabelToNote) {

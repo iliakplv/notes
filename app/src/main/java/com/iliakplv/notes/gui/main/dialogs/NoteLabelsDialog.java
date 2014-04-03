@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NoteLabelsDialog extends AbstractNoteDialog {
+public class NoteLabelsDialog extends AbstractItemDialog {
 
 	private static final String FRAGMENT_TAG = "note_labels_dialog";
 
@@ -38,9 +38,9 @@ public class NoteLabelsDialog extends AbstractNoteDialog {
 			fromSavedInstanceState = true;
 		}
 
-		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(noteId);
+		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(id);
 		return new AlertDialog.Builder(activity)
-				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(noteId).getEntry()))
+				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry()))
 				.setAdapter(labelsAdapter, null)
 				.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 					@Override

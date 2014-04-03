@@ -6,14 +6,14 @@ import android.os.Bundle;
 
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
-public class AbstractLabelDialog extends DialogFragment {
+public abstract class AbstractItemDialog extends DialogFragment {
 
-	public static final String EXTRA_LABEL_ID = "label_id";
+	public static final String EXTRA_ID = "item_id";
 
 	protected NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 
 	protected Activity activity;
-	protected int labelId;
+	protected int id;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -27,16 +27,15 @@ public class AbstractLabelDialog extends DialogFragment {
 		super.onCreate(savedInstanceState);
 
 		final Bundle args = getArguments();
-		if (args == null || !args.containsKey(EXTRA_LABEL_ID)) {
-			throw new RuntimeException("Label id required");
+		if (args == null || !args.containsKey(EXTRA_ID)) {
+			throw new RuntimeException("Item id required");
 		}
-		labelId = args.getInt(EXTRA_LABEL_ID);
+		id = args.getInt(EXTRA_ID);
 	}
 
-	protected static Bundle createArgumentsBundle(int labelId) {
+	protected static Bundle createArgumentsBundle(int noteId) {
 		final Bundle args = new Bundle();
-		args.putInt(EXTRA_LABEL_ID, labelId);
+		args.putInt(EXTRA_ID, noteId);
 		return args;
 	}
-
 }
