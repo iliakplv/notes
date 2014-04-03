@@ -24,42 +24,43 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	private static final String EXTRA_TYPE = "dialog_type";
 	private static final String FRAGMENT_TAG_PREFIX = "item_dialog_";
 
+
+	// Dialogs creation
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final DialogType type = (DialogType) getArguments().getSerializable(EXTRA_TYPE);
 
 		switch (type) {
+
+			// for note
+			case NoteActions:
+				return createNoteActionsDialog();
 			case NoteInfo:
 				return createNoteInfoDialog();
 			case NoteDelete:
 				return createNoteDeleteDialog();
 			case NoteNoLabels:
 				return createNoteNoLabelsDialog();
+
+			// for label
 			case LabelActions:
 				return createLabelActionsDialog();
 			case LabelDelete:
 				return createLabelDeleteDialog();
+
 			default:
 				throw new RuntimeException("Unknown dialog type: " + type.toString());
 		}
 	}
 
-	private Dialog createNoteDeleteDialog() {
+	private Dialog createNoteActionsDialog() {
+		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNote(id);
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry())).
-				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
-				setNegativeButton(R.string.common_no, null).
-				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						NotesApplication.executeInBackground(new Runnable() {
-							@Override
-							public void run() {
-								NotesDatabaseFacade.getInstance().deleteNote(id);
-							}
-						});
-					}
-				}).create();
+				setTitle(NotesUtils.getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
+				setItems(R.array.note_actions, new NoteActionDialogClickListener()).
+				setNegativeButton(R.string.common_cancel, null).
+				create();
 	}
 
 	private Dialog createNoteInfoDialog() {
@@ -84,6 +85,24 @@ public class SimpleItemDialog extends AbstractItemDialog {
 				setMessage(info).
 				setNegativeButton(R.string.common_ok, null).
 				create();
+	}
+
+	private Dialog createNoteDeleteDialog() {
+		return new AlertDialog.Builder(activity).
+				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry())).
+				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
+				setNegativeButton(R.string.common_no, null).
+				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						NotesApplication.executeInBackground(new Runnable() {
+							@Override
+							public void run() {
+								NotesDatabaseFacade.getInstance().deleteNote(id);
+							}
+						});
+					}
+				}).create();
 	}
 
 	private Dialog createNoteNoLabelsDialog() {
@@ -131,13 +150,20 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 
-	public static void show(DialogType type, int id, FragmentManager fragmentManager) {
+	// New dialog showing
+
+	public static void show(DialogType type, int itemId, FragmentManager fragmentManager) {
 		final SimpleItemDialog dialog = new SimpleItemDialog();
-		final Bundle args = createArgumentsBundle(id);
+		final Bundle args = createArgumentsBundle(itemId);
 		args.putSerializable(EXTRA_TYPE, type);
 		dialog.setArguments(args);
 		dialog.show(fragmentManager, FRAGMENT_TAG_PREFIX + type.toString());
 	}
+
+	private void showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType type) {
+		SimpleItemDialog.show(type, id, activity.getFragmentManager());
+	}
+
 
 	/**
 	 * ******************************************
@@ -148,12 +174,49 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	 */
 
 	public static enum DialogType {
-		NoteDelete,
+		// for note
+		NoteActions,
 		NoteInfo,
+		NoteDelete,
 		NoteNoLabels,
-
+		// for label
 		LabelActions,
 		LabelDelete
+	}
+
+	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
+
+		private final int LABELS_INDEX = 0;
+		private final int INFO_INDEX = 1;
+		private final int DELETE_INDEX = 2;
+
+		public NoteActionDialogClickListener() {}
+
+		@Override
+		public void onClick(DialogInterface dialogInterface, int i) {
+			switch (i) {
+				case LABELS_INDEX:
+					showNoteLabelsDialog();
+					break;
+				case INFO_INDEX:
+					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteInfo);
+					break;
+				case DELETE_INDEX:
+					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteDelete);
+					break;
+			}
+		}
+
+		private void showNoteLabelsDialog() {
+			final boolean noLabelsCreated = dbFacade.getAllLabels().size() == 0;
+			if(noLabelsCreated) {
+				showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteNoLabels);
+			} else {
+				NoteLabelsDialog.show(activity.getFragmentManager(), id);
+			}
+		}
+
+
 	}
 
 	private class LabelActionDialogClickListener implements DialogInterface.OnClickListener {
@@ -167,13 +230,12 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		public void onClick(DialogInterface dialogInterface, int i) {
 			switch (i) {
 				case EDIT_INDEX:
-					((MainActivity) activity).getNavigationDrawerFragment()
+					((MainActivity) activity)
+							.getNavigationDrawerFragment()
 							.showLabelEditDialog(id);
 					break;
 				case DELETE_INDEX:
-					SimpleItemDialog.show(DialogType.LabelDelete,
-							id,
-							activity.getFragmentManager());
+					showSimpleDialogForCurrentItem(DialogType.LabelDelete);
 					break;
 			}
 		}

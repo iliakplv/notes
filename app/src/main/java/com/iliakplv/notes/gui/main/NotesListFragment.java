@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.gui.main.dialogs.NoteActionsDialog;
+import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -71,7 +71,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private boolean showNoteActionsDialog(int position) {
 		final int noteId = dbFacade.getNotesForLabel(currentLabelId).get(position).getId();
-		NoteActionsDialog.show(mainActivity.getFragmentManager(), noteId);
+		SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteActions,
+				noteId,
+				mainActivity.getFragmentManager());
 		return true;
 	}
 
