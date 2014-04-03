@@ -33,9 +33,9 @@ public abstract class AbstractItemDialog extends DialogFragment {
 		id = args.getInt(EXTRA_ID);
 	}
 
-	protected static Bundle createArgumentsBundle(int noteId) {
+	protected static Bundle createArgumentsBundle(int id) {
 		final Bundle args = new Bundle();
-		args.putInt(EXTRA_ID, noteId);
+		args.putInt(EXTRA_ID, id);
 		return args;
 	}
 }
