@@ -31,6 +31,7 @@ import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.List;
 
@@ -389,7 +390,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 			// TODO implement as DialogFragment
 			new AlertDialog.Builder(mainActivity).
 					setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
-					setMessage("\n" + getString(R.string.label_action_delete_confirm_dialog_text) + "\n").
+					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.label_action_delete_confirm_dialog_text))).
 					setNegativeButton(R.string.common_no, null).
 					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
 						@Override
