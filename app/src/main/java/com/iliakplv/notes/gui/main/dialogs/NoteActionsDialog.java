@@ -6,16 +6,10 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
-import com.iliakplv.notes.utils.StringUtils;
-
-import org.joda.time.DateTime;
 
 public class NoteActionsDialog extends AbstractItemDialog {
 
@@ -67,78 +61,27 @@ public class NoteActionsDialog extends AbstractItemDialog {
 					showNoteLabelsDialog();
 					break;
 				case INFO_INDEX:
-					showNoteInfoDialog();
+					showSimpleDialog(SimpleItemDialog.DialogType.NoteInfo);
 					break;
 				case DELETE_INDEX:
-					showNoteDeleteDialog();
+					showSimpleDialog(SimpleItemDialog.DialogType.NoteDelete);
 					break;
 			}
-		}
-
-		private void showNoteDeleteDialog() {
-			// TODO implement as DialogFragment
-			new AlertDialog.Builder(activity).
-					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
-					setNegativeButton(R.string.common_no, null).
-					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-							NotesApplication.executeInBackground(new Runnable() {
-								@Override
-								public void run() {
-									NotesDatabaseFacade.getInstance().deleteNote(noteEntry.getId());
-								}
-							});
-						}
-					}).create().show();
-		}
-
-		private void showNoteInfoDialog() {
-			// TODO implement as DialogFragment
-			final String timeFormat = "HH:mm";
-
-			final DateTime createTime = noteEntry.getEntry().getCreateTime();
-			final DateTime changeTime = noteEntry.getEntry().getChangeTime();
-
-			final String createdString = createTime.toLocalDate().toString() + " " +
-					createTime.toLocalTime().toString(timeFormat);
-			String info = StringUtils.wrapWithEmptyLines(getString(R.string.note_info_created, createdString));
-
-			if (!createTime.equals(changeTime)) {
-				final String changedString = changeTime.toLocalDate().toString() + " " +
-						changeTime.toLocalTime().toString(timeFormat);
-				info += StringUtils.wrapWithEmptyLines(getString(R.string.note_info_modified, changedString));
-			}
-
-			new AlertDialog.Builder(activity).
-					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage(info).
-					setNegativeButton(R.string.common_ok, null).
-					create().show();
 		}
 
 		private void showNoteLabelsDialog() {
 			final boolean noLabelsCreated = dbFacade.getAllLabels().size() == 0;
 			if(noLabelsCreated) {
-				showNoLabelsCreatedDialog();
+				showSimpleDialog(SimpleItemDialog.DialogType.NoteNoLabels);
 			} else {
 				NoteLabelsDialog.show(activity.getFragmentManager(), id);
 			}
 		}
 
-		private void showNoLabelsCreatedDialog() {
-			// TODO implement as DialogFragment
-			new AlertDialog.Builder(activity).
-					setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
-					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
-					setNegativeButton(R.string.common_no, null).
-					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-							((MainActivity) activity).createNewLabelForNote(id);
-						}
-					}).create().show();
+		private void showSimpleDialog(SimpleItemDialog.DialogType type) {
+			SimpleItemDialog.show(type,
+					noteEntry.getId(),
+					activity.getFragmentManager());
 		}
 	}
 }

@@ -2,9 +2,7 @@ package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -24,14 +22,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.LabelEditDialog;
+import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
-import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.List;
 
@@ -126,13 +123,9 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 
 				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
 					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
-					// TODO implement as DialogFragment
-					new AlertDialog.Builder(mainActivity).
-							setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
-							setItems(R.array.label_actions, new LabelActionDialogClickListener(labelEntry)).
-							setNegativeButton(R.string.common_cancel, null).
-							create().show();
-
+					SimpleItemDialog.show(SimpleItemDialog.DialogType.LabelActions,
+							labelEntry.getId(),
+							mainActivity.getFragmentManager());
 				}
 				return true;
 			}
@@ -240,11 +233,13 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	}
 
 	public void createNewLabel() {
-		LabelEditDialog.show(mainActivity.getFragmentManager(), LabelEditDialog.NEW_LABEL, this);
+		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
 	}
 
-	public void createNewLabelForNote(int noteId) {
-		LabelEditDialog.showCreateAndSet(mainActivity.getFragmentManager(), this, noteId);
+	public void showLabelEditDialog(int labelId) {
+		LabelEditDialog.show(mainActivity.getFragmentManager(),
+				labelId,
+				this);
 	}
 
 	@Override
@@ -356,59 +351,6 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		@Override
 		public int getCount() {
 			return dbFacade.getAllLabels().size();
-		}
-
-	}
-
-	private class LabelActionDialogClickListener implements DialogInterface.OnClickListener {
-
-		private final int EDIT_INDEX = 0;
-		private final int DELETE_INDEX = 1;
-
-		private NotesDatabaseEntry<Label> labelEntry;
-
-		public LabelActionDialogClickListener(NotesDatabaseEntry<Label> labelEntry) {
-			if (labelEntry == null) {
-				throw new NullPointerException("Label entry is null");
-			}
-			this.labelEntry = labelEntry;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialogInterface, int i) {
-			switch (i) {
-				case EDIT_INDEX:
-					LabelEditDialog.show(mainActivity.getFragmentManager(), labelEntry.getId(), NavigationDrawerFragment.this);
-					break;
-				case DELETE_INDEX:
-					showDeleteDialog();
-					break;
-			}
-		}
-
-		private void showDeleteDialog() {
-			// TODO implement as DialogFragment
-			new AlertDialog.Builder(mainActivity).
-					setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
-					setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.label_action_delete_confirm_dialog_text))).
-					setNegativeButton(R.string.common_no, null).
-					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-							NotesApplication.executeInBackground(new Runnable() {
-								@Override
-								public void run() {
-									dbFacade.deleteLabel(labelEntry.getId());
-									mainActivity.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											labelsListAdapter.notifyDataSetChanged();
-										}
-									});
-								}
-							});
-						}
-					}).create().show();
 		}
 	}
 
