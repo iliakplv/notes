@@ -1,6 +1,8 @@
 package com.iliakplv.notes.notes.db;
 
 import android.util.Log;
+import android.util.Pair;
+
 import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
@@ -134,6 +136,10 @@ public class NotesDatabaseFacade {
 
 	// notes_labels
 
+	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
+		return (Set<Pair<Integer, Integer>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
+	}
+
 	public List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
 		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
@@ -199,6 +205,9 @@ public class NotesDatabaseFacade {
 				result = adapter.deleteLabel(labelId);
 				break;
 
+			case GetAllNotesLabelsIds:
+				result = adapter.getAllNotesLabelsIds();
+				break;
 			case GetLabelsForNote:
 				noteId = (Integer) args[0];
 				result = adapter.getLabelsForNote(noteId);
@@ -311,6 +320,7 @@ public class NotesDatabaseFacade {
 		UpdateLabel,
 		DeleteLabel,
 
+		GetAllNotesLabelsIds,
 		GetLabelsForNote,
 		GetLabelsIdsForNote,
 		GetNotesForLabel,

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Pair;
 
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
@@ -60,6 +61,12 @@ class NotesDatabaseAdapter {
 	private static final String NOTES_LABELS_TABLE = "notes_labels";
 	private static final String NOTES_LABELS_NOTE_ID = "note_id";
 	private static final String NOTES_LABELS_LABEL_ID = "label_id";
+
+	private static final int NOTE_LABELS_NOTE_ID_COLUMN = 1;
+	private static final int NOTE_LABELS_LABEL_ID_COLUMN = 2;
+
+	private static final String[] NOTES_LABELS_PROJECTION = {KEY_ID,
+			NOTES_LABELS_NOTE_ID, NOTES_LABELS_LABEL_ID};
 
 
 	// Schema creation
@@ -213,6 +220,21 @@ class NotesDatabaseAdapter {
 
 
 	// notes_labels queries
+
+	Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
+		final Cursor cursor = db.query(NOTES_LABELS_TABLE, NOTES_LABELS_PROJECTION,
+				null, null, null, null, null);
+
+		final Set<Pair<Integer, Integer>> result = new HashSet<Pair<Integer, Integer>>();
+		if (cursor.moveToFirst()) {
+			do {
+				result.add(new Pair<Integer, Integer>(cursor.getInt(NOTE_LABELS_NOTE_ID_COLUMN),
+						cursor.getInt(NOTE_LABELS_LABEL_ID_COLUMN)));
+			} while (cursor.moveToNext());
+		}
+
+		return result;
+	}
 
 	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) { // sorted by label name
 		final Cursor cursor = getLabelsForNoteCursor(noteId, true);
