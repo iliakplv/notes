@@ -5,18 +5,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.utils.AppLog;
 import com.iliakplv.notes.utils.StringUtils;
 
 public class NoteDetailsFragment extends Fragment {
@@ -51,9 +50,7 @@ public class NoteDetailsFragment extends Fragment {
 		if (savedInstanceState != null) {
 			noteId = savedInstanceState.getInt(ARG_NOTE_ID);
 		}
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
-		}
+		AppLog.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
 	}
 
 	@Override
@@ -67,9 +64,7 @@ public class NoteDetailsFragment extends Fragment {
 				noteId = args.getInt(ARG_NOTE_ID);
 			}
 		}
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "onStart() call. Note id = " + noteId);
-		}
+		AppLog.d(LOG_TAG, "onStart() call. Note id = " + noteId);
 
 		updateNoteDetailsView();
 	}
@@ -99,9 +94,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
-		}
+		AppLog.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
 		outState.putInt(ARG_NOTE_ID, noteId);
 	}
 
@@ -117,13 +110,9 @@ public class NoteDetailsFragment extends Fragment {
 					!StringUtils.isNullOrEmpty(newBody)) {
 				// (perform on UI thread)
 				noteId = dbFacade.insertNote(new TextNote(newTitle, newBody));
-				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
-				}
+				AppLog.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
-				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
-				}
+				AppLog.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
 			}
 		} else {
 			final NotesDatabaseEntry<AbstractNote> noteEntry = dbFacade.getNote(noteId);
@@ -137,19 +126,13 @@ public class NoteDetailsFragment extends Fragment {
 					currentNote.setBody(newBody);
 					currentNote.updateChangeTime();
 					final boolean updated = dbFacade.updateNote(noteId, currentNote);
-					if (BuildConfig.DEBUG) {
-						Log.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database "
-								+ (updated ? "" : "NOT (!) ") + "updated.");
-					}
+					AppLog.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database "
+							+ (updated ? "" : "NOT (!) ") + "updated.");
 				} else {
-					if (BuildConfig.DEBUG) {
-						Log.d(LOG_TAG, LOG_PREFIX + "Note data unchanged.");
-					}
+					AppLog.d(LOG_TAG, LOG_PREFIX + "Note data unchanged.");
 				}
 			} else {
-				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "Note entry is null (!)");
-				}
+				AppLog.d(LOG_TAG, LOG_PREFIX + "Note entry is null (!)");
 			}
 		}
 	}

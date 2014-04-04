@@ -2,7 +2,8 @@ package com.iliakplv.notes;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
+
+import com.iliakplv.notes.utils.AppLog;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,17 +20,13 @@ public class NotesApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "onCreate() call");
-		}
+		AppLog.d(LOG_TAG, "onCreate() call");
 		super.onCreate();
 
 		context = this.getApplicationContext();
 
 		final int processors = Runtime.getRuntime().availableProcessors();
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Detected " + processors + " processors. Creating thread pool...");
-		}
+		AppLog.d(LOG_TAG, "Detected " + processors + " processors. Creating thread pool...");
 		executor = new ThreadPoolExecutor(processors,
 				processors,
 				NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS,
@@ -39,9 +36,7 @@ public class NotesApplication extends Application {
 
 	@Override
 	public void onTerminate() {
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "onTerminate() call");
-		}
+		AppLog.d(LOG_TAG, "onTerminate() call");
 		super.onTerminate();
 	}
 

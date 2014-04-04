@@ -2,10 +2,9 @@ package com.iliakplv.notes.notes.db;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.NotesApplication;
+import com.iliakplv.notes.utils.AppLog;
 
 class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
@@ -27,9 +26,7 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Upgrading version " + oldVersion + " to " + newVersion);
-		}
+		AppLog.d(LOG_TAG, "Upgrading version " + oldVersion + " to " + newVersion);
 
 		if (oldVersion == DATABASE_VERSION_FIRST && newVersion == DATABASE_VERSION_LABELS) {
 			upgradeToLabels(db, false);
@@ -38,17 +35,13 @@ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private void createFirstVersion(SQLiteDatabase db) {
 		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_TABLE);
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
-		}
+		AppLog.d(LOG_TAG, "Schema creation: " + NotesDatabaseAdapter.CREATE_NOTES_TABLE);
 	}
 
 	private void upgradeToLabels(SQLiteDatabase db, boolean creation) {
 		db.execSQL(NotesDatabaseAdapter.CREATE_LABELS_TABLE);
 		db.execSQL(NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, (creation ? "Schema creation: " : "Schema upgrading: ") + NotesDatabaseAdapter.CREATE_LABELS_TABLE);
-			Log.d(LOG_TAG, (creation ? "Schema creation: " : "Schema upgrading: ") + NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
-		}
+		AppLog.d(LOG_TAG, (creation ? "Schema creation: " : "Schema upgrading: ") + NotesDatabaseAdapter.CREATE_LABELS_TABLE);
+		AppLog.d(LOG_TAG, (creation ? "Schema creation: " : "Schema upgrading: ") + NotesDatabaseAdapter.CREATE_NOTES_LABELS_TABLE);
 	}
 }

@@ -1,13 +1,12 @@
 package com.iliakplv.notes.notes.db;
 
-import android.util.Log;
 import android.util.Pair;
 
-import com.iliakplv.notes.BuildConfig;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.utils.AppLog;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,10 +59,8 @@ public class NotesDatabaseFacade {
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
 		final boolean needToRefresh = lastFetchedNoteEntryId != id || !lastFetchedNoteEntryActual;
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
-					(needToRefresh ? "NOT " : "") + "actual");
-		}
+		AppLog.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
+				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			lastFetchedNoteEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
 			lastFetchedNoteEntryId = id;
@@ -74,10 +71,8 @@ public class NotesDatabaseFacade {
 
 	public List<NotesDatabaseEntry> getNotesForLabel(int labelId) {
 		final boolean needToRefresh = lastFetchedNotesListLabelId != labelId || !lastFetchedNotesListActual;
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Notes entries fetching (labelId=" + labelId + "). Cached entries list " +
-					(needToRefresh ? "NOT " : "") + "actual");
-		}
+		AppLog.d(LOG_TAG, "Notes entries fetching (labelId=" + labelId + "). Cached entries list " +
+				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			final TransactionType selectTransaction =
 					labelId == ALL_LABELS ? TransactionType.GetAllNotes : TransactionType.GetNotesForLabel;
@@ -241,9 +236,7 @@ public class NotesDatabaseFacade {
 	}
 
 	private void onTransactionPerformed(TransactionType transactionType) {
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
-		}
+		AppLog.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 		if (databaseModificationTransaction(transactionType)) {
 			lastFetchedNotesListActual = false;
 			notifyDatabaseListeners();
