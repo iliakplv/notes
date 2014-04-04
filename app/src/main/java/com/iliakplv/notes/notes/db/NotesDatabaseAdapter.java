@@ -138,27 +138,6 @@ class NotesDatabaseAdapter {
 		return result;
 	}
 
-	private static String sortOrderClause(NotesUtils.NoteSortOrder order) {
-		if (order == null) {
-			return null;
-		}
-		switch (order) {
-			case Title:
-				return NOTES_NAME;
-
-			case CreateDateAscending:
-				return NOTES_CREATE_DATE + " ASC";
-			case CreateDateDescending:
-				return NOTES_CREATE_DATE + " DESC";
-
-			case ChangeDate:
-				return NOTES_CHANGE_DATE + " DESC";
-
-			default:
-				throw new IllegalArgumentException("Unsupported sort order: " + order.toString());
-		}
-	}
-
 
 	// notes data modification
 
@@ -324,6 +303,27 @@ class NotesDatabaseAdapter {
 
 
 	// Util methods
+
+	private static String sortOrderClause(NotesUtils.NoteSortOrder order) {
+		if (order == null) {
+			return null;
+		}
+		switch (order) {
+			case Title:
+				return NOTES_NAME;
+
+			case CreateDateAscending:
+				return NOTES_CREATE_DATE + " ASC";
+			case CreateDateDescending:
+				return NOTES_CREATE_DATE + " DESC";
+
+			case ChangeDate:
+				return NOTES_CHANGE_DATE + " DESC";
+
+			default:
+				throw new IllegalArgumentException("Unsupported sort order: " + order.toString());
+		}
+	}
 
 	private static ContentValues contentValuesForNote(AbstractNote note) {
 		final ContentValues cv = new ContentValues();
