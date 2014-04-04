@@ -10,7 +10,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.widget.Toast;
 
+import com.dropbox.sync.android.DbxAccount;
+import com.dropbox.sync.android.DbxAccountManager;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -28,6 +31,41 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
+
+
+	// TODO dropbox test
+
+	private static final int REQUEST_LINK_TO_DBX = 0;
+	private static final String APP_KEY = "cyla6oz3c3vuje3";
+	private static final String APP_SECRET = "blt7jatmxpojwiz";
+	private DbxAccountManager mAccountManager;
+	private DbxAccount mAccount;
+
+	private void dropboxTest() {
+		mAccountManager = DbxAccountManager.getInstance(getApplicationContext(), APP_KEY, APP_SECRET);
+
+		if (mAccountManager.hasLinkedAccount()) {
+			Toast.makeText(this, "Account already linked", Toast.LENGTH_LONG).show();
+		} else {
+			mAccountManager.startLink(this, REQUEST_LINK_TO_DBX);
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_LINK_TO_DBX) {
+			if (resultCode == Activity.RESULT_OK) {
+				mAccount = mAccountManager.getLinkedAccount();
+				Toast.makeText(this, "Account has been linked", Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(this, "Account link failed!", Toast.LENGTH_LONG).show();
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	// TODO dropbox test
 
 
 	private boolean isDetailsShown() {
