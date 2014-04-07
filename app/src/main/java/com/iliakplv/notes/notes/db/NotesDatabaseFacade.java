@@ -57,6 +57,7 @@ public class NotesDatabaseFacade {
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
+		// TODO actual flag
 		final boolean needToRefresh = noteCacheNoteId != id;
 		AppLog.d(LOG_TAG, "Note entry refresh (id=" + id + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
