@@ -33,7 +33,6 @@ public class NotesDatabaseFacade {
 	// note cache
 	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
 	private volatile int lastFetchedNoteEntryId = INVALID_ID;
-	private volatile boolean lastFetchedNoteEntryActual = false;
 
 	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
@@ -58,13 +57,12 @@ public class NotesDatabaseFacade {
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final boolean needToRefresh = lastFetchedNoteEntryId != id || !lastFetchedNoteEntryActual;
+		final boolean needToRefresh = lastFetchedNoteEntryId != id;
 		AppLog.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			lastFetchedNoteEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
 			lastFetchedNoteEntryId = id;
-			lastFetchedNoteEntryActual = true;
 		}
 		return lastFetchedNoteEntry;
 	}
