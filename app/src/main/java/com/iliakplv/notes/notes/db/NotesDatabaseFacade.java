@@ -22,17 +22,17 @@ public class NotesDatabaseFacade {
 
 
 	// list cache
-	private List<NotesDatabaseEntry> lastFetchedNotesList; // List<NotesDatabaseEntry<AbstractNote>>
-	private volatile int lastFetchedNotesListLabelId = INVALID_ID;
-	private volatile boolean lastFetchedNotesListActual = false;
-	private volatile int lastFetchedNotesListSize = 0;
+	private List<NotesDatabaseEntry> notesListCache;
+	private volatile int notesListCacheLabelId = INVALID_ID;
+	private volatile boolean notesListCacheActual = false;
+	private volatile int notesListCacheSize = 0;
 
 	// list sort
 	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
 
 	// note cache
-	private NotesDatabaseEntry<AbstractNote> lastFetchedNoteEntry;
-	private volatile int lastFetchedNoteEntryId = INVALID_ID;
+	private NotesDatabaseEntry<AbstractNote> noteCache;
+	private volatile int noteCacheNoteId = INVALID_ID;
 
 	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
@@ -50,42 +50,46 @@ public class NotesDatabaseFacade {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
-			lastFetchedNotesListActual = false;
+			notesListCacheActual = false;
 			notifyDatabaseListeners();
 		}
 		return orderChanged;
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final boolean needToRefresh = lastFetchedNoteEntryId != id;
-		AppLog.d(LOG_TAG, "Note entry fetching (id=" + id + "). Cached entry " +
+		final boolean needToRefresh = noteCacheNoteId != id;
+		AppLog.d(LOG_TAG, "Note entry refresh (id=" + id + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
-			lastFetchedNoteEntry = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
-			lastFetchedNoteEntryId = id;
+			noteCache = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
+			noteCacheNoteId = id;
 		}
-		return lastFetchedNoteEntry;
+		return noteCache;
 	}
 
-	public List<NotesDatabaseEntry> getNotesForLabel(int labelId) {
-		final boolean needToRefresh = lastFetchedNotesListLabelId != labelId || !lastFetchedNotesListActual;
-		AppLog.d(LOG_TAG, "Notes entries fetching (labelId=" + labelId + "). Cached entries list " +
+	private void refreshNotesListCacheIfNeeded(int labelId) {
+		final boolean needToRefresh = notesListCacheLabelId != labelId || !notesListCacheActual;
+		AppLog.d(LOG_TAG, "Notes entries refresh (labelId=" + labelId + "). Cached entries list " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			final TransactionType selectTransaction =
 					labelId == ALL_LABELS ? TransactionType.GetAllNotes : TransactionType.GetNotesForLabel;
-			lastFetchedNotesList =
+			notesListCache =
 					(List<NotesDatabaseEntry>) performDatabaseTransaction(selectTransaction, labelId);
-			lastFetchedNotesListLabelId = labelId;
-			lastFetchedNotesListSize = lastFetchedNotesList.size();
-			lastFetchedNotesListActual = true;
+			notesListCacheLabelId = labelId;
+			notesListCacheSize = notesListCache.size();
+			notesListCacheActual = true;
 		}
-		return lastFetchedNotesList;
+	}
+
+	public List<NotesDatabaseEntry> getNotesForLabel(int labelId) {
+		refreshNotesListCacheIfNeeded(labelId);
+		return notesListCache;
 	}
 
 	public int getNotesForLabelCount(int labelId) {
-		getNotesForLabel(labelId); // cache refresh
-		return lastFetchedNotesListSize;
+		refreshNotesListCacheIfNeeded(labelId);
+		return notesListCacheSize;
 	}
 
 	public synchronized int insertNote(AbstractNote note) {
@@ -233,7 +237,7 @@ public class NotesDatabaseFacade {
 	private void onTransactionPerformed(TransactionType transactionType) {
 		AppLog.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 		if (databaseModificationTransaction(transactionType)) {
-			lastFetchedNotesListActual = false;
+			notesListCacheActual = false;
 			notifyDatabaseListeners();
 		}
 
