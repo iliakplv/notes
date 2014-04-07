@@ -33,6 +33,7 @@ public class NotesDatabaseFacade {
 	// note cache
 	private NotesDatabaseEntry<AbstractNote> noteCache;
 	private volatile int noteCacheNoteId = INVALID_ID;
+	private volatile boolean noteCacheActual = false;
 
 	// listeners
 	private List<DatabaseChangeListener> databaseListeners;
@@ -57,13 +58,13 @@ public class NotesDatabaseFacade {
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		// TODO actual flag
-		final boolean needToRefresh = noteCacheNoteId != id;
+		final boolean needToRefresh = noteCacheNoteId != id || !noteCacheActual;
 		AppLog.d(LOG_TAG, "Note entry refresh (id=" + id + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			noteCache = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
 			noteCacheNoteId = id;
+			noteCacheActual = true;
 		}
 		return noteCache;
 	}
@@ -154,8 +155,8 @@ public class NotesDatabaseFacade {
 
 	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		Object result;
-		int noteId;
-		int labelId;
+		int noteId = 0;
+		int labelId = 0;
 
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
@@ -231,17 +232,21 @@ public class NotesDatabaseFacade {
 		}
 		adapter.close();
 
-		onTransactionPerformed(transactionType);
+		onTransactionPerformed(transactionType, noteId, labelId);
 		return result;
 	}
 
-	private void onTransactionPerformed(TransactionType transactionType) {
+	private void onTransactionPerformed(TransactionType transactionType, int noteId, int labelId) {
 		AppLog.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
+
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
 			notifyDatabaseListeners();
 		}
 
+		if (noteCacheNoteId == noteId && noteModificationTransaction(transactionType)) {
+			noteCacheActual = false;
+		}
 	}
 
 	// Listeners
@@ -283,6 +288,21 @@ public class NotesDatabaseFacade {
 			case DeleteNote:
 
 			case InsertLabel:
+			case UpdateLabel:
+			case DeleteLabel:
+
+			case InsertLabelToNote:
+			case DeleteLabelFromNote:
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean noteModificationTransaction(TransactionType transactionType) {
+		switch (transactionType) {
+			case UpdateNote:
+			case DeleteNote:
+
 			case UpdateLabel:
 			case DeleteLabel:
 
