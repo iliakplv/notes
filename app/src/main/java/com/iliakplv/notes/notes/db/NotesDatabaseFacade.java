@@ -84,10 +84,7 @@ public class NotesDatabaseFacade {
 	}
 
 	public int getNotesForLabelCount(int labelId) {
-		final boolean needToRefresh = lastFetchedNotesListLabelId != labelId || !lastFetchedNotesListActual;
-		if (needToRefresh) {
-			getNotesForLabel(labelId);
-		}
+		getNotesForLabel(labelId); // cache refresh
 		return lastFetchedNotesListSize;
 	}
 
