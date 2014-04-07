@@ -58,15 +58,19 @@ public class NotesDatabaseFacade {
 	}
 
 	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final boolean needToRefresh = noteCacheNoteId != id || !noteCacheActual;
-		AppLog.d(LOG_TAG, "Note entry refresh (id=" + id + "). Cached entry " +
+		refreshNoteCacheIfNeeded(id);
+		return noteCache;
+	}
+
+	private void refreshNoteCacheIfNeeded(int noteId) {
+		final boolean needToRefresh = noteCacheNoteId != noteId || !noteCacheActual;
+		AppLog.d(LOG_TAG, "Note entry refresh (id=" + noteId + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
-			noteCache = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, id);
-			noteCacheNoteId = id;
+			noteCache = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, noteId);
+			noteCacheNoteId = noteId;
 			noteCacheActual = true;
 		}
-		return noteCache;
 	}
 
 	private void refreshNotesListCacheIfNeeded(int labelId) {
