@@ -24,7 +24,7 @@ public class NotesApplication extends Application {
 		super.onCreate();
 		AppLog.d(LOG_TAG, "onCreate() call");
 
-		context = this.getApplicationContext();
+		context = getApplicationContext();
 
 		final int processors = Runtime.getRuntime().availableProcessors();
 		AppLog.d(LOG_TAG, "Detected " + processors + " processors. Creating thread pool...");
