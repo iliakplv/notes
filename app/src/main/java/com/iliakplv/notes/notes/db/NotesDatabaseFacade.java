@@ -6,13 +6,15 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.AppLog;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class NotesDatabaseFacade {
+public class NotesDatabaseFacade implements NotesStorage {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
 	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
@@ -36,7 +38,7 @@ public class NotesDatabaseFacade {
 	private volatile boolean noteCacheActual = false;
 
 	// listeners
-	private List<DatabaseChangeListener> databaseListeners;
+	private List<NotesStorageListener> databaseListeners;
 
 
 	private NotesDatabaseFacade() {}
@@ -47,6 +49,7 @@ public class NotesDatabaseFacade {
 
 	// notes
 
+	@Override
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
 		if (orderChanged) {
@@ -57,6 +60,7 @@ public class NotesDatabaseFacade {
 		return orderChanged;
 	}
 
+	@Override
 	public AbstractNote getNote(int id) {
 		refreshNoteCacheIfNeeded(id);
 		return noteCache;
@@ -88,24 +92,29 @@ public class NotesDatabaseFacade {
 		}
 	}
 
+	@Override
 	public List<AbstractNote> getNotesForLabel(int labelId) {
 		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCache;
 	}
 
+	@Override
 	public int getNotesForLabelCount(int labelId) {
 		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCacheSize;
 	}
 
+	@Override
 	public synchronized int insertNote(AbstractNote note) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertNote, note);
 	}
 
+	@Override
 	public synchronized boolean updateNote(int id, AbstractNote note) {
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateNote, id, note);
 	}
 
+	@Override
 	public synchronized boolean deleteNote(int id) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteNote, id);
 	}
@@ -113,22 +122,27 @@ public class NotesDatabaseFacade {
 
 	// labels
 
+	@Override
 	public Label getLabel(int id) {
 		return (Label) performDatabaseTransaction(TransactionType.GetLabel, id);
 	}
 
+	@Override
 	public List<Label> getAllLabels() {
 		return (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
 	}
 
+	@Override
 	public synchronized int insertLabel(Label label) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabel, label);
 	}
 
+	@Override
 	public synchronized boolean updateLabel(int id, Label label) {
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateLabel, id, label);
 	}
 
+	@Override
 	public synchronized boolean deleteLabel(int id) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabel, id);
 	}
@@ -136,22 +150,27 @@ public class NotesDatabaseFacade {
 
 	// notes_labels
 
+	@Override
 	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
 		return (Set<Pair<Integer, Integer>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
 	}
 
+	@Override
 	public List<Label> getLabelsForNote(int noteId) {
 		return (List<Label>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
+	@Override
 	public Set<Integer> getLabelsIdsForNote(int noteId) {
 		return (Set<Integer>) performDatabaseTransaction(TransactionType.GetLabelsIdsForNote, noteId);
 	}
 
+	@Override
 	public synchronized int insertLabelToNote(int noteId, int labelId) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
 	}
 
+	@Override
 	public synchronized boolean deleteLabelFromNote(int noteId, int labelId) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabelFromNote, noteId, labelId);
 	}
@@ -260,25 +279,27 @@ public class NotesDatabaseFacade {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override
 				public void run() {
-					for (DatabaseChangeListener listener : databaseListeners) {
-						listener.onDatabaseChanged();
+					for (NotesStorageListener listener : databaseListeners) {
+						listener.onContentChanged();
 					}
 				}
 			});
 		}
 	}
 
-	public boolean addDatabaseChangeListener(DatabaseChangeListener listener) {
+	@Override
+	public boolean addStorageListener(NotesStorageListener listener) {
 		if (listener == null) {
 			throw new NullPointerException();
 		}
 		if (databaseListeners == null) {
-			databaseListeners = new LinkedList<DatabaseChangeListener>();
+			databaseListeners = new LinkedList<NotesStorageListener>();
 		}
 		return databaseListeners.add(listener);
 	}
 
-	public boolean removeDatabaseChangeListener(DatabaseChangeListener listener) {
+	@Override
+	public boolean removeStorageListener(NotesStorageListener listener) {
 		if (databaseListeners != null) {
 			return databaseListeners.remove(listener);
 		}
@@ -343,16 +364,6 @@ public class NotesDatabaseFacade {
 		GetNotesForLabel,
 		InsertLabelToNote,
 		DeleteLabelFromNote
-	}
-
-	public interface DatabaseChangeListener {
-
-		/**
-		 * Callback for notes database changing
-		 * Called after transaction that affects database entries (insert, update or delete) had performed
-		 * Called from background thread. If you want to refresh UI in this method perform it on UI thread!
-		 */
-		public void onDatabaseChanged();
 	}
 
 }

@@ -17,18 +17,19 @@ import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
-		NotesDatabaseFacade.DatabaseChangeListener {
+		NotesStorageListener {
 
 	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
-	private boolean listeningDatabase = false;
+	private boolean listeningStorage = false;
 
 	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 	private int currentLabelId = ALL_LABELS;
@@ -50,13 +51,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	@Override
 	public void onResume() {
 		super.onResume();
-		startListeningDatabase();
+		startListeningStorage();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		stopListeningDatabase();
+		stopListeningStorage();
 	}
 
 	@Override
@@ -78,8 +79,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	@Override
-	public void onDatabaseChanged() {
-		if (listeningDatabase) {
+	public void onContentChanged() {
+		if (listeningStorage) {
 			updateListView();
 		}
 	}
@@ -106,17 +107,17 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-	private void startListeningDatabase() {
-		if (!listeningDatabase) {
-			dbFacade.addDatabaseChangeListener(this);
-			listeningDatabase = true;
+	private void startListeningStorage() {
+		if (!listeningStorage) {
+			dbFacade.addStorageListener(this);
+			listeningStorage = true;
 		}
 	}
 
-	private void stopListeningDatabase() {
-		if (listeningDatabase) {
-			dbFacade.removeDatabaseChangeListener(this);
-			listeningDatabase = false;
+	private void stopListeningStorage() {
+		if (listeningStorage) {
+			dbFacade.removeStorageListener(this);
+			listeningStorage = false;
 		}
 	}
 
