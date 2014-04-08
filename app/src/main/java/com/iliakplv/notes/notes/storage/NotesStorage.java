@@ -5,7 +5,6 @@ import android.util.Pair;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 
 import java.util.List;
 import java.util.Set;
@@ -21,8 +20,8 @@ public interface NotesStorage {
 
 	// notes
 
-	public NotesDatabaseEntry<AbstractNote> getNote(int id);
-	public List<NotesDatabaseEntry> getNotesForLabel(int labelId);
+	public AbstractNote getNote(int id);
+	public List<AbstractNote> getNotesForLabel(int labelId);
 	public int getNotesForLabelCount(int labelId);
 
 	public int insertNote(AbstractNote note);
@@ -32,8 +31,8 @@ public interface NotesStorage {
 
 	// labels
 
-	public NotesDatabaseEntry<Label> getLabel(int id);
-	public List<NotesDatabaseEntry<Label>> getAllLabels();
+	public Label getLabel(int id);
+	public List<Label> getAllLabels();
 
 	public int insertLabel(Label label);
 	public boolean updateLabel(int id, Label label);
@@ -42,7 +41,7 @@ public interface NotesStorage {
 
 	// notes_labels
 
-	public List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId);
+	public List<Label> getLabelsForNote(int noteId);
 	public Set<Integer> getLabelsIdsForNote(int noteId);
 	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds();
 
