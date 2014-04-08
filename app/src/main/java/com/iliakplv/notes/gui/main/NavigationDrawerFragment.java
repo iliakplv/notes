@@ -27,7 +27,6 @@ import com.iliakplv.notes.gui.main.dialogs.LabelEditDialog;
 import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 
 import java.util.List;
@@ -118,13 +117,13 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
-				final List<NotesDatabaseEntry<Label>> labels = dbFacade.getAllLabels();
+				final List<Label> labels = dbFacade.getAllLabels();
 				final int labelItemIndex = position - 1;
 
 				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
-					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
+					final Label label = labels.get(labelItemIndex);
 					SimpleItemDialog.show(SimpleItemDialog.DialogType.LabelActions,
-							labelEntry.getId(),
+							label.getId(),
 							mainActivity.getFragmentManager());
 				}
 				return true;
@@ -222,10 +221,10 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 				labelId = ALL_LABELS;
 				newTitle = getString(R.string.labels_drawer_all_notes);
 			} else {
-				final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
-				final NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
-				labelId = labelEntry.getId();
-				newTitle = NotesUtils.getTitleForLabel(labelEntry.getEntry());
+				final List<Label> allLabels = dbFacade.getAllLabels();
+				final Label label = allLabels.get(position - 1);
+				labelId = label.getId();
+				newTitle = NotesUtils.getTitleForLabel(label);
 			}
 
 			mainActivity.onLabelSelected(labelId, newTitle);
@@ -319,7 +318,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	 * *******************************************
 	 */
 
-	private class LabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+	private class LabelsListAdapter extends ArrayAdapter<Label> {
 
 		private int[] labelsColors;
 
@@ -337,11 +336,11 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry<Label> entry = dbFacade.getAllLabels().get(position);
+			final Label label = dbFacade.getAllLabels().get(position);
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
-			final int labelColor = labelsColors[entry.getEntry().getColor()];
-			name.setText(NotesUtils.getTitleForLabel(entry.getEntry()));
+			final int labelColor = labelsColors[label.getColor()];
+			name.setText(NotesUtils.getTitleForLabel(label));
 			name.setTextColor(labelColor);
 			color.setBackgroundColor(labelColor);
 

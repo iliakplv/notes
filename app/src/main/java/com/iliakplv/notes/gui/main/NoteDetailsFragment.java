@@ -13,7 +13,6 @@ import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.AppLog;
 import com.iliakplv.notes.utils.StringUtils;
@@ -73,7 +72,7 @@ public class NoteDetailsFragment extends Fragment {
 	public void updateNoteDetailsView() {
 		final boolean gotNoteToShow = noteId > 0 && dbFacade.getNote(noteId) != null;
 		if (gotNoteToShow) {
-			final AbstractNote note = dbFacade.getNote(noteId).getEntry();
+			final AbstractNote note = dbFacade.getNote(noteId);
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
 
@@ -115,9 +114,9 @@ public class NoteDetailsFragment extends Fragment {
 				AppLog.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
 			}
 		} else {
-			final NotesDatabaseEntry<AbstractNote> noteEntry = dbFacade.getNote(noteId);
-			if (noteEntry != null) {
-				final AbstractNote currentNote = noteEntry.getEntry();
+			final AbstractNote note = dbFacade.getNote(noteId);
+			if (note != null) {
+				final AbstractNote currentNote = note;
 
 				// update current note if changed
 				if (!StringUtils.equals(currentNote.getBody(), newBody) ||

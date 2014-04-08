@@ -16,7 +16,6 @@ import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
@@ -130,7 +129,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	 * *******************************************
 	 */
 
-	private class NotesListAdapter extends ArrayAdapter<NotesDatabaseEntry> {
+	private class NotesListAdapter extends ArrayAdapter<AbstractNote> {
 
 		private final int[] LABELS_IDS = {
 				R.id.label_1,
@@ -160,32 +159,32 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			// texts
-			final NotesDatabaseEntry<AbstractNote> entry = dbFacade.getNotesForLabel(currentLabelId).get(position);
+			final AbstractNote note = dbFacade.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-			title.setText(NotesUtils.getTitleForNote(entry.getEntry()));
-			if (NotesUtils.isNoteTitleEmpty(entry.getEntry())) {
+			title.setText(NotesUtils.getTitleForNote(note));
+			if (NotesUtils.isNoteTitleEmpty(note)) {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
 				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
 			} else {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_black));
 				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_grey));
 			}
-			subtitle.setText(entry.getEntry().getBody());
+			subtitle.setText(note.getBody());
 
 			// labels
 			final boolean showingNotesForAllLabels = currentLabelId == ALL_LABELS;
-			final List<NotesDatabaseEntry<Label>> labelEntries;
+			final List<Label> labels;
 			if (showingNotesForAllLabels) {
-				labelEntries = dbFacade.getLabelsForNote(entry.getId());
+				labels = dbFacade.getLabelsForNote(note.getId());
 			} else {
-				labelEntries = new ArrayList<NotesDatabaseEntry<Label>>(1);
-				labelEntries.add(dbFacade.getLabel(currentLabelId));
+				labels = new ArrayList<Label>(1);
+				labels.add(dbFacade.getLabel(currentLabelId));
 			}
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
-				if (i < labelEntries.size()) {
-					final Label label = labelEntries.get(i).getEntry();
+				if (i < labels.size()) {
+					final Label label = labels.get(i);
 					labelView.setBackgroundColor(labelsColors[label.getColor()]);
 					labelView.setText(getLetterForLabelName(label.getName()));
 					labelView.setVisibility(View.VISIBLE);
@@ -196,7 +195,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			// show [...] sign
 			// if showing notes for selected label or
 			// if not enough space to show all labels
-			if (!showingNotesForAllLabels || labelEntries.size() > LABELS_IDS.length) {
+			if (!showingNotesForAllLabels || labels.size() > LABELS_IDS.length) {
 				view.findViewById(R.id.more_labels).setVisibility(View.VISIBLE);
 			} else {
 				view.findViewById(R.id.more_labels).setVisibility(View.GONE);
