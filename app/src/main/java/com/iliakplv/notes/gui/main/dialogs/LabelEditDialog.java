@@ -48,7 +48,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 		final boolean fromSavedInstanceState = savedInstanceState != null;
 
 		final Label label = editMode ?
-				dbFacade.getLabel(id).getEntry() :
+				dbFacade.getLabel(id) :
 				new Label("", Label.DEFAULT_COLOR_INDEX);
 		final String labelName = fromSavedInstanceState ?
 				savedInstanceState.getString(EXTRA_LABEL_NAME) :

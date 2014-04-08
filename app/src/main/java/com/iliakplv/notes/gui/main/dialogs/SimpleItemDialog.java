@@ -13,7 +13,6 @@ import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.utils.StringUtils;
 
@@ -55,9 +54,9 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createNoteActionsDialog() {
-		final NotesDatabaseEntry selectedNoteEntry = dbFacade.getNote(id);
+		final AbstractNote selectedNote = dbFacade.getNote(id);
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote((AbstractNote) selectedNoteEntry.getEntry())).
+				setTitle(NotesUtils.getTitleForNote(selectedNote)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener()).
 				setNegativeButton(R.string.common_cancel, null).
 				create();
@@ -66,9 +65,9 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	private Dialog createNoteInfoDialog() {
 		final String timeFormat = "HH:mm";
 
-		final NotesDatabaseEntry<AbstractNote> noteEntry = dbFacade.getNote(id);
-		final DateTime createTime = noteEntry.getEntry().getCreateTime();
-		final DateTime changeTime = noteEntry.getEntry().getChangeTime();
+		final AbstractNote note = dbFacade.getNote(id);
+		final DateTime createTime = note.getCreateTime();
+		final DateTime changeTime = note.getChangeTime();
 
 		final String createdString = createTime.toLocalDate().toString() + " " +
 				createTime.toLocalTime().toString(timeFormat);
@@ -81,7 +80,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		}
 
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(noteEntry.getEntry())).
+				setTitle(NotesUtils.getTitleForNote(note)).
 				setMessage(info).
 				setNegativeButton(R.string.common_ok, null).
 				create();
@@ -89,7 +88,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	private Dialog createNoteDeleteDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry())).
+				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -107,7 +106,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	private Dialog createNoteNoLabelsDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry())).
+				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -121,18 +120,18 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createLabelActionsDialog() {
-		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id);
+		final Label label = dbFacade.getLabel(id);
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
+				setTitle(NotesUtils.getTitleForLabel(label)).
 				setItems(R.array.label_actions, new LabelActionDialogClickListener()).
 				setNegativeButton(R.string.common_cancel, null).
 				create();
 	}
 
 	private Dialog createLabelDeleteDialog() {
-		final NotesDatabaseEntry<Label> labelEntry = dbFacade.getLabel(id);
+		final Label label = dbFacade.getLabel(id);
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForLabel(labelEntry.getEntry())).
+				setTitle(NotesUtils.getTitleForLabel(label)).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.label_action_delete_confirm_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -141,7 +140,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 						NotesApplication.executeInBackground(new Runnable() {
 							@Override
 							public void run() {
-								dbFacade.deleteLabel(labelEntry.getId());
+								dbFacade.deleteLabel(label.getId());
 								((MainActivity) activity).getNavigationDrawerFragment().onLabelChanged();
 							}
 						});

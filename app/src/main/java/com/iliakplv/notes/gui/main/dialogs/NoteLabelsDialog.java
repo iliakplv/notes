@@ -16,7 +16,6 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 
 		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(id);
 		return new AlertDialog.Builder(activity)
-				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id).getEntry()))
+				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id)))
 				.setAdapter(labelsAdapter, null)
 				.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 					@Override
@@ -73,12 +72,12 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 	 * *******************************************
 	 */
 
-	private class NoteLabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+	private class NoteLabelsListAdapter extends ArrayAdapter<Label> {
 
 		private final int[] labelsColors;
 
 		private final int noteId;
-		private final List<NotesDatabaseEntry<Label>> allLabels;
+		private final List<Label> allLabels;
 		private final boolean[] currentLabels;
 
 		public NoteLabelsListAdapter(int noteId) {
@@ -115,7 +114,7 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
 
-			final Label label = allLabels.get(position).getEntry();
+			final Label label = allLabels.get(position);
 			name.setText(NotesUtils.getTitleForLabel(label));
 			color.setBackgroundColor(labelsColors[label.getColor()]);
 
