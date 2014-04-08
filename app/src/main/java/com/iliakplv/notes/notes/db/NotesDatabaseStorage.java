@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class NotesDatabaseFacade implements NotesStorage {
+public class NotesDatabaseStorage implements NotesStorage {
 
-	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
+	private static final String LOG_TAG = NotesDatabaseStorage.class.getSimpleName();
 	private static final int INVALID_ID = -1;
 
 
@@ -37,7 +37,6 @@ public class NotesDatabaseFacade implements NotesStorage {
 	// listeners
 	private List<NotesStorageListener> databaseListeners;
 
-	public NotesDatabaseFacade() {}
 
 	// notes
 

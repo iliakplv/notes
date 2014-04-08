@@ -1,6 +1,6 @@
 package com.iliakplv.notes.notes.storage;
 
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.db.NotesDatabaseStorage;
 
 public final class Storage {
 
@@ -26,7 +26,7 @@ public final class Storage {
 
 		switch (storageType) {
 			case Database:
-				storageWrapper.initStorage(new NotesDatabaseFacade());
+				storageWrapper.initStorage(new NotesDatabaseStorage());
 				break;
 
 			case Dropbox:
