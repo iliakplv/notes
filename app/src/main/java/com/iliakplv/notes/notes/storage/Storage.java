@@ -1,9 +1,11 @@
 package com.iliakplv.notes.notes.storage;
 
 import com.iliakplv.notes.notes.db.NotesDatabaseStorage;
+import com.iliakplv.notes.utils.AppLog;
 
 public final class Storage {
 
+	private static final String LOG_TAG = Storage.class.getSimpleName();
 	private static final Type DEFAULT = Type.Database;
 
 	private static final StorageWrapper storageWrapper = new StorageWrapper();
@@ -22,8 +24,8 @@ public final class Storage {
 	}
 
 	public static void init(Type storageType) {
+		AppLog.d(LOG_TAG, "init() call. Storage type: " + storageType.toString());
 		initialized = false;
-
 		switch (storageType) {
 			case Database:
 				storageWrapper.initStorage(new NotesDatabaseStorage());
@@ -37,7 +39,6 @@ public final class Storage {
 				throw new IllegalArgumentException("Unknown storage type: "
 						+ storageType.toString());
 		}
-
 		initialized = true;
 	}
 
