@@ -13,6 +13,7 @@ public interface NotesStorage {
 
 	public static final int NOTES_FOR_ALL_LABELS = 0;
 
+
 	// sort
 
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder);
@@ -50,6 +51,7 @@ public interface NotesStorage {
 
 
 	// listeners
+
 	public boolean addStorageListener(NotesStorageListener listener);
 	public boolean removeStorageListener(NotesStorageListener listener);
 }
