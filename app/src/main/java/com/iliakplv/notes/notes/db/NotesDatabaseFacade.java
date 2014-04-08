@@ -18,7 +18,7 @@ public class NotesDatabaseFacade implements NotesStorage {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
 
-	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
+	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int INVALID_ID = -1;
 
 

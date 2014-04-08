@@ -16,7 +16,6 @@ import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.notes.storage.Storage;
@@ -33,7 +32,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private NotesListAdapter listAdapter;
 	private boolean listeningStorage = false;
 
-	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private int currentLabelId = ALL_LABELS;
 
 	@Override

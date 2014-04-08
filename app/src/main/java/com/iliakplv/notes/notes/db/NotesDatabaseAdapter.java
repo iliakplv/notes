@@ -23,8 +23,7 @@ class NotesDatabaseAdapter {
 	// Database
 	private static final String DATABASE_NAME = "notes.db";
 	private static final int CURRENT_VERSION = NotesDatabaseOpenHelper.DATABASE_VERSION_LABELS;
-
-	static final int ALL_ENTRIES = 0;
+	private static final int ALL_ENTRIES = 0;
 
 	// Common keys
 	private static final String KEY_ID = "_id";

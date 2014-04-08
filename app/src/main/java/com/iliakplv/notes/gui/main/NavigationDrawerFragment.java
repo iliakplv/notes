@@ -27,7 +27,6 @@ import com.iliakplv.notes.gui.main.dialogs.LabelEditDialog;
 import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 
@@ -39,7 +38,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 	private static final String PREF_SHOW_DRAWER_ON_START = "show_drawer_on_start";
 
-	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int ALL_LABELS_HEADER_POSITION = 0;
 	private static final int NO_LABEL_SELECTED = -1;
 

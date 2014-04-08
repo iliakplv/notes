@@ -3,6 +3,7 @@ package com.iliakplv.notes.db;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -15,7 +16,7 @@ public class DatabaseTest extends TestCase {
 
 //	TODO FIX
 	
-	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
+	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 
 	List<Integer> notesIds;
 	List<Integer> labelsIds;

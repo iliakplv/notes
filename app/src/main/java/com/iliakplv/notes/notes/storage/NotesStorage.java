@@ -21,8 +21,8 @@ public interface NotesStorage {
 	// notes
 
 	public AbstractNote getNote(int id);
-	public List<AbstractNote> getNotesForLabel(int labelId);
-	public int getNotesForLabelCount(int labelId);
+	public List<AbstractNote> getNotesForLabel(int labelId); // for all notes use NOTES_FOR_ALL_LABELS
+	public int getNotesForLabelCount(int labelId); // for all notes use NOTES_FOR_ALL_LABELS
 
 	public int insertNote(AbstractNote note);
 	public boolean updateNote(int id, AbstractNote note);
