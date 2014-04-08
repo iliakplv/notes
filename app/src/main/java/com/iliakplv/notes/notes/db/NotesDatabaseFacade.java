@@ -17,7 +17,6 @@ import java.util.Set;
 public class NotesDatabaseFacade implements NotesStorage {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
-	private static NotesDatabaseFacade instance = new NotesDatabaseFacade();
 
 	public static final int ALL_LABELS = NotesDatabaseAdapter.ALL_ENTRIES;
 	private static final int INVALID_ID = -1;
@@ -40,12 +39,7 @@ public class NotesDatabaseFacade implements NotesStorage {
 	// listeners
 	private List<NotesStorageListener> databaseListeners;
 
-
-	private NotesDatabaseFacade() {}
-	public static NotesDatabaseFacade getInstance() {
-		return instance;
-	}
-
+	public NotesDatabaseFacade() {}
 
 	// notes
 

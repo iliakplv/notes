@@ -17,7 +17,9 @@ import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
+import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ import java.util.List;
 public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
 		NotesStorageListener {
 
-	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
 	private boolean listeningStorage = false;
@@ -62,7 +64,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(dbFacade.getNotesForLabel(currentLabelId).get(position).getId());
+		mainActivity.onNoteSelected(storage.getNotesForLabel(currentLabelId).get(position).getId());
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	private boolean showNoteActionsDialog(int position) {
-		final int noteId = dbFacade.getNotesForLabel(currentLabelId).get(position).getId();
+		final int noteId = storage.getNotesForLabel(currentLabelId).get(position).getId();
 		SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteActions,
 				noteId,
 				mainActivity.getFragmentManager());
@@ -109,14 +111,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private void startListeningStorage() {
 		if (!listeningStorage) {
-			dbFacade.addStorageListener(this);
+			Storage.addStorageListener(this);
 			listeningStorage = true;
 		}
 	}
 
 	private void stopListeningStorage() {
 		if (listeningStorage) {
-			dbFacade.removeStorageListener(this);
+			Storage.removeStorageListener(this);
 			listeningStorage = false;
 		}
 	}
@@ -141,13 +143,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private int [] labelsColors;
 
 		public NotesListAdapter() {
-			super(mainActivity, 0, dbFacade.getNotesForLabel(currentLabelId));
+			super(mainActivity, 0, storage.getNotesForLabel(currentLabelId));
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
 		@Override
 		public int getCount() {
-			return dbFacade.getNotesForLabelCount(currentLabelId);
+			return storage.getNotesForLabelCount(currentLabelId);
 		}
 
 		@Override
@@ -160,7 +162,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			// texts
-			final AbstractNote note = dbFacade.getNotesForLabel(currentLabelId).get(position);
+			final AbstractNote note = storage.getNotesForLabel(currentLabelId).get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(NotesUtils.getTitleForNote(note));
@@ -177,10 +179,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final boolean showingNotesForAllLabels = currentLabelId == ALL_LABELS;
 			final List<Label> labels;
 			if (showingNotesForAllLabels) {
-				labels = dbFacade.getLabelsForNote(note.getId());
+				labels = storage.getLabelsForNote(note.getId());
 			} else {
 				labels = new ArrayList<Label>(1);
-				labels.add(dbFacade.getLabel(currentLabelId));
+				labels.add(storage.getLabel(currentLabelId));
 			}
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);

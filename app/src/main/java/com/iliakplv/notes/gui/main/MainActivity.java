@@ -17,7 +17,8 @@ import com.dropbox.sync.android.DbxAccountManager;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.Storage;
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
@@ -26,7 +27,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final int NEW_NOTE = 0;
 
-	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private final NotesStorage storage = Storage.getStorage();
 
 	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
@@ -225,7 +226,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
-		if (dbFacade.setNotesSortOrder(order)) {
+		if (storage.setNotesSortOrder(order)) {
 			final SharedPreferences.Editor editor = getPreferences(Activity.MODE_PRIVATE).edit();
 			editor.putInt(PREFS_KEY_SORT_ORDER, order.ordinal());
 			editor.commit();

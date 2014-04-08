@@ -48,7 +48,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 		final boolean fromSavedInstanceState = savedInstanceState != null;
 
 		final Label label = editMode ?
-				dbFacade.getLabel(id) :
+				storage.getLabel(id) :
 				new Label("", Label.DEFAULT_COLOR_INDEX);
 		final String labelName = fromSavedInstanceState ?
 				savedInstanceState.getString(EXTRA_LABEL_NAME) :
@@ -85,11 +85,11 @@ public class LabelEditDialog extends AbstractItemDialog {
 								label.setName(labelName);
 								label.setColor(selectedColor);
 								if (editMode) {
-									dbFacade.updateLabel(id, label);
+									storage.updateLabel(id, label);
 								} else {
-									final int labelId = dbFacade.insertLabel(label);
+									final int labelId = storage.insertLabel(label);
 									if (insertLabelToNote) {
-										dbFacade.insertLabelToNote(noteId, labelId);
+										storage.insertLabelToNote(noteId, labelId);
 									}
 								}
 								((LabelEditDialogCallback) getTargetFragment()).onLabelChanged();

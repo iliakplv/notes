@@ -1,8 +1,10 @@
 package com.iliakplv.notes.notes.storage;
 
+import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+
 public final class Storage {
 
-	private static NotesStorage currentStorage;
+	private static NotesStorage currentStorage = new NotesDatabaseFacade();
 
 
 	public static NotesStorage getStorage() {

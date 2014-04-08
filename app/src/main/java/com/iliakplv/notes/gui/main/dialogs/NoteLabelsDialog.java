@@ -39,7 +39,7 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 
 		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(id);
 		return new AlertDialog.Builder(activity)
-				.setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id)))
+				.setTitle(NotesUtils.getTitleForNote(storage.getNote(id)))
 				.setAdapter(labelsAdapter, null)
 				.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 					@Override
@@ -81,13 +81,13 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 		private final boolean[] currentLabels;
 
 		public NoteLabelsListAdapter(int noteId) {
-			super(activity, 0, dbFacade.getAllLabels());
+			super(activity, 0, storage.getAllLabels());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 
 			this.noteId = noteId;
-			this.allLabels = dbFacade.getAllLabels();
+			this.allLabels = storage.getAllLabels();
 
-			final Set<Integer> currentNoteLabelsIds = dbFacade.getLabelsIdsForNote(noteId);
+			final Set<Integer> currentNoteLabelsIds = storage.getLabelsIdsForNote(noteId);
 			currentLabels = new boolean[allLabels.size()];
 			for (int i = 0; i < currentLabels.length; i++) {
 				currentLabels[i] = currentNoteLabelsIds.contains(allLabels.get(i).getId());
@@ -147,10 +147,10 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 				@Override
 				public void run() {
 					for (int labelId : labelsIdsToDelete) {
-						dbFacade.deleteLabelFromNote(noteId, labelId);
+						storage.deleteLabelFromNote(noteId, labelId);
 					}
 					for (int labelId : labelsIdsToAdd) {
-						dbFacade.insertLabelToNote(noteId, labelId);
+						storage.insertLabelToNote(noteId, labelId);
 					}
 				}
 			});

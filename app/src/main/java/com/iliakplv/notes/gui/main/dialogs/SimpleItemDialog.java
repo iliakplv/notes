@@ -13,7 +13,7 @@ import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
@@ -54,7 +54,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createNoteActionsDialog() {
-		final AbstractNote selectedNote = dbFacade.getNote(id);
+		final AbstractNote selectedNote = storage.getNote(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForNote(selectedNote)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener()).
@@ -65,7 +65,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	private Dialog createNoteInfoDialog() {
 		final String timeFormat = "HH:mm";
 
-		final AbstractNote note = dbFacade.getNote(id);
+		final AbstractNote note = storage.getNote(id);
 		final DateTime createTime = note.getCreateTime();
 		final DateTime changeTime = note.getChangeTime();
 
@@ -88,7 +88,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	private Dialog createNoteDeleteDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id))).
+				setTitle(NotesUtils.getTitleForNote(storage.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -97,7 +97,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 						NotesApplication.executeInBackground(new Runnable() {
 							@Override
 							public void run() {
-								NotesDatabaseFacade.getInstance().deleteNote(id);
+								Storage.getStorage().deleteNote(id);
 							}
 						});
 					}
@@ -106,7 +106,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	private Dialog createNoteNoLabelsDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(dbFacade.getNote(id))).
+				setTitle(NotesUtils.getTitleForNote(storage.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -120,7 +120,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createLabelActionsDialog() {
-		final Label label = dbFacade.getLabel(id);
+		final Label label = storage.getLabel(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForLabel(label)).
 				setItems(R.array.label_actions, new LabelActionDialogClickListener()).
@@ -129,7 +129,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createLabelDeleteDialog() {
-		final Label label = dbFacade.getLabel(id);
+		final Label label = storage.getLabel(id);
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForLabel(label)).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.label_action_delete_confirm_dialog_text))).
@@ -140,7 +140,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 						NotesApplication.executeInBackground(new Runnable() {
 							@Override
 							public void run() {
-								dbFacade.deleteLabel(label.getId());
+								storage.deleteLabel(label.getId());
 								((MainActivity) activity).getNavigationDrawerFragment().onLabelChanged();
 							}
 						});
@@ -207,7 +207,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		}
 
 		private void showNoteLabelsDialog() {
-			final boolean noLabelsCreated = dbFacade.getAllLabels().size() == 0;
+			final boolean noLabelsCreated = storage.getAllLabels().size() == 0;
 			if(noLabelsCreated) {
 				showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteNoLabels);
 			} else {

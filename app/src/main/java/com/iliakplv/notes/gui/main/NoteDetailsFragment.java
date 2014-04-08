@@ -13,7 +13,8 @@ import android.widget.EditText;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.AppLog;
 import com.iliakplv.notes.utils.StringUtils;
 
@@ -29,7 +30,7 @@ public class NoteDetailsFragment extends Fragment {
 	final static String ARG_NOTE_ID = "note_id";
 
 	private int noteId = MainActivity.NEW_NOTE;
-	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private final NotesStorage storage = Storage.getStorage();
 
 	private EditText title;
 	private EditText body;
@@ -70,9 +71,9 @@ public class NoteDetailsFragment extends Fragment {
 
 
 	public void updateNoteDetailsView() {
-		final boolean gotNoteToShow = noteId > 0 && dbFacade.getNote(noteId) != null;
+		final boolean gotNoteToShow = noteId > 0 && storage.getNote(noteId) != null;
 		if (gotNoteToShow) {
-			final AbstractNote note = dbFacade.getNote(noteId);
+			final AbstractNote note = storage.getNote(noteId);
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
 
@@ -108,13 +109,13 @@ public class NoteDetailsFragment extends Fragment {
 			if (!StringUtils.isNullOrEmpty(newTitle) ||
 					!StringUtils.isNullOrEmpty(newBody)) {
 				// (perform on UI thread)
-				noteId = dbFacade.insertNote(new TextNote(newTitle, newBody));
+				noteId = storage.insertNote(new TextNote(newTitle, newBody));
 				AppLog.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
 				AppLog.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
 			}
 		} else {
-			final AbstractNote note = dbFacade.getNote(noteId);
+			final AbstractNote note = storage.getNote(noteId);
 			if (note != null) {
 				final AbstractNote currentNote = note;
 
@@ -124,7 +125,7 @@ public class NoteDetailsFragment extends Fragment {
 					currentNote.setTitle(newTitle);
 					currentNote.setBody(newBody);
 					currentNote.updateChangeTime();
-					final boolean updated = dbFacade.updateNote(noteId, currentNote);
+					final boolean updated = storage.updateNote(noteId, currentNote);
 					AppLog.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database "
 							+ (updated ? "" : "NOT (!) ") + "updated.");
 				} else {

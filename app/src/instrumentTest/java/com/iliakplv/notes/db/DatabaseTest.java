@@ -12,6 +12,8 @@ import java.util.List;
 
 
 public class DatabaseTest extends TestCase {
+
+//	TODO FIX
 	
 	private static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
 

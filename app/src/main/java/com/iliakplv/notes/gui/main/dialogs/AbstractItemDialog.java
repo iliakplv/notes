@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.Bundle;
 
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.Storage;
 
 public abstract class AbstractItemDialog extends DialogFragment {
 
 	public static final String EXTRA_ID = "item_id";
 
-	protected NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	protected NotesStorage storage = Storage.getStorage();
 
 	protected Activity activity;
 	protected int id;
