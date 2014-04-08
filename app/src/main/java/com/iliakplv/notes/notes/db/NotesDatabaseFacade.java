@@ -22,7 +22,7 @@ public class NotesDatabaseFacade {
 
 
 	// list cache
-	private List<NotesDatabaseEntry> notesListCache;
+	private List<AbstractNote> notesListCache;
 	private volatile int notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
 	private volatile int notesListCacheSize = 0;
@@ -31,7 +31,7 @@ public class NotesDatabaseFacade {
 	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
 
 	// note cache
-	private NotesDatabaseEntry<AbstractNote> noteCache;
+	private AbstractNote noteCache;
 	private volatile int noteCacheNoteId = INVALID_ID;
 	private volatile boolean noteCacheActual = false;
 
@@ -57,7 +57,7 @@ public class NotesDatabaseFacade {
 		return orderChanged;
 	}
 
-	public NotesDatabaseEntry<AbstractNote> getNote(int id) {
+	public AbstractNote getNote(int id) {
 		refreshNoteCacheIfNeeded(id);
 		return noteCache;
 	}
@@ -67,7 +67,7 @@ public class NotesDatabaseFacade {
 		AppLog.d(LOG_TAG, "Note entry refresh (id=" + noteId + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
-			noteCache = (NotesDatabaseEntry<AbstractNote>) performDatabaseTransaction(TransactionType.GetNote, noteId);
+			noteCache = (AbstractNote) performDatabaseTransaction(TransactionType.GetNote, noteId);
 			noteCacheNoteId = noteId;
 			noteCacheActual = true;
 		}
@@ -81,14 +81,14 @@ public class NotesDatabaseFacade {
 			final TransactionType selectTransaction =
 					labelId == ALL_LABELS ? TransactionType.GetAllNotes : TransactionType.GetNotesForLabel;
 			notesListCache =
-					(List<NotesDatabaseEntry>) performDatabaseTransaction(selectTransaction, labelId);
+					(List<AbstractNote>) performDatabaseTransaction(selectTransaction, labelId);
 			notesListCacheLabelId = labelId;
 			notesListCacheSize = notesListCache.size();
 			notesListCacheActual = true;
 		}
 	}
 
-	public List<NotesDatabaseEntry> getNotesForLabel(int labelId) {
+	public List<AbstractNote> getNotesForLabel(int labelId) {
 		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCache;
 	}
@@ -113,12 +113,12 @@ public class NotesDatabaseFacade {
 
 	// labels
 
-	public NotesDatabaseEntry<Label> getLabel(int id) {
-		return (NotesDatabaseEntry<Label>) performDatabaseTransaction(TransactionType.GetLabel, id);
+	public Label getLabel(int id) {
+		return (Label) performDatabaseTransaction(TransactionType.GetLabel, id);
 	}
 
-	public List<NotesDatabaseEntry<Label>> getAllLabels() {
-		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetAllLabels);
+	public List<Label> getAllLabels() {
+		return (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
 	}
 
 	public synchronized int insertLabel(Label label) {
@@ -140,8 +140,8 @@ public class NotesDatabaseFacade {
 		return (Set<Pair<Integer, Integer>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
 	}
 
-	public List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
-		return (List<NotesDatabaseEntry<Label>>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
+	public List<Label> getLabelsForNote(int noteId) {
+		return (List<Label>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
 	public Set<Integer> getLabelsIdsForNote(int noteId) {

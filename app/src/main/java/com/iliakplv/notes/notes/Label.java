@@ -6,6 +6,8 @@ public class Label {
 
 	public static final int DEFAULT_COLOR_INDEX = 0;
 
+	private int id = 0;
+
 	private String name;
 	private int color;
 
@@ -36,4 +38,14 @@ public class Label {
 		this.color = color;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		if (id <= 0) {
+			throw new IllegalArgumentException("Id value must be positive!");
+		}
+		this.id = id;
+	}
 }

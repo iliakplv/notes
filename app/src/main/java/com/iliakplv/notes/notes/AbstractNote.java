@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 
 public abstract class AbstractNote {
 
+	private int id = 0;
+
 	private String title;
 	private String body;
 	private DateTime createTime;
@@ -66,4 +68,14 @@ public abstract class AbstractNote {
 		changeTime = new DateTime();
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		if (id <= 0) {
+			throw new IllegalArgumentException("Id value must be positive!");
+		}
+		this.id = id;
+	}
 }

@@ -105,8 +105,8 @@ class NotesDatabaseAdapter {
 
 	// notes queries
 
-	NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final List<NotesDatabaseEntry<AbstractNote>> list = notesQuery(id, null);
+	AbstractNote getNote(int id) {
+		final List<AbstractNote> list = notesQuery(id, null);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -114,15 +114,15 @@ class NotesDatabaseAdapter {
 		}
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getAllNotes(NotesUtils.NoteSortOrder order) {
+	List<AbstractNote> getAllNotes(NotesUtils.NoteSortOrder order) {
 		return notesQuery(ALL_ENTRIES, order);
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id, NotesUtils.NoteSortOrder order) {
+	private List<AbstractNote> notesQuery(int id, NotesUtils.NoteSortOrder order) {
 		Cursor cursor = db.query(NOTES_TABLE, NOTES_PROJECTION,
 				whereClauseForId(id), null, null, null, sortOrderClause(order));
 
-		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
+		List<AbstractNote> result = new ArrayList<AbstractNote>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -130,8 +130,8 @@ class NotesDatabaseAdapter {
 						cursor.getString(NOTES_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
-				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				note.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(note);
 			} while (cursor.moveToNext());
 		}
 
@@ -156,26 +156,26 @@ class NotesDatabaseAdapter {
 
 	// labels queries
 
-	NotesDatabaseEntry<Label> getLabel(int id) { // returns list with one label
-		final List<NotesDatabaseEntry<Label>> labels = labelsQuery(id);
+	Label getLabel(int id) { // returns list with one label
+		final List<Label> labels = labelsQuery(id);
 		return labels.isEmpty() ? null : labels.get(0);
 	}
 
-	List<NotesDatabaseEntry<Label>> getAllLabels() { // sorted by name
+	List<Label> getAllLabels() { // sorted by name
 		return labelsQuery(ALL_ENTRIES);
 	}
 
-	private List<NotesDatabaseEntry<Label>> labelsQuery(int id) {
+	private List<Label> labelsQuery(int id) {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
 				whereClauseForId(id), null, null, null, LABELS_NAME);
 
-		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+		List<Label> result = new ArrayList<Label>();
 
 		if (cursor.moveToFirst()) {
 			do {
 				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
-				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				label.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(label);
 			} while (cursor.moveToNext());
 		}
 
@@ -215,14 +215,14 @@ class NotesDatabaseAdapter {
 		return result;
 	}
 
-	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) { // sorted by label name
+	List<Label> getLabelsForNote(int noteId) { // sorted by label name
 		final Cursor cursor = getLabelsForNoteCursor(noteId, true);
-		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+		List<Label> result = new ArrayList<Label>();
 		if (cursor.moveToFirst()) {
 			do {
 				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
-				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				label.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(label);
 			} while (cursor.moveToNext());
 		}
 		return result;
@@ -251,7 +251,7 @@ class NotesDatabaseAdapter {
 		return db.rawQuery(query, null);
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId, NotesUtils.NoteSortOrder order) {
+	List<AbstractNote> getNotesForLabel(int labelId, NotesUtils.NoteSortOrder order) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
@@ -259,7 +259,7 @@ class NotesDatabaseAdapter {
 				" ORDER BY " + sortOrderClause(order) + ";";
 		Cursor cursor = db.rawQuery(query, null);
 
-		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
+		List<AbstractNote> result = new ArrayList<AbstractNote>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -267,8 +267,8 @@ class NotesDatabaseAdapter {
 						cursor.getString(NOTES_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
-				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				note.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(note);
 			} while (cursor.moveToNext());
 		}
 
