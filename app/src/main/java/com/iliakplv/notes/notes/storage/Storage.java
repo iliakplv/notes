@@ -28,7 +28,7 @@ public final class Storage {
 		initialized = false;
 		switch (storageType) {
 			case Database:
-				storageWrapper.initStorage(new NotesDatabaseStorage());
+				storageWrapper.setTarget(new NotesDatabaseStorage());
 				break;
 
 			case Dropbox:
