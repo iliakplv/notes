@@ -1,6 +1,7 @@
 package com.iliakplv.notes.notes.storage;
 
 import com.iliakplv.notes.notes.db.NotesDatabaseStorage;
+import com.iliakplv.notes.notes.dropbox.NotesDropboxStorage;
 import com.iliakplv.notes.utils.AppLog;
 
 public final class Storage {
@@ -32,8 +33,8 @@ public final class Storage {
 				break;
 
 			case Dropbox:
-				throw new IllegalArgumentException("Not implemented");
-				// break;
+				storageWrapper.setTarget(new NotesDropboxStorage());
+				break;
 
 			default:
 				throw new IllegalArgumentException("Unknown storage type: "
