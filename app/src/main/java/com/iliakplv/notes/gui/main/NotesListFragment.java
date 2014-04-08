@@ -110,14 +110,14 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	private void startListeningStorage() {
 		if (!listeningStorage) {
-			Storage.addStorageListener(this);
+			storage.addStorageListener(this);
 			listeningStorage = true;
 		}
 	}
 
 	private void stopListeningStorage() {
 		if (listeningStorage) {
-			Storage.removeStorageListener(this);
+			storage.removeStorageListener(this);
 			listeningStorage = false;
 		}
 	}
