@@ -13,7 +13,6 @@ import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
@@ -97,7 +96,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 						NotesApplication.executeInBackground(new Runnable() {
 							@Override
 							public void run() {
-								Storage.getStorage().deleteNote(id);
+								storage.deleteNote(id);
 							}
 						});
 					}
