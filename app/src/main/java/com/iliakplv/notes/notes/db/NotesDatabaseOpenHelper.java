@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.utils.AppLog;
 
-class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
+/* package */ class NotesDatabaseOpenHelper extends SQLiteOpenHelper {
 
 	private static final String LOG_TAG = NotesDatabaseOpenHelper.class.getSimpleName();
 

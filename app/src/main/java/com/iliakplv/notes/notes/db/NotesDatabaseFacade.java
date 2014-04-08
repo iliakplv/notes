@@ -17,8 +17,6 @@ import java.util.Set;
 public class NotesDatabaseFacade implements NotesStorage {
 
 	private static final String LOG_TAG = NotesDatabaseFacade.class.getSimpleName();
-
-	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int INVALID_ID = -1;
 
 
@@ -76,8 +74,9 @@ public class NotesDatabaseFacade implements NotesStorage {
 		AppLog.d(LOG_TAG, "Notes entries refresh (labelId=" + labelId + "). Cached entries list " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
-			final TransactionType selectTransaction =
-					labelId == ALL_LABELS ? TransactionType.GetAllNotes : TransactionType.GetNotesForLabel;
+			final TransactionType selectTransaction = labelId == NOTES_FOR_ALL_LABELS ?
+							TransactionType.GetAllNotes :
+							TransactionType.GetNotesForLabel;
 			notesListCache =
 					(List<AbstractNote>) performDatabaseTransaction(selectTransaction, labelId);
 			notesListCacheLabelId = labelId;

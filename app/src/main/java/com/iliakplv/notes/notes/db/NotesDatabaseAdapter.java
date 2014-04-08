@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-class NotesDatabaseAdapter {
+/* package */ class NotesDatabaseAdapter {
 
 	// Database
 	private static final String DATABASE_NAME = "notes.db";

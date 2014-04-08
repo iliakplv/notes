@@ -3,6 +3,7 @@ package com.iliakplv.notes;
 import android.app.Application;
 import android.content.Context;
 
+import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.AppLog;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,8 +21,8 @@ public class NotesApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		AppLog.d(LOG_TAG, "onCreate() call");
 		super.onCreate();
+		AppLog.d(LOG_TAG, "onCreate() call");
 
 		context = this.getApplicationContext();
 
@@ -32,6 +33,8 @@ public class NotesApplication extends Application {
 				NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS,
 				TimeUnit.SECONDS,
 				new LinkedBlockingQueue<Runnable>());
+
+		Storage.initDefault();
 	}
 
 	@Override
