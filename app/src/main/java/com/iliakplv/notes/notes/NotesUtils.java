@@ -4,11 +4,15 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.utils.StringUtils;
 
+import java.io.Serializable;
+
 public final class NotesUtils {
 
 	private NotesUtils() {
 		throw new AssertionError("Instance creation not allowed!");
 	}
+
+	public static final Serializable DEFAULT_ID = "";
 
 	public static enum NoteSortOrder {
 		Title,
@@ -52,4 +56,7 @@ public final class NotesUtils {
 		}
 	}
 
+	public static Serializable getValidNoteId(Serializable id) {
+		return id != null ? id : DEFAULT_ID;
+	}
 }

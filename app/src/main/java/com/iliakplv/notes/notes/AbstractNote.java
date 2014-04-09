@@ -3,9 +3,11 @@ package com.iliakplv.notes.notes;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 public abstract class AbstractNote {
 
-	private int id = 0;
+	private Serializable id = NotesUtils.DEFAULT_ID;
 
 	private String title;
 	private String body;
@@ -68,14 +70,11 @@ public abstract class AbstractNote {
 		changeTime = new DateTime();
 	}
 
-	public int getId() {
+	public Serializable getId() {
 		return id;
 	}
 
-	public void setId(int id) {
-		if (id <= 0) {
-			throw new IllegalArgumentException("Id value must be positive!");
-		}
-		this.id = id;
+	public void setId(Serializable id) {
+		this.id = NotesUtils.getValidNoteId(id);
 	}
 }
