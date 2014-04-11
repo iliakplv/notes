@@ -17,6 +17,7 @@ import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +58,7 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 		outState.putBooleanArray(EXTRA_SELECTED_LABELS, selectedLabels);
 	}
 
-	public static void show(FragmentManager fragmentManager, int noteId) {
+	public static void show(FragmentManager fragmentManager, Serializable noteId) {
 		final NoteLabelsDialog dialog = new NoteLabelsDialog();
 		dialog.setArguments(createArgumentsBundle(noteId));
 		dialog.show(fragmentManager, FRAGMENT_TAG);
@@ -76,18 +77,18 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 
 		private final int[] labelsColors;
 
-		private final int noteId;
+		private final Serializable noteId;
 		private final List<Label> allLabels;
 		private final boolean[] currentLabels;
 
-		public NoteLabelsListAdapter(int noteId) {
+		public NoteLabelsListAdapter(Serializable noteId) {
 			super(activity, 0, storage.getAllLabels());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 
 			this.noteId = noteId;
 			this.allLabels = storage.getAllLabels();
 
-			final Set<Integer> currentNoteLabelsIds = storage.getLabelsIdsForNote(noteId);
+			final Set<Serializable> currentNoteLabelsIds = storage.getLabelsIdsForNote(noteId);
 			currentLabels = new boolean[allLabels.size()];
 			for (int i = 0; i < currentLabels.length; i++) {
 				currentLabels[i] = currentNoteLabelsIds.contains(allLabels.get(i).getId());
@@ -131,11 +132,11 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 		}
 
 		public void applyNoteLabelsChanges() {
-			final Set<Integer> labelsIdsToAdd = new HashSet<Integer>();
-			final Set<Integer> labelsIdsToDelete = new HashSet<Integer>();
+			final Set<Serializable> labelsIdsToAdd = new HashSet<Serializable>();
+			final Set<Serializable> labelsIdsToDelete = new HashSet<Serializable>();
 
 			for (int i = 0; i < allLabels.size(); i++) {
-				final int labelId = allLabels.get(i).getId();
+				final Serializable labelId = allLabels.get(i).getId();
 				if (!currentLabels[i] && selectedLabels[i]) {
 					labelsIdsToAdd.add(labelId);
 				} else if (currentLabels[i] && !selectedLabels[i]) {
@@ -146,10 +147,10 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override
 				public void run() {
-					for (int labelId : labelsIdsToDelete) {
+					for (Serializable labelId : labelsIdsToDelete) {
 						storage.deleteLabelFromNote(noteId, labelId);
 					}
-					for (int labelId : labelsIdsToAdd) {
+					for (Serializable labelId : labelsIdsToAdd) {
 						storage.insertLabelToNote(noteId, labelId);
 					}
 				}

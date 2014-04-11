@@ -17,6 +17,8 @@ import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 public class SimpleItemDialog extends AbstractItemDialog {
 
 	private static final String EXTRA_TYPE = "dialog_type";
@@ -150,7 +152,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	// New dialog showing
 
-	public static void show(DialogType type, int itemId, FragmentManager fragmentManager) {
+	public static void show(DialogType type, Serializable itemId, FragmentManager fragmentManager) {
 		final SimpleItemDialog dialog = new SimpleItemDialog();
 		final Bundle args = createArgumentsBundle(itemId);
 		args.putSerializable(EXTRA_TYPE, type);

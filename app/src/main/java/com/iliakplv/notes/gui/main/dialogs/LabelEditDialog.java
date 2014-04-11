@@ -16,9 +16,11 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 
+import java.io.Serializable;
+
 public class LabelEditDialog extends AbstractItemDialog {
 
-	public static final int NEW_LABEL = 0;
+	public static final Integer NEW_LABEL = 0;
 
 	private static final String FRAGMENT_TAG = "label_edit_dialog";
 
@@ -44,7 +46,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 		final LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
 
-		final boolean editMode = id != NEW_LABEL;
+		final boolean editMode = !NEW_LABEL.equals(id);
 		final boolean fromSavedInstanceState = savedInstanceState != null;
 
 		final Label label = editMode ?
@@ -69,8 +71,8 @@ public class LabelEditDialog extends AbstractItemDialog {
 
 		final boolean insertLabelToNote = getArguments() != null &&
 				getArguments().containsKey(EXTRA_NOTE_ID);
-		final int noteId = insertLabelToNote ?
-				getArguments().getInt(EXTRA_NOTE_ID) :
+		final Serializable noteId = insertLabelToNote ?
+				getArguments().getSerializable(EXTRA_NOTE_ID) :
 				0;
 
 		return new AlertDialog.Builder(activity)
@@ -87,7 +89,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 								if (editMode) {
 									storage.updateLabel(id, label);
 								} else {
-									final int labelId = storage.insertLabel(label);
+									final Serializable labelId = storage.insertLabel(label);
 									if (insertLabelToNote) {
 										storage.insertLabelToNote(noteId, labelId);
 									}
@@ -109,23 +111,23 @@ public class LabelEditDialog extends AbstractItemDialog {
 	}
 
 	// Show dialog
-	public static void show(FragmentManager fragmentManager, int labelId, Fragment targetFragment) {
+	public static void show(FragmentManager fragmentManager, Serializable labelId, Fragment targetFragment) {
 		createDialog(targetFragment, labelId, 0).show(fragmentManager, FRAGMENT_TAG);
 	}
 
 	// Show this dialog for new label creation. Set created label to specified note.
-	public static void showCreateAndSet(FragmentManager fragmentManager, Fragment targetFragment, int noteId) {
+	public static void showCreateAndSet(FragmentManager fragmentManager, Fragment targetFragment, Serializable noteId) {
 		createDialog(targetFragment, NEW_LABEL, noteId).show(fragmentManager, FRAGMENT_TAG);
 	}
 
-	private static LabelEditDialog createDialog(Fragment targetFragment, int labelId, int noteId) {
+	private static LabelEditDialog createDialog(Fragment targetFragment, Serializable labelId, Serializable noteId) {
 		if (!(targetFragment instanceof LabelEditDialogCallback)) {
 			throw new IllegalArgumentException("Target fragment must implement callback interface");
 		}
 		final LabelEditDialog dialog = new LabelEditDialog();
 		final Bundle args = createArgumentsBundle(labelId);
-		if (noteId > 0) {
-			args.putInt(EXTRA_NOTE_ID, noteId);
+		if (!Integer.valueOf(0).equals(noteId)) {
+			args.putSerializable(EXTRA_NOTE_ID, noteId);
 		}
 		dialog.setArguments(args);
 		dialog.setTargetFragment(targetFragment, 0);
