@@ -158,11 +158,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 	// notes_labels
 
 	@Override
-	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
-		return (Set<Pair<Serializable, Serializable>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
-	}
-
-	@Override
 	public List<Label> getLabelsForNote(Serializable noteId) {
 		return (List<Label>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
@@ -170,6 +165,11 @@ public class NotesDatabaseStorage implements NotesStorage {
 	@Override
 	public Set<Serializable> getLabelsIdsForNote(Serializable noteId) {
 		return (Set<Serializable>) performDatabaseTransaction(TransactionType.GetLabelsIdsForNote, noteId);
+	}
+
+	@Override
+	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
+		return (Set<Pair<Serializable, Serializable>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
 	}
 
 	@Override
