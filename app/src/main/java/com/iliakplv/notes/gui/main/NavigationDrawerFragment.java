@@ -30,6 +30,7 @@ import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class NavigationDrawerFragment extends Fragment implements LabelEditDialog.LabelEditDialogCallback {
@@ -38,7 +39,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 	private static final String PREF_SHOW_DRAWER_ON_START = "show_drawer_on_start";
 
-	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
+	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int ALL_LABELS_HEADER_POSITION = 0;
 	private static final int NO_LABEL_SELECTED = -1;
 
@@ -216,7 +217,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 				drawerLayout.closeDrawer(fragmentContainerView);
 			}
 
-			final int labelId;
+			final Serializable labelId;
 			final String newTitle;
 			if (position == ALL_LABELS_HEADER_POSITION) {
 				labelId = ALL_LABELS;
@@ -236,7 +237,7 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
 	}
 
-	public void showLabelEditDialog(int labelId) {
+	public void showLabelEditDialog(Serializable labelId) {
 		LabelEditDialog.show(mainActivity.getFragmentManager(),
 				labelId,
 				this);
@@ -355,6 +356,6 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 	}
 
 	public static interface NavigationDrawerListener {
-		void onLabelSelected(int id, String newTitle);
+		void onLabelSelected(Serializable id, String newTitle);
 	}
 }

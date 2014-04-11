@@ -21,6 +21,7 @@ import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private NotesListAdapter listAdapter;
 	private boolean listeningStorage = false;
 
-	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
-	private int currentLabelId = ALL_LABELS;
+	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
+	private Serializable currentLabelId = ALL_LABELS;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -72,7 +73,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	private boolean showNoteActionsDialog(int position) {
-		final int noteId = storage.getNotesForLabel(currentLabelId).get(position).getId();
+		final Serializable noteId = storage.getNotesForLabel(currentLabelId).get(position).getId();
 		SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteActions,
 				noteId,
 				mainActivity.getFragmentManager());
@@ -86,13 +87,9 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 	}
 
-	public void showNotesForLabel(int labelId) {
-		if (labelId == ALL_LABELS || labelId >= 1) {
-			currentLabelId = labelId;
-			updateListView();
-		} else {
-			throw new IllegalArgumentException("Wrong label id value: " + labelId);
-		}
+	public void showNotesForLabel(Serializable labelId) {
+		currentLabelId = labelId;
+		updateListView();
 	}
 
 	private void updateListView() {
@@ -175,7 +172,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			subtitle.setText(note.getBody());
 
 			// labels
-			final boolean showingNotesForAllLabels = currentLabelId == ALL_LABELS;
+			final boolean showingNotesForAllLabels = ALL_LABELS.equals(currentLabelId);
 			final List<Label> labels;
 			if (showingNotesForAllLabels) {
 				labels = storage.getLabelsForNote(note.getId());
