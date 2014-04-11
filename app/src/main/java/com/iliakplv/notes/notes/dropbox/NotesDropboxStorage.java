@@ -9,6 +9,7 @@ import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -21,37 +22,37 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	@Override
-	public AbstractNote getNote(int id) {
+	public AbstractNote getNote(Serializable id) {
 		return null;
 	}
 
 	@Override
-	public List<AbstractNote> getNotesForLabel(int labelId) {
+	public List<AbstractNote> getNotesForLabel(Serializable labelId) {
 		return null;
 	}
 
 	@Override
-	public int getNotesForLabelCount(int labelId) {
+	public int getNotesForLabelCount(Serializable labelId) {
 		return 0;
 	}
 
 	@Override
-	public int insertNote(AbstractNote note) {
+	public Serializable insertNote(AbstractNote note) {
 		return 0;
 	}
 
 	@Override
-	public boolean updateNote(int id, AbstractNote note) {
+	public boolean updateNote(Serializable id, AbstractNote note) {
 		return false;
 	}
 
 	@Override
-	public boolean deleteNote(int id) {
+	public boolean deleteNote(Serializable id) {
 		return false;
 	}
 
 	@Override
-	public Label getLabel(int id) {
+	public Label getLabel(Serializable id) {
 		return null;
 	}
 
@@ -61,42 +62,42 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	@Override
-	public int insertLabel(Label label) {
+	public Serializable insertLabel(Label label) {
 		return 0;
 	}
 
 	@Override
-	public boolean updateLabel(int id, Label label) {
+	public boolean updateLabel(Serializable id, Label label) {
 		return false;
 	}
 
 	@Override
-	public boolean deleteLabel(int id) {
+	public boolean deleteLabel(Serializable id) {
 		return false;
 	}
 
 	@Override
-	public List<Label> getLabelsForNote(int noteId) {
+	public List<Label> getLabelsForNote(Serializable noteId) {
 		return null;
 	}
 
 	@Override
-	public Set<Integer> getLabelsIdsForNote(int noteId) {
+	public Set<Serializable> getLabelsIdsForNote(Serializable noteId) {
 		return null;
 	}
 
 	@Override
-	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
+	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
 		return null;
 	}
 
 	@Override
-	public int insertLabelToNote(int noteId, int labelId) {
+	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
 		return 0;
 	}
 
 	@Override
-	public boolean deleteLabelFromNote(int noteId, int labelId) {
+	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
 		return false;
 	}
 

@@ -7,6 +7,7 @@ import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -27,32 +28,32 @@ import java.util.Set;
 
 	// notes
 
-	public AbstractNote getNote(int id) {
+	public AbstractNote getNote(Serializable id) {
 		return target.getNote(id);
 	}
-	public List<AbstractNote> getNotesForLabel(int labelId) {
+	public List<AbstractNote> getNotesForLabel(Serializable labelId) {
 		return target.getNotesForLabel(labelId);
 	}
 
-	public int getNotesForLabelCount(int labelId) {
+	public int getNotesForLabelCount(Serializable labelId) {
 		return target.getNotesForLabelCount(labelId);
 	}
 
-	public int insertNote(AbstractNote note) {
+	public Serializable insertNote(AbstractNote note) {
 		return target.insertNote(note);
 	}
 
-	public boolean updateNote(int id, AbstractNote note) {
+	public boolean updateNote(Serializable id, AbstractNote note) {
 		return target.updateNote(id, note);
 	}
 
-	public boolean deleteNote(int id) {
+	public boolean deleteNote(Serializable id) {
 		return target.deleteNote(id);
 	}
 
 	// labels
 
-	public Label getLabel(int id) {
+	public Label getLabel(Serializable id) {
 		return target.getLabel(id);
 	}
 
@@ -60,37 +61,37 @@ import java.util.Set;
 		return target.getAllLabels();
 	}
 
-	public int insertLabel(Label label) {
+	public Serializable insertLabel(Label label) {
 		return target.insertLabel(label);
 	}
 
-	public boolean updateLabel(int id, Label label) {
+	public boolean updateLabel(Serializable id, Label label) {
 		return target.updateLabel(id, label);
 	}
 
-	public boolean deleteLabel(int id) {
+	public boolean deleteLabel(Serializable id) {
 		return target.deleteLabel(id);
 	}
 
 	// notes_labels
 
-	public List<Label> getLabelsForNote(int noteId) {
+	public List<Label> getLabelsForNote(Serializable noteId) {
 		return target.getLabelsForNote(noteId);
 	}
 
-	public Set<Integer> getLabelsIdsForNote(int noteId) {
+	public Set<Serializable> getLabelsIdsForNote(Serializable noteId) {
 		return target.getLabelsIdsForNote(noteId);
 	}
 
-	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
+	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
 		return target.getAllNotesLabelsIds();
 	}
 
-	public int insertLabelToNote(int noteId, int labelId) {
+	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
 		return target.insertLabelToNote(noteId,labelId);
 	}
 
-	public boolean deleteLabelFromNote(int noteId, int labelId) {
+	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
 		return target.deleteLabelFromNote(noteId, labelId);
 	}
 
