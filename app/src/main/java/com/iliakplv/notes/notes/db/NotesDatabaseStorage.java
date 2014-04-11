@@ -35,6 +35,10 @@ public class NotesDatabaseStorage implements NotesStorage {
 	private volatile Integer noteCacheNoteId = INVALID_ID;
 	private volatile boolean noteCacheActual = false;
 
+	// labels cache
+	private List<Label> labelsListCache;
+	private volatile boolean labelsListCacheActual = false;
+
 	// listeners
 	private List<NotesStorageListener> databaseListeners;
 
@@ -122,7 +126,17 @@ public class NotesDatabaseStorage implements NotesStorage {
 
 	@Override
 	public List<Label> getAllLabels() {
-		return (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
+		refreshLabelsListCacheIfNeeded();
+		return labelsListCache;
+	}
+
+	private void refreshLabelsListCacheIfNeeded() {
+		AppLog.d(LOG_TAG, "Labels entries refresh. Cached entries list " +
+				(labelsListCacheActual ? "" : "NOT ") + "actual");
+		if (!labelsListCacheActual) {
+			labelsListCache = (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
+			labelsListCacheActual = true;
+		}
 	}
 
 	@Override
@@ -255,13 +269,15 @@ public class NotesDatabaseStorage implements NotesStorage {
 	private void onTransactionPerformed(TransactionType transactionType, Integer noteId, Integer labelId) {
 		AppLog.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 
+		if (noteCacheNoteId.equals(noteId) && noteModificationTransaction(transactionType)) {
+			noteCacheActual = false;
+		}
+		if (labelsModificationTransaction(transactionType)) {
+			labelsListCacheActual = false;
+		}
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
 			notifyDatabaseListeners();
-		}
-
-		if (noteCacheNoteId.equals(noteId) && noteModificationTransaction(transactionType)) {
-			noteCacheActual = false;
 		}
 	}
 
@@ -326,6 +342,16 @@ public class NotesDatabaseStorage implements NotesStorage {
 
 			case InsertLabelToNote:
 			case DeleteLabelFromNote:
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean labelsModificationTransaction(TransactionType transactionType) {
+		switch (transactionType) {
+			case InsertLabel:
+			case UpdateLabel:
+			case DeleteLabel:
 				return true;
 		}
 		return false;
