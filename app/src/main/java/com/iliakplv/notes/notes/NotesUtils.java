@@ -21,6 +21,8 @@ public final class NotesUtils {
 		ChangeDate
 	}
 
+	public static final NoteSortOrder DEFAULT_SORT_ORDER = NoteSortOrder.Title;
+
 
 	private static final String[] COLORS_NAMES =
 			NotesApplication.getContext().getResources().getStringArray(R.array.label_colors_names);

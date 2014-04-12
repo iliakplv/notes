@@ -28,7 +28,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 	private volatile int notesListCacheSize = 0;
 
 	// list sort
-	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
+	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
 
 	// note cache
 	private AbstractNote noteCache;
