@@ -188,7 +188,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final int itemId = item.getItemId();
 		switch (itemId) {
 
-			// menu in list
+			// main menu
 			case R.id.action_add:
 				createNewNote();
 				return true;
@@ -206,13 +206,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			case R.id.sort_by_change:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
 				return true;
-
-			// menu in details
-//			TODO [low] implement showing NoteLabelsDialog
-//			case R.id.action_labels:
-//				return true;
-
-//			TODO implement sharing
 
 			// global menu
 			case R.id.action_settings:

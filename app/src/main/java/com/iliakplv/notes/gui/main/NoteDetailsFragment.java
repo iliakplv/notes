@@ -1,11 +1,13 @@
 package com.iliakplv.notes.gui.main;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -53,6 +55,7 @@ public class NoteDetailsFragment extends Fragment {
 			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
 		}
 		AppLog.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -98,6 +101,26 @@ public class NoteDetailsFragment extends Fragment {
 		super.onSaveInstanceState(outState);
 		AppLog.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
 		outState.putSerializable(ARG_NOTE_ID, noteId);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		// TODO [low] implement showing NoteLabelsDialog
+
+		if (item.getItemId() == R.id.action_share) {
+			shareNote();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void shareNote() {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_SUBJECT, title.getText().toString());
+		intent.putExtra(Intent.EXTRA_TEXT, body.getText().toString());
+		startActivity(Intent.createChooser(intent, getString(R.string.action_bar_share_title)));
 	}
 
 	private void trySaveCurrentNote() {

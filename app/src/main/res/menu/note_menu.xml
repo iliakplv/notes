@@ -6,6 +6,12 @@
 		<!--android:icon="@drawable/ic_menu_mark"-->
 		<!--android:showAsAction="always"/>-->
 
+	<item
+		android:id="@+id/action_share"
+		android:title="@string/action_bar_share"
+		android:icon="@drawable/ic_menu_share"
+		android:showAsAction="always"/>
+
 	<item android:id="@+id/action_settings"
 	      android:title="@string/action_settings"
 	      android:orderInCategory="100"
