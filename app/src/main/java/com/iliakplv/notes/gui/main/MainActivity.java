@@ -20,12 +20,14 @@ import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 
+import java.io.Serializable;
+
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
 	private static final String LIST_FRAGMENT_TAG = "notes_list_fragment";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
-	public static final int NEW_NOTE = 0;
+	public static final Integer NEW_NOTE = 0;
 
 	private final NotesStorage storage = Storage.getStorage();
 
@@ -110,7 +112,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	@Override
-	public void onLabelSelected(int labelId, String newTitle) {
+	public void onLabelSelected(Serializable labelId, String newTitle) {
 		title = newTitle;
 		final NotesListFragment noteListFragment =
 				(NotesListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
@@ -119,12 +121,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		}
 	}
 
-	public void onNoteSelected(int noteId) {
+	public void onNoteSelected(Serializable noteId) {
 		setDetailsShown(true);
 
 		final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
 		final Bundle args = new Bundle();
-		args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+		args.putSerializable(NoteDetailsFragment.ARG_NOTE_ID, noteId);
 		noteDetailsFragment.setArguments(args);
 
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -186,7 +188,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final int itemId = item.getItemId();
 		switch (itemId) {
 
-			// menu in list
+			// main menu
 			case R.id.action_add:
 				createNewNote();
 				return true;
@@ -204,13 +206,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			case R.id.sort_by_change:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
 				return true;
-
-			// menu in details
-//			TODO [low] implement showing NoteLabelsDialog
-//			case R.id.action_labels:
-//				return true;
-
-//			TODO implement sharing
 
 			// global menu
 			case R.id.action_settings:

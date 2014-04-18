@@ -10,6 +10,7 @@ import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.AppLog;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -17,22 +18,26 @@ import java.util.Set;
 public class NotesDatabaseStorage implements NotesStorage {
 
 	private static final String LOG_TAG = NotesDatabaseStorage.class.getSimpleName();
-	private static final int INVALID_ID = -1;
+	private static final Integer INVALID_ID = -1;
 
 
 	// list cache
 	private List<AbstractNote> notesListCache;
-	private volatile int notesListCacheLabelId = INVALID_ID;
+	private volatile Integer notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
 	private volatile int notesListCacheSize = 0;
 
 	// list sort
-	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.NoteSortOrder.Title;
+	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
 
 	// note cache
 	private AbstractNote noteCache;
-	private volatile int noteCacheNoteId = INVALID_ID;
+	private volatile Integer noteCacheNoteId = INVALID_ID;
 	private volatile boolean noteCacheActual = false;
+
+	// labels cache
+	private List<Label> labelsListCache;
+	private volatile boolean labelsListCacheActual = false;
 
 	// listeners
 	private List<NotesStorageListener> databaseListeners;
@@ -52,13 +57,13 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 	@Override
-	public AbstractNote getNote(int id) {
-		refreshNoteCacheIfNeeded(id);
+	public AbstractNote getNote(Serializable id) {
+		refreshNoteCacheIfNeeded((Integer) id);
 		return noteCache;
 	}
 
-	private void refreshNoteCacheIfNeeded(int noteId) {
-		final boolean needToRefresh = noteCacheNoteId != noteId || !noteCacheActual;
+	private void refreshNoteCacheIfNeeded(Integer noteId) {
+		final boolean needToRefresh = !noteCacheNoteId.equals(noteId) || !noteCacheActual;
 		AppLog.d(LOG_TAG, "Note entry refresh (id=" + noteId + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
@@ -68,8 +73,8 @@ public class NotesDatabaseStorage implements NotesStorage {
 		}
 	}
 
-	private void refreshNotesListCacheIfNeeded(int labelId) {
-		final boolean needToRefresh = notesListCacheLabelId != labelId || !notesListCacheActual;
+	private void refreshNotesListCacheIfNeeded(Integer labelId) {
+		final boolean needToRefresh = !notesListCacheLabelId.equals(labelId) || !notesListCacheActual;
 		AppLog.d(LOG_TAG, "Notes entries refresh (labelId=" + labelId + "). Cached entries list " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
@@ -85,29 +90,29 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 	@Override
-	public List<AbstractNote> getNotesForLabel(int labelId) {
-		refreshNotesListCacheIfNeeded(labelId);
+	public List<AbstractNote> getNotesForLabel(Serializable labelId) {
+		refreshNotesListCacheIfNeeded((Integer) labelId);
 		return notesListCache;
 	}
 
 	@Override
-	public int getNotesForLabelCount(int labelId) {
-		refreshNotesListCacheIfNeeded(labelId);
+	public int getNotesForLabelCount(Serializable labelId) {
+		refreshNotesListCacheIfNeeded((Integer) labelId);
 		return notesListCacheSize;
 	}
 
 	@Override
-	public synchronized int insertNote(AbstractNote note) {
+	public synchronized Serializable insertNote(AbstractNote note) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertNote, note);
 	}
 
 	@Override
-	public synchronized boolean updateNote(int id, AbstractNote note) {
+	public synchronized boolean updateNote(Serializable id, AbstractNote note) {
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateNote, id, note);
 	}
 
 	@Override
-	public synchronized boolean deleteNote(int id) {
+	public synchronized boolean deleteNote(Serializable id) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteNote, id);
 	}
 
@@ -115,27 +120,37 @@ public class NotesDatabaseStorage implements NotesStorage {
 	// labels
 
 	@Override
-	public Label getLabel(int id) {
+	public Label getLabel(Serializable id) {
 		return (Label) performDatabaseTransaction(TransactionType.GetLabel, id);
 	}
 
 	@Override
 	public List<Label> getAllLabels() {
-		return (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
+		refreshLabelsListCacheIfNeeded();
+		return labelsListCache;
+	}
+
+	private void refreshLabelsListCacheIfNeeded() {
+		AppLog.d(LOG_TAG, "Labels entries refresh. Cached entries list " +
+				(labelsListCacheActual ? "" : "NOT ") + "actual");
+		if (!labelsListCacheActual) {
+			labelsListCache = (List<Label>) performDatabaseTransaction(TransactionType.GetAllLabels);
+			labelsListCacheActual = true;
+		}
 	}
 
 	@Override
-	public synchronized int insertLabel(Label label) {
+	public synchronized Serializable insertLabel(Label label) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabel, label);
 	}
 
 	@Override
-	public synchronized boolean updateLabel(int id, Label label) {
+	public synchronized boolean updateLabel(Serializable id, Label label) {
 		return (Boolean) performDatabaseTransaction(TransactionType.UpdateLabel, id, label);
 	}
 
 	@Override
-	public synchronized boolean deleteLabel(int id) {
+	public synchronized boolean deleteLabel(Serializable id) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabel, id);
 	}
 
@@ -143,35 +158,35 @@ public class NotesDatabaseStorage implements NotesStorage {
 	// notes_labels
 
 	@Override
-	public Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
-		return (Set<Pair<Integer, Integer>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
-	}
-
-	@Override
-	public List<Label> getLabelsForNote(int noteId) {
+	public List<Label> getLabelsForNote(Serializable noteId) {
 		return (List<Label>) performDatabaseTransaction(TransactionType.GetLabelsForNote, noteId);
 	}
 
 	@Override
-	public Set<Integer> getLabelsIdsForNote(int noteId) {
-		return (Set<Integer>) performDatabaseTransaction(TransactionType.GetLabelsIdsForNote, noteId);
+	public Set<Serializable> getLabelsIdsForNote(Serializable noteId) {
+		return (Set<Serializable>) performDatabaseTransaction(TransactionType.GetLabelsIdsForNote, noteId);
 	}
 
 	@Override
-	public synchronized int insertLabelToNote(int noteId, int labelId) {
+	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
+		return (Set<Pair<Serializable, Serializable>>) performDatabaseTransaction(TransactionType.GetAllNotesLabelsIds);
+	}
+
+	@Override
+	public synchronized Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
 		return (Integer) performDatabaseTransaction(TransactionType.InsertLabelToNote, noteId, labelId);
 	}
 
 	@Override
-	public synchronized boolean deleteLabelFromNote(int noteId, int labelId) {
+	public synchronized boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
 		return (Boolean) performDatabaseTransaction(TransactionType.DeleteLabelFromNote, noteId, labelId);
 	}
 
 
 	private Object performDatabaseTransaction(TransactionType transactionType, Object... args) {
 		Object result;
-		int noteId = 0;
-		int labelId = 0;
+		Integer noteId = 0;
+		Integer labelId = 0;
 
 		final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
 		adapter.open();
@@ -251,16 +266,18 @@ public class NotesDatabaseStorage implements NotesStorage {
 		return result;
 	}
 
-	private void onTransactionPerformed(TransactionType transactionType, int noteId, int labelId) {
+	private void onTransactionPerformed(TransactionType transactionType, Integer noteId, Integer labelId) {
 		AppLog.d(LOG_TAG, "Database transaction (" + transactionType.name() + ") performed");
 
+		if (noteCacheNoteId.equals(noteId) && noteModificationTransaction(transactionType)) {
+			noteCacheActual = false;
+		}
+		if (labelsModificationTransaction(transactionType)) {
+			labelsListCacheActual = false;
+		}
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
 			notifyDatabaseListeners();
-		}
-
-		if (noteCacheNoteId == noteId && noteModificationTransaction(transactionType)) {
-			noteCacheActual = false;
 		}
 	}
 
@@ -325,6 +342,16 @@ public class NotesDatabaseStorage implements NotesStorage {
 
 			case InsertLabelToNote:
 			case DeleteLabelFromNote:
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean labelsModificationTransaction(TransactionType transactionType) {
+		switch (transactionType) {
+			case InsertLabel:
+			case UpdateLabel:
+			case DeleteLabel:
 				return true;
 		}
 		return false;

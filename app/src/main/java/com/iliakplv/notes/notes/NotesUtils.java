@@ -1,8 +1,13 @@
 package com.iliakplv.notes.notes;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.utils.StringUtils;
+
+import java.io.Serializable;
 
 public final class NotesUtils {
 
@@ -10,12 +15,16 @@ public final class NotesUtils {
 		throw new AssertionError("Instance creation not allowed!");
 	}
 
+	public static final Serializable DEFAULT_ID = "";
+
 	public static enum NoteSortOrder {
 		Title,
 		CreateDateAscending,
 		CreateDateDescending,
 		ChangeDate
 	}
+
+	public static final NoteSortOrder DEFAULT_SORT_ORDER = NoteSortOrder.Title;
 
 
 	private static final String[] COLORS_NAMES =
@@ -44,6 +53,7 @@ public final class NotesUtils {
 		return isNoteTitleEmpty(note) && isNoteBodyEmpty(note);
 	}
 
+
 	public static String getTitleForLabel(Label label) {
 		if (!StringUtils.isNullOrEmpty(label.getName())) {
 			return label.getName();
@@ -52,4 +62,20 @@ public final class NotesUtils {
 		}
 	}
 
+	public static Serializable getValidNoteId(Serializable id) {
+		return id != null ? id : DEFAULT_ID;
+	}
+
+
+	public static void shareNote(Context context, AbstractNote note) {
+		shareNote(context, note.getTitle(), note.getBody());
+	}
+
+	public static void shareNote(Context context, String subject, String text) {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_TEXT, text);
+		context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_bar_share_title)));
+	}
 }

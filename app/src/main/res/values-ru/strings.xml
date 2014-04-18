@@ -14,6 +14,8 @@
 
 	<string name="action_bar_add">Новая заметка</string>
 	<string name="action_bar_labels">Изменить метки</string>
+	<string name="action_bar_share">Отправить</string>
+	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_settings">Настройки</string>
 
 	<string name="action_sort">Сортировка</string>

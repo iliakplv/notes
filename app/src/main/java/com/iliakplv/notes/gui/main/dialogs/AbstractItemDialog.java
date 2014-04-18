@@ -7,6 +7,8 @@ import android.os.Bundle;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 
+import java.io.Serializable;
+
 public abstract class AbstractItemDialog extends DialogFragment {
 
 	public static final String EXTRA_ID = "item_id";
@@ -14,7 +16,7 @@ public abstract class AbstractItemDialog extends DialogFragment {
 	protected NotesStorage storage = Storage.getStorage();
 
 	protected Activity activity;
-	protected int id;
+	protected Serializable id;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -31,12 +33,12 @@ public abstract class AbstractItemDialog extends DialogFragment {
 		if (args == null || !args.containsKey(EXTRA_ID)) {
 			throw new RuntimeException("Item id required");
 		}
-		id = args.getInt(EXTRA_ID);
+		id = args.getSerializable(EXTRA_ID);
 	}
 
-	protected static Bundle createArgumentsBundle(int id) {
+	protected static Bundle createArgumentsBundle(Serializable id) {
 		final Bundle args = new Bundle();
-		args.putInt(EXTRA_ID, id);
+		args.putSerializable(EXTRA_ID, id);
 		return args;
 	}
 }

@@ -17,6 +17,8 @@ import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 public class SimpleItemDialog extends AbstractItemDialog {
 
 	private static final String EXTRA_TYPE = "dialog_type";
@@ -150,7 +152,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	// New dialog showing
 
-	public static void show(DialogType type, int itemId, FragmentManager fragmentManager) {
+	public static void show(DialogType type, Serializable itemId, FragmentManager fragmentManager) {
 		final SimpleItemDialog dialog = new SimpleItemDialog();
 		final Bundle args = createArgumentsBundle(itemId);
 		args.putSerializable(EXTRA_TYPE, type);
@@ -185,8 +187,9 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	private class NoteActionDialogClickListener implements DialogInterface.OnClickListener {
 
 		private final int LABELS_INDEX = 0;
-		private final int INFO_INDEX = 1;
-		private final int DELETE_INDEX = 2;
+		private final int SHARE_INDEX = 1;
+		private final int INFO_INDEX = 2;
+		private final int DELETE_INDEX = 3;
 
 		public NoteActionDialogClickListener() {}
 
@@ -195,6 +198,9 @@ public class SimpleItemDialog extends AbstractItemDialog {
 			switch (i) {
 				case LABELS_INDEX:
 					showNoteLabelsDialog();
+					break;
+				case SHARE_INDEX:
+					shareNote();
 					break;
 				case INFO_INDEX:
 					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteInfo);
@@ -214,7 +220,9 @@ public class SimpleItemDialog extends AbstractItemDialog {
 			}
 		}
 
-
+		private void shareNote() {
+			NotesUtils.shareNote(activity, storage.getNote(id));
+		}
 	}
 
 	private class LabelActionDialogClickListener implements DialogInterface.OnClickListener {

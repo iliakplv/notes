@@ -1,22 +1,29 @@
 package com.iliakplv.notes.gui.main;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.gui.main.dialogs.NoteLabelsDialog;
+import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.AppLog;
 import com.iliakplv.notes.utils.StringUtils;
+
+import java.io.Serializable;
 
 public class NoteDetailsFragment extends Fragment {
 
@@ -29,7 +36,7 @@ public class NoteDetailsFragment extends Fragment {
 
 	final static String ARG_NOTE_ID = "note_id";
 
-	private int noteId = MainActivity.NEW_NOTE;
+	private Serializable noteId = MainActivity.NEW_NOTE;
 	private final NotesStorage storage = Storage.getStorage();
 
 	private EditText title;
@@ -48,9 +55,10 @@ public class NoteDetailsFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
-			noteId = savedInstanceState.getInt(ARG_NOTE_ID);
+			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
 		}
 		AppLog.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -58,10 +66,10 @@ public class NoteDetailsFragment extends Fragment {
 		super.onStart();
 		final Bundle args = getArguments();
 
-		if (noteId == MainActivity.NEW_NOTE) {
+		if (MainActivity.NEW_NOTE.equals(noteId)) {
 			// Not restored from savedInstanceState in onCreate()
 			if (args != null) {
-				noteId = args.getInt(ARG_NOTE_ID);
+				noteId = args.getSerializable(ARG_NOTE_ID);
 			}
 		}
 		AppLog.d(LOG_TAG, "onStart() call. Note id = " + noteId);
@@ -71,7 +79,7 @@ public class NoteDetailsFragment extends Fragment {
 
 
 	public void updateNoteDetailsView() {
-		final boolean gotNoteToShow = noteId > 0 && storage.getNote(noteId) != null;
+		final boolean gotNoteToShow = !MainActivity.NEW_NOTE.equals(noteId) && storage.getNote(noteId) != null;
 		if (gotNoteToShow) {
 			final AbstractNote note = storage.getNote(noteId);
 			title.setText(note.getTitle());
@@ -88,25 +96,50 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		trySaveCurrentNote();
+		trySaveCurrentNote(false);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		AppLog.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
-		outState.putInt(ARG_NOTE_ID, noteId);
+		outState.putSerializable(ARG_NOTE_ID, noteId);
 	}
 
-	private void trySaveCurrentNote() {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.action_share:
+				NotesUtils.shareNote(getActivity(),
+						title.getText().toString(),
+						body.getText().toString());
+				return true;
+
+			case R.id.action_labels:
+				trySaveCurrentNote(true);
+				final boolean noLabelsCreated = storage.getAllLabels().size() == 0;
+				final FragmentManager fragmentManager = getActivity().getFragmentManager();
+				if(noLabelsCreated) {
+					SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
+				} else {
+					NoteLabelsDialog.show(fragmentManager, noteId);
+				}
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void trySaveCurrentNote(boolean saveIfEmpty) {
 		final String LOG_PREFIX = "trySaveCurrentNote(): ";
 
 		final String newTitle = title.getText().toString();
 		final String newBody = body.getText().toString();
 
-		if (noteId == MainActivity.NEW_NOTE) {
-			// insert new note if not empty
-			if (!StringUtils.isNullOrEmpty(newTitle) ||
+		if (MainActivity.NEW_NOTE.equals(noteId)) {
+			if (saveIfEmpty ||
+					!StringUtils.isNullOrEmpty(newTitle) ||
 					!StringUtils.isNullOrEmpty(newBody)) {
 				// (perform on UI thread)
 				noteId = storage.insertNote(new TextNote(newTitle, newBody));
