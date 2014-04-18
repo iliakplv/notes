@@ -1,5 +1,8 @@
 package com.iliakplv.notes.notes;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.utils.StringUtils;
@@ -50,6 +53,7 @@ public final class NotesUtils {
 		return isNoteTitleEmpty(note) && isNoteBodyEmpty(note);
 	}
 
+
 	public static String getTitleForLabel(Label label) {
 		if (!StringUtils.isNullOrEmpty(label.getName())) {
 			return label.getName();
@@ -60,5 +64,18 @@ public final class NotesUtils {
 
 	public static Serializable getValidNoteId(Serializable id) {
 		return id != null ? id : DEFAULT_ID;
+	}
+
+
+	public static void shareNote(Context context, AbstractNote note) {
+		shareNote(context, note.getTitle(), note.getBody());
+	}
+
+	public static void shareNote(Context context, String subject, String text) {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_TEXT, text);
+		context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_bar_share_title)));
 	}
 }

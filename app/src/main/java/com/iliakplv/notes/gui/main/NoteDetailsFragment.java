@@ -1,7 +1,6 @@
 package com.iliakplv.notes.gui.main;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,6 +13,7 @@ import android.widget.EditText;
 
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
@@ -109,18 +109,12 @@ public class NoteDetailsFragment extends Fragment {
 		// TODO [low] implement showing NoteLabelsDialog
 
 		if (item.getItemId() == R.id.action_share) {
-			shareNote();
+			NotesUtils.shareNote(getActivity(),
+					title.getText().toString(),
+					body.getText().toString());
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void shareNote() {
-		final Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_SUBJECT, title.getText().toString());
-		intent.putExtra(Intent.EXTRA_TEXT, body.getText().toString());
-		startActivity(Intent.createChooser(intent, getString(R.string.action_bar_share_title)));
 	}
 
 	private void trySaveCurrentNote() {
