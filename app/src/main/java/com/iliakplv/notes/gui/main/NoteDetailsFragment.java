@@ -135,7 +135,7 @@ public class NoteDetailsFragment extends Fragment {
 
 		final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
 		final FragmentManager fragmentManager = getActivity().getFragmentManager();
-		if(noLabelsCreated) {
+		if (noLabelsCreated) {
 			SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
 		} else {
 			NoteLabelsDialog.show(fragmentManager, noteId);
