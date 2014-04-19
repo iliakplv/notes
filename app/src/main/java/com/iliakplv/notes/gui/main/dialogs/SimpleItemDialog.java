@@ -212,7 +212,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		}
 
 		private void showNoteLabelsDialog() {
-			final boolean noLabelsCreated = storage.getAllLabels().size() == 0;
+			final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
 			if(noLabelsCreated) {
 				showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteNoLabels);
 			} else {

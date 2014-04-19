@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.NoteLabelsDialog;
@@ -111,38 +112,52 @@ public class NoteDetailsFragment extends Fragment {
 		final int itemId = item.getItemId();
 		switch (itemId) {
 			case R.id.action_share:
-				NotesUtils.shareNote(getActivity(),
-						title.getText().toString(),
-						body.getText().toString());
+				shareNote();
 				return true;
 
 			case R.id.action_labels:
-				trySaveCurrentNote(true);
-				final boolean noLabelsCreated = storage.getAllLabels().size() == 0;
-				final FragmentManager fragmentManager = getActivity().getFragmentManager();
-				if(noLabelsCreated) {
-					SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
-				} else {
-					NoteLabelsDialog.show(fragmentManager, noteId);
-				}
+				showLabelsDialog();
 				return true;
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void trySaveCurrentNote(boolean saveIfEmpty) {
+	private void shareNote() {
+		NotesUtils.shareNote(getActivity(),
+				title.getText().toString(),
+				body.getText().toString());
+	}
+
+	private void showLabelsDialog() {
+		if (trySaveCurrentNote(true)) {
+			Toast.makeText(getActivity(), "[note saved]", Toast.LENGTH_SHORT).show();
+		}
+
+		final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
+		final FragmentManager fragmentManager = getActivity().getFragmentManager();
+		if(noLabelsCreated) {
+			SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
+		} else {
+			NoteLabelsDialog.show(fragmentManager, noteId);
+		}
+		// TODO delete empty note on Back press
+	}
+
+	// returns true if new note created
+	private boolean trySaveCurrentNote(boolean saveIfEmpty) {
 		final String LOG_PREFIX = "trySaveCurrentNote(): ";
 
 		final String newTitle = title.getText().toString();
 		final String newBody = body.getText().toString();
 
+		boolean newNoteCreated = false;
 		if (MainActivity.NEW_NOTE.equals(noteId)) {
 			if (saveIfEmpty ||
 					!StringUtils.isNullOrEmpty(newTitle) ||
 					!StringUtils.isNullOrEmpty(newBody)) {
 				// (perform on UI thread)
 				noteId = storage.insertNote(new TextNote(newTitle, newBody));
+				newNoteCreated = true;
 				AppLog.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
 				AppLog.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
@@ -168,6 +183,6 @@ public class NoteDetailsFragment extends Fragment {
 				AppLog.d(LOG_TAG, LOG_PREFIX + "Note entry is null (!)");
 			}
 		}
+		return newNoteCreated;
 	}
-
 }
