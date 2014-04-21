@@ -152,7 +152,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		setDetailsShown(false);
+		if (isDetailsShown()) {
+			setDetailsShown(false);
+			final NoteDetailsFragment noteDetailsFragment =
+					(NoteDetailsFragment) getFragmentManager().findFragmentByTag(NoteDetailsFragment.TAG);
+			if (noteDetailsFragment != null) {
+				noteDetailsFragment.onBackPressed();
+			}
+		}
 	}
 
 

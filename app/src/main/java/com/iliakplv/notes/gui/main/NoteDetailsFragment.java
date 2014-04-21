@@ -30,19 +30,25 @@ public class NoteDetailsFragment extends Fragment {
 
 	public static final String TAG = NoteDetailsFragment.class.getSimpleName();
 
+	final static String ARG_NOTE_ID = "note_id";
+
 	private final static String PREFS_KEY_LINKIFY = "linkify_note_text";
 	private final static int LINKIFY_MASK = Linkify.WEB_URLS |
 			Linkify.EMAIL_ADDRESSES |
 			Linkify.PHONE_NUMBERS;
 
-	final static String ARG_NOTE_ID = "note_id";
-
 	private Serializable noteId = MainActivity.NEW_NOTE;
+	private boolean newNoteCreationMode = true;
+
 	private final NotesStorage storage = Storage.getStorage();
 
 	private EditText title;
 	private EditText body;
 
+
+	private static boolean isNewNoteId(Serializable id) {
+		return MainActivity.NEW_NOTE.equals(id);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,29 +64,31 @@ public class NoteDetailsFragment extends Fragment {
 		if (savedInstanceState != null) {
 			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
 		}
-		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
+		// TODO
+		final Bundle args = getArguments();
+		if (args != null) {
+			final Serializable noteIdFromArgs = args.getSerializable(ARG_NOTE_ID);
+			newNoteCreationMode = isNewNoteId(noteIdFromArgs);
+			if (newNoteCreationMode) {
+				// Not restored from savedInstanceState
+				// Try get id from arguments
+				noteId = noteIdFromArgs;
+			}
+		}
+		AppLog.d(TAG, "onCreate() call. Note id = " + noteId +
+				", newNoteCreationMode == " + newNoteCreationMode);
 		setHasOptionsMenu(true);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		final Bundle args = getArguments();
-
-		if (MainActivity.NEW_NOTE.equals(noteId)) {
-			// Not restored from savedInstanceState in onCreate()
-			if (args != null) {
-				noteId = args.getSerializable(ARG_NOTE_ID);
-			}
-		}
-		AppLog.d(TAG, "onStart() call. Note id = " + noteId);
-
-		updateNoteDetailsView();
+ 		updateNoteDetailsView();
 	}
 
 
 	public void updateNoteDetailsView() {
-		final boolean gotNoteToShow = !MainActivity.NEW_NOTE.equals(noteId) && storage.getNote(noteId) != null;
+		final boolean gotNoteToShow = !isNewNoteId(noteId) && storage.getNote(noteId) != null;
 		if (gotNoteToShow) {
 			final AbstractNote note = storage.getNote(noteId);
 			title.setText(note.getTitle());
@@ -105,6 +113,14 @@ public class NoteDetailsFragment extends Fragment {
 		super.onSaveInstanceState(outState);
 		AppLog.d(TAG, "onSaveInstanceState() call. Note id = " + noteId);
 		outState.putSerializable(ARG_NOTE_ID, noteId);
+	}
+
+	public void onBackPressed() {
+		if (newNoteCreationMode && !isNewNoteId(noteId)) {
+			// New note creation mode AND this note has been temporary saved in storage
+			// TODO
+			storage.deleteNote(noteId);
+		}
 	}
 
 	@Override
@@ -140,7 +156,6 @@ public class NoteDetailsFragment extends Fragment {
 		} else {
 			NoteLabelsDialog.show(fragmentManager, noteId);
 		}
-		// TODO delete empty note on Back press
 	}
 
 	// returns true if new note created
@@ -151,7 +166,7 @@ public class NoteDetailsFragment extends Fragment {
 		final String newBody = body.getText().toString();
 
 		boolean newNoteCreated = false;
-		if (MainActivity.NEW_NOTE.equals(noteId)) {
+		if (isNewNoteId(noteId)) {
 			if (saveIfEmpty ||
 					!StringUtils.isNullOrEmpty(newTitle) ||
 					!StringUtils.isNullOrEmpty(newBody)) {
