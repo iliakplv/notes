@@ -28,6 +28,8 @@ import java.util.List;
 public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
 		NotesStorageListener {
 
+	public static final String TAG = NotesListFragment.class.getSimpleName();
+
 	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;

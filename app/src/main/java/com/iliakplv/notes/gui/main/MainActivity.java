@@ -25,7 +25,6 @@ import java.io.Serializable;
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
-	private static final String LIST_FRAGMENT_TAG = "notes_list_fragment";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final Integer NEW_NOTE = 0;
 
@@ -93,7 +92,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			final NotesListFragment notesListFragment = new NotesListFragment();
 			notesListFragment.setArguments(getIntent().getExtras());
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.fragment_container, notesListFragment, LIST_FRAGMENT_TAG);
+			ft.add(R.id.fragment_container, notesListFragment, NotesListFragment.TAG);
 			ft.commit();
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
@@ -115,7 +114,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	public void onLabelSelected(Serializable labelId, String newTitle) {
 		title = newTitle;
 		final NotesListFragment noteListFragment =
-				(NotesListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+				(NotesListFragment) getFragmentManager().findFragmentByTag(NotesListFragment.TAG);
 		if (noteListFragment != null) {
 			noteListFragment.showNotesForLabel(labelId);
 		}
@@ -130,7 +129,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		noteDetailsFragment.setArguments(args);
 
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.fragment_container, noteDetailsFragment);
+		ft.add(R.id.fragment_container, noteDetailsFragment, NoteDetailsFragment.TAG);
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();

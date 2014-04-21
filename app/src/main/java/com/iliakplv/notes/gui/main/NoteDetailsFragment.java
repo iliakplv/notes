@@ -28,7 +28,7 @@ import java.io.Serializable;
 
 public class NoteDetailsFragment extends Fragment {
 
-	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
+	public static final String TAG = NoteDetailsFragment.class.getSimpleName();
 
 	private final static String PREFS_KEY_LINKIFY = "linkify_note_text";
 	private final static int LINKIFY_MASK = Linkify.WEB_URLS |
@@ -58,7 +58,7 @@ public class NoteDetailsFragment extends Fragment {
 		if (savedInstanceState != null) {
 			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
 		}
-		AppLog.d(LOG_TAG, "onCreate() call. Note id = " + noteId);
+		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
 		setHasOptionsMenu(true);
 	}
 
@@ -73,7 +73,7 @@ public class NoteDetailsFragment extends Fragment {
 				noteId = args.getSerializable(ARG_NOTE_ID);
 			}
 		}
-		AppLog.d(LOG_TAG, "onStart() call. Note id = " + noteId);
+		AppLog.d(TAG, "onStart() call. Note id = " + noteId);
 
 		updateNoteDetailsView();
 	}
@@ -103,7 +103,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		AppLog.d(LOG_TAG, "onSaveInstanceState() call. Note id = " + noteId);
+		AppLog.d(TAG, "onSaveInstanceState() call. Note id = " + noteId);
 		outState.putSerializable(ARG_NOTE_ID, noteId);
 	}
 
@@ -158,9 +158,9 @@ public class NoteDetailsFragment extends Fragment {
 				// (perform on UI thread)
 				noteId = storage.insertNote(new TextNote(newTitle, newBody));
 				newNoteCreated = true;
-				AppLog.d(LOG_TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
+				AppLog.d(TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
-				AppLog.d(LOG_TAG, LOG_PREFIX + "New note empty. Not saved.");
+				AppLog.d(TAG, LOG_PREFIX + "New note empty. Not saved.");
 			}
 		} else {
 			final AbstractNote note = storage.getNote(noteId);
@@ -174,13 +174,13 @@ public class NoteDetailsFragment extends Fragment {
 					currentNote.setBody(newBody);
 					currentNote.updateChangeTime();
 					final boolean updated = storage.updateNote(noteId, currentNote);
-					AppLog.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database "
+					AppLog.d(TAG, LOG_PREFIX + "Note data changed. Database "
 							+ (updated ? "" : "NOT (!) ") + "updated.");
 				} else {
-					AppLog.d(LOG_TAG, LOG_PREFIX + "Note data unchanged.");
+					AppLog.d(TAG, LOG_PREFIX + "Note data unchanged.");
 				}
 			} else {
-				AppLog.d(LOG_TAG, LOG_PREFIX + "Note entry is null (!)");
+				AppLog.d(TAG, LOG_PREFIX + "Note entry is null (!)");
 			}
 		}
 		return newNoteCreated;
