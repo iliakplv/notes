@@ -26,6 +26,8 @@
 
 	<string name="empty_note_title_placeholder">(без заголовка)</string>
 	<string name="empty_note_placeholder">(пустая заметка)</string>
+	<string name="empty_note_not_saved">Пустая заметка не сохранена</string>
+	<string name="empty_note_not_shared">Эта заметка пуста</string>
 
 	<string name="note_action_labels">Изменить метки</string>
 	<string name="note_action_info">Свойства</string>

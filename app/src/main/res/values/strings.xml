@@ -26,6 +26,8 @@
 
 	<string name="empty_note_title_placeholder">(no title)</string>
 	<string name="empty_note_placeholder">(empty note)</string>
+	<string name="empty_note_not_saved">Empty note not saved</string>
+	<string name="empty_note_not_shared">This note is empty</string>
 
 	<string name="note_action_labels">Change labels</string>
 	<string name="note_action_info">Note Info</string>

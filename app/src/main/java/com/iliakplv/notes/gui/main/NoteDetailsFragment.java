@@ -64,14 +64,13 @@ public class NoteDetailsFragment extends Fragment {
 		if (savedInstanceState != null) {
 			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
 		}
-		// TODO
 		final Bundle args = getArguments();
 		if (args != null) {
 			final Serializable noteIdFromArgs = args.getSerializable(ARG_NOTE_ID);
 			newNoteCreationMode = isNewNoteId(noteIdFromArgs);
-			if (newNoteCreationMode) {
-				// Not restored from savedInstanceState
-				// Try get id from arguments
+			if (isNewNoteId(noteId)) {
+				// not restored from savedInstanceState
+				// use value from args
 				noteId = noteIdFromArgs;
 			}
 		}
@@ -83,7 +82,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
- 		updateNoteDetailsView();
+		updateNoteDetailsView();
 	}
 
 
@@ -116,10 +115,16 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	public void onBackPressed() {
-		if (newNoteCreationMode && !isNewNoteId(noteId)) {
-			// New note creation mode AND this note has been temporary saved in storage
-			// TODO
-			storage.deleteNote(noteId);
+		final boolean empty = StringUtils.isNullOrEmpty(title.getText().toString()) &&
+				StringUtils.isNullOrEmpty(body.getText().toString());
+		final boolean savedInStorage = !isNewNoteId(noteId);
+		final boolean hasLabels = savedInStorage && !storage.getLabelsIdsForNote(noteId).isEmpty();
+
+		if (newNoteCreationMode && empty && !hasLabels) {
+			if (savedInStorage) {
+				storage.deleteNote(noteId);
+			}
+			Toast.makeText(getActivity(), R.string.empty_note_not_saved, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -141,13 +146,12 @@ public class NoteDetailsFragment extends Fragment {
 	private void shareNote() {
 		NotesUtils.shareNote(getActivity(),
 				title.getText().toString(),
-				body.getText().toString());
+				body.getText().toString(),
+				true);
 	}
 
 	private void showLabelsDialog() {
-		if (trySaveCurrentNote(true)) {
-			Toast.makeText(getActivity(), "[note saved]", Toast.LENGTH_SHORT).show();
-		}
+		trySaveCurrentNote(true);
 
 		final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
 		final FragmentManager fragmentManager = getActivity().getFragmentManager();

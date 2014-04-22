@@ -129,7 +129,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		noteDetailsFragment.setArguments(args);
 
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.add(R.id.fragment_container, noteDetailsFragment, NoteDetailsFragment.TAG);
+		ft.replace(R.id.fragment_container, noteDetailsFragment, NoteDetailsFragment.TAG);
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();

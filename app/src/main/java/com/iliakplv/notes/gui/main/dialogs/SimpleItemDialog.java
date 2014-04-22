@@ -221,7 +221,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		}
 
 		private void shareNote() {
-			NotesUtils.shareNote(activity, storage.getNote(id));
+			NotesUtils.shareNote(activity, storage.getNote(id), true);
 		}
 	}
 
