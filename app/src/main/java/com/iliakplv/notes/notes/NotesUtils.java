@@ -74,16 +74,14 @@ public final class NotesUtils {
 
 	public static void shareNote(Context context, String subject, String text, boolean showToastIfEmpty) {
 		final boolean empty = StringUtils.isNullOrEmpty(subject) && StringUtils.isNullOrEmpty(text);
-		if (empty) {
-			if (showToastIfEmpty) {
-				Toast.makeText(context, R.string.empty_note_not_shared, Toast.LENGTH_SHORT).show();
-			}
-		} else {
+		if (!empty) {
 			final Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_SUBJECT, subject);
 			intent.putExtra(Intent.EXTRA_TEXT, text);
 			context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_bar_share_title)));
+		} else if (showToastIfEmpty) {
+			Toast.makeText(context, R.string.empty_note_not_shared, Toast.LENGTH_SHORT).show();
 		}
 	}
 }
