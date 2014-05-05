@@ -18,6 +18,8 @@
 	<string name="action_bar_share_title">Share note</string>
 	<string name="action_settings">Settings</string>
 
+	<string name="no_notes_text">No notes</string>
+
 	<string name="action_sort">Sort</string>
 	<string name="action_sort_by_title">By title</string>
 	<string name="action_sort_by_create_asc">By creation (oldest first)</string>

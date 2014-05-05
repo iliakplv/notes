@@ -13,6 +13,16 @@ tools:context="com.iliakplv.bookmarks.MainActivity">
 	android:id="@+id/fragment_container"
 	style="@style/MainActivity"/>
 
+	<TextView
+		android:id="@+id/no_notes_placeholder"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent"
+		android:gravity="center"
+		android:text="@string/no_notes_text"
+		android:textSize="32sp"
+		android:textColor="#ff9c9c9c">
+	</TextView>
+
 <!-- android:layout_gravity="start" tells DrawerLayout to treat
 	 this as a sliding drawer on the left side for left-to-right
 	 languages and on the right side for right-to-left languages.

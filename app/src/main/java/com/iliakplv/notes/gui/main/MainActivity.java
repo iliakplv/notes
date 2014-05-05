@@ -10,10 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.widget.Toast;
-
-import com.dropbox.sync.android.DbxAccount;
-import com.dropbox.sync.android.DbxAccountManager;
+import android.view.View;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -33,6 +30,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
+	private View noNotesPlaceholder;
 
 
 	private boolean isDetailsShown() {
@@ -42,6 +40,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	public void setDetailsShown(boolean shown) {
 		detailsShown = shown;
 		invalidateOptionsMenu();
+		updateNoNotesPlaceholder();
 	}
 
 
@@ -49,9 +48,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		noNotesPlaceholder = findViewById(R.id.no_notes_placeholder);
 
 		restoreNotesSortOrder();
 		setupNavigationDrawer();
+		updateNoNotesPlaceholder();
 
 		if (savedInstanceState == null) {
 			final NotesListFragment notesListFragment = new NotesListFragment();
@@ -62,7 +63,20 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
 		}
+	}
 
+	private void updateNoNotesPlaceholder() {
+		final int visibility;
+		if (isDetailsShown()) {
+			visibility = View.GONE;
+		} else {
+			if (storage.getNotesForLabel(NotesStorage.NOTES_FOR_ALL_LABELS).isEmpty()) {
+				visibility = View.VISIBLE;
+			} else {
+				visibility = View.GONE;
+			}
+		}
+		noNotesPlaceholder.setVisibility(visibility);
 	}
 
 	private void setupNavigationDrawer() {
@@ -98,6 +112,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
+	}
+
+	public void onNotesListUpdated() {
+		updateNoNotesPlaceholder();
 	}
 
 	public void createNewNote() {
