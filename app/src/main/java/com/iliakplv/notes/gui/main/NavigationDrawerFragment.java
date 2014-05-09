@@ -314,9 +314,9 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 
 	/**
 	 * ******************************************
-	 * <p/>
+	 *
 	 * Inner classes
-	 * <p/>
+	 *
 	 * *******************************************
 	 */
 
