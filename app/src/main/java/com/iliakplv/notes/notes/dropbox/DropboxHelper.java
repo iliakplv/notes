@@ -6,36 +6,59 @@ import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
+import com.iliakplv.notes.NotesApplication;
+
+
+/**
+ * Temporary class for Dropbox account management
+ */
 
 public final class DropboxHelper {
 
-	private static final int REQUEST_LINK_TO_DBX = 42;
+	private static final int REQUEST_LINK_TO_DBX = 242424;
 	private static final String APP_KEY = "cyla6oz3c3vuje3";
 	private static final String APP_SECRET = "blt7jatmxpojwiz";
 
-	private DbxAccountManager mAccountManager;
-	private DbxAccount mAccount;
+	private static DbxAccountManager accountManager;
+	private static DbxAccount account;
 
 
-	private void tryLinkAccount(Activity accountLinkActivity) {
-		mAccountManager = DbxAccountManager.getInstance(accountLinkActivity.getApplicationContext(), APP_KEY, APP_SECRET);
+	// call from activity
+	public static void tryLinkAccount(Activity accountLinkActivity) {
+		accountManager = DbxAccountManager.getInstance(accountLinkActivity.getApplicationContext(), APP_KEY, APP_SECRET);
 
-		if (mAccountManager.hasLinkedAccount()) {
-			Toast.makeText(accountLinkActivity, "Account already linked", Toast.LENGTH_LONG).show();
+		if (accountManager.hasLinkedAccount()) {
+			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
+			account = accountManager.getLinkedAccount();
 		} else {
-			mAccountManager.startLink(accountLinkActivity, REQUEST_LINK_TO_DBX);
+			accountManager.startLink(accountLinkActivity, REQUEST_LINK_TO_DBX);
 		}
 	}
 
-	public void onAccountLinkActivityResult(Activity accountLinkActivity, int requestCode, int resultCode, Intent data) {
+	// call from activity's onActivityResult()
+	public static void onAccountLinkActivityResult(Activity accountLinkActivity, int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_LINK_TO_DBX) {
 			if (resultCode == Activity.RESULT_OK) {
-				mAccount = mAccountManager.getLinkedAccount();
-				Toast.makeText(accountLinkActivity, "Account has been linked", Toast.LENGTH_LONG).show();
+				account = accountManager.getLinkedAccount();
+				Toast.makeText(accountLinkActivity, "Dropbox account has been linked", Toast.LENGTH_LONG).show();
 			} else {
-				Toast.makeText(accountLinkActivity, "Account link failed!", Toast.LENGTH_LONG).show();
+				Toast.makeText(accountLinkActivity, "Dropbox account link failed!", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
 
+
+	public static synchronized DbxAccount getAccount() {
+		if (account == null) {
+			if (accountManager == null) {
+				accountManager = DbxAccountManager.getInstance(NotesApplication.getContext(), APP_KEY, APP_SECRET);
+			}
+			if (accountManager.hasLinkedAccount()) {
+				account = accountManager.getLinkedAccount();
+			} else {
+				throw new RuntimeException("No linked dropbox account!");
+			}
+		}
+		return account;
+	}
 }

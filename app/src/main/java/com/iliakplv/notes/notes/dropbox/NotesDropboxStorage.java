@@ -3,11 +3,16 @@ package com.iliakplv.notes.notes.dropbox;
 
 import android.util.Pair;
 
+import com.dropbox.sync.android.DbxAccount;
+import com.dropbox.sync.android.DbxDatastore;
+import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxTable;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
+import com.iliakplv.notes.utils.AppLog;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +20,33 @@ import java.util.Set;
 
 public class NotesDropboxStorage implements NotesStorage {
 
+	private static final String TAG = NotesDropboxStorage.class.getSimpleName();
+
+	private DbxAccount account;
+	private DbxDatastore datastore;
+
+	private DbxTable notesTable;
+	private DbxTable labelsTable;
+	private DbxTable notesLabelsTable;
+
+
+
+	public NotesDropboxStorage() {
+		account = DropboxHelper.getAccount();
+		try {
+			datastore = DbxDatastore.openDefault(account);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "Error opening datastore", e);
+			throw new RuntimeException("Error opening datastore");
+		}
+		initTables();
+	}
+
+	public void initTables() {
+		notesTable = datastore.getTable("notes");
+		labelsTable = datastore.getTable("labels");
+		notesLabelsTable = datastore.getTable("notes_labels");
+	}
 
 	@Override
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
