@@ -102,7 +102,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					if (listAdapter != null) {
 						listAdapter.notifyDataSetChanged();
 					}
-					mainActivity.onNotesListUpdated();
 				}
 			});
 		}

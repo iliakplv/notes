@@ -18,8 +18,6 @@
 	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_settings">Настройки</string>
 
-	<string name="no_notes_text">Нет заметок</string>
-
 	<string name="action_sort">Сортировка</string>
 	<string name="action_sort_by_title">По заголовку</string>
 	<string name="action_sort_by_create_asc">По созданию (сначала старые)</string>
