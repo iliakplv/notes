@@ -10,9 +10,12 @@ import com.dropbox.sync.android.DbxTable;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.AppLog;
+
+import org.joda.time.DateTime;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,27 +25,32 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	private static final String TAG = NotesDropboxStorage.class.getSimpleName();
 
-	private DbxAccount account;
-	private DbxDatastore datastore;
+
+	private static final String NOTES_TITLE = "title";
+	private static final String NOTES_TEXT = "text";
+	private static final String NOTES_CREATE_TIME = "created";
+	private static final String NOTES_CHANGE_TIME = "changed";
 
 	private DbxTable notesTable;
 	private DbxTable labelsTable;
 	private DbxTable notesLabelsTable;
 
 
-
 	public NotesDropboxStorage() {
-		account = DropboxHelper.getAccount();
+		final DbxAccount account = DropboxHelper.getAccount();
+		DbxDatastore datastore;
+
 		try {
 			datastore = DbxDatastore.openDefault(account);
 		} catch (DbxException e) {
 			AppLog.e(TAG, "Error opening datastore", e);
 			throw new RuntimeException("Error opening datastore");
 		}
-		initTables();
+
+		initTables(datastore);
 	}
 
-	public void initTables() {
+	public void initTables(DbxDatastore datastore) {
 		notesTable = datastore.getTable("notes");
 		labelsTable = datastore.getTable("labels");
 		notesLabelsTable = datastore.getTable("notes_labels");
@@ -55,7 +63,20 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public AbstractNote getNote(Serializable id) {
-		return null;
+		AbstractNote note;
+		try {
+			final String title = notesTable.get(id.toString()).getString(NOTES_TITLE);
+			final String text = notesTable.get(id.toString()).getString(NOTES_TEXT);
+			final long createTime = notesTable.get(id.toString()).getLong(NOTES_CREATE_TIME);
+			final long changeTime = notesTable.get(id.toString()).getLong(NOTES_CHANGE_TIME);
+			note = new TextNote(title, text);
+			note.setCreateTime(new DateTime(createTime));
+			note.setChangeTime(new DateTime(changeTime));
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getNote()", e);
+			throw new RuntimeException();
+		}
+		return note;
 	}
 
 	@Override
