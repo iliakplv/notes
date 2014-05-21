@@ -63,7 +63,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 	private void refreshNoteCacheIfNeeded(Integer noteId) {
-		final boolean needToRefresh = !noteCacheNoteId.equals(noteId) || !noteCacheActual;
+		final boolean needToRefresh = !noteCacheActual || !noteCacheNoteId.equals(noteId);
 		AppLog.d(LOG_TAG, "Note entry refresh (id=" + noteId + "). Cached entry " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
@@ -74,7 +74,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 	private void refreshNotesListCacheIfNeeded(Integer labelId) {
-		final boolean needToRefresh = !notesListCacheLabelId.equals(labelId) || !notesListCacheActual;
+		final boolean needToRefresh = !notesListCacheActual || !notesListCacheLabelId.equals(labelId);
 		AppLog.d(LOG_TAG, "Notes entries refresh (labelId=" + labelId + "). Cached entries list " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
