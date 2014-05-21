@@ -43,6 +43,11 @@ public class NotesDropboxStorage implements NotesStorage {
 	private DbxTable notesTable;
 	private DbxTable labelsTable;
 	private DbxTable notesLabelsTable;
+	
+	// cache
+	private static final int CACHE_NOTE = 1;
+	private static final int CACHE_NOTES_LIST = 2;
+	private static final int CACHE_LABELS_LIST = 4;
 
 	// notes list cache
 	private List<AbstractNote> notesListCache;
@@ -65,8 +70,6 @@ public class NotesDropboxStorage implements NotesStorage {
 	// listeners
 	private List<NotesStorageListener> storageListeners;
 
-
-	// TODO call invalidateCache [note|notes|labels]
 
 	public NotesDropboxStorage() {
 		final DbxAccount account = DropboxHelper.getAccount();
@@ -93,7 +96,7 @@ public class NotesDropboxStorage implements NotesStorage {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
-			invalidateCache(CacheType.NotesList);
+			invalidateCache(CACHE_NOTES_LIST);
 		}
 		return orderChanged;
 	}
@@ -156,21 +159,21 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public Serializable insertNote(AbstractNote note) {
 		// TODO implement
-
+		invalidateCache(CACHE_NOTES_LIST);
 		return 0;
 	}
 
 	@Override
 	public boolean updateNote(Serializable id, AbstractNote note) {
 		// TODO implement
-
+		invalidateCache((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
 	@Override
 	public boolean deleteNote(Serializable id) {
 		// TODO implement
-
+		invalidateCache((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
@@ -191,21 +194,21 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public Serializable insertLabel(Label label) {
 		// TODO implement
-
+		invalidateCache(CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return 0;
 	}
 
 	@Override
 	public boolean updateLabel(Serializable id, Label label) {
 		// TODO implement
-
+		invalidateCache(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return false;
 	}
 
 	@Override
 	public boolean deleteLabel(Serializable id) {
 		// TODO implement
-
+		invalidateCache(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return false;
 	}
 
@@ -233,41 +236,29 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
 		// TODO implement
-
+		invalidateCache((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return 0;
 	}
 
 	@Override
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
 		// TODO implement
-
+		invalidateCache((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
 	// Cache control
 
-	private void invalidateCache(CacheType cacheType) {
-		switch (cacheType) {
-			case Note:
-				noteCacheActual = false;
-				break;
-			case NotesList:
-				notesListCacheActual = false;
-				notifyDatabaseListeners();
-				break;
-			case LabelsList:
-				labelsListCacheActual = false;
-				break;
-
-			case AllTypes:
-				noteCacheActual = false;
-				notesListCacheActual = false;
-				labelsListCacheActual = false;
-				notifyDatabaseListeners();
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unknown cache type: " + cacheType.toString());
+	private void invalidateCache(final int cacheType) {
+		if ((cacheType & CACHE_NOTE) != 0) {
+			noteCacheActual = false;
+		}
+		if ((cacheType & CACHE_NOTES_LIST) != 0) {
+			notesListCacheActual = false;
+			notifyDatabaseListeners();
+		}
+		if ((cacheType & CACHE_LABELS_LIST) != 0) {
+			labelsListCacheActual = false;
 		}
 	}
 
@@ -305,17 +296,4 @@ public class NotesDropboxStorage implements NotesStorage {
 		return false;
 	}
 
-
-	/*********************************************
-	 *
-	 *            Inner classes
-	 *
-	 *********************************************/
-
-	private static enum CacheType {
-		Note,
-		NotesList,
-		LabelsList,
-		AllTypes
-	}
 }
