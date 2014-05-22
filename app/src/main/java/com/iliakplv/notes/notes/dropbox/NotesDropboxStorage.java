@@ -194,9 +194,14 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public Serializable insertNote(AbstractNote note) {
-		// TODO implement
+		final DbxRecord temp = notesTable.insert()
+				.set(NOTES_TITLE, note.getTitle())
+				.set(NOTES_TEXT, note.getBody())
+				.set(NOTES_CREATE_TIME, note.getCreateTime().getMillis())
+				.set(NOTES_CHANGE_TIME, note.getChangeTime().getMillis());
+
 		invalidateCache(CACHE_NOTES_LIST);
-		return 0;
+		return temp.getId();
 	}
 
 	@Override
@@ -229,9 +234,12 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public Serializable insertLabel(Label label) {
-		// TODO implement
+		final DbxRecord temp = labelsTable.insert()
+				.set(LABELS_NAME, label.getName())
+				.set(LABELS_COLOR, label.getColor());
+
 		invalidateCache(CACHE_NOTES_LIST | CACHE_LABELS_LIST);
-		return 0;
+		return temp.getId();
 	}
 
 	@Override
@@ -301,9 +309,12 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
-		// TODO implement
+		final DbxRecord temp = notesLabelsTable.insert()
+				.set(NOTE_LABELS_NOTE_ID, (String) noteId)
+				.set(NOTE_LABELS_LABEL_ID, (String) labelId);
+
 		invalidateCache((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
-		return 0;
+		return temp.getId();
 	}
 
 	@Override
