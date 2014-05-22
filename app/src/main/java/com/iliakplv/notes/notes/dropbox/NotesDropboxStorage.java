@@ -168,7 +168,7 @@ public class NotesDropboxStorage implements NotesStorage {
 			try {
 				allNotesRecords = notesTable.query();
 			} catch (DbxException e) {
-				AppLog.e(TAG, "query", e);
+				AppLog.e(TAG, "refreshNotesListCacheIfNeeded", e);
 				throw new RuntimeException();
 			}
 
@@ -262,20 +262,37 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public List<Label> getAllLabels() {
-		final DbxTable.QueryResult allLabelsRecords;
-		try {
-			allLabelsRecords = labelsTable.query();
-		} catch (DbxException e) {
-			AppLog.e(TAG, "getAllLabels()", e);
-			throw new RuntimeException();
-		}
+		refreshLabelsListCacheIfNeeded();
+		return labelsListCache;
+	}
 
-		final List<Label> result = new ArrayList<Label>();
-		for (DbxRecord labelRecord : allLabelsRecords) {
-			result.add(createLabelFromRecord(labelRecord));
+	private void refreshLabelsListCacheIfNeeded() {
+		AppLog.d(TAG, "Labels entries refresh. Cached entries list " +
+				(labelsListCacheActual ? "" : "NOT ") + "actual");
+		if (!labelsListCacheActual) {
+			// get all labels records
+			final DbxTable.QueryResult allLabelsRecords;
+			try {
+				allLabelsRecords = labelsTable.query();
+			} catch (DbxException e) {
+				AppLog.e(TAG, "refreshLabelsListCacheIfNeeded()", e);
+				throw new RuntimeException();
+			}
+
+			// fill cache
+			if (labelsListCache != null) {
+				labelsListCache.clear();
+			} else {
+				labelsListCache = new ArrayList<Label>();
+			}
+			for (DbxRecord labelRecord : allLabelsRecords) {
+				labelsListCache.add(createLabelFromRecord(labelRecord));
+			}
+
+			// TODO sort labelsListCache
+
+			labelsListCacheActual = true;
 		}
-		// TODO sort result
-		return result;
 	}
 
 	private static Label createLabelFromRecord(DbxRecord record) {
