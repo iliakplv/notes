@@ -236,16 +236,43 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public boolean updateNote(Serializable id, AbstractNote note) {
-		// TODO implement
-		onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
-		return false;
+		final DbxRecord noteRecord;
+		try {
+			noteRecord = notesTable.get((String) id);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "updateNote()", e);
+			throw new RuntimeException();
+		}
+
+		final boolean existingRecord = noteRecord != null;
+		if (existingRecord) {
+			noteRecord
+					.set(NOTES_TITLE, note.getTitle())
+					.set(NOTES_TEXT, note.getBody())
+					.set(NOTES_CREATE_TIME, note.getCreateTime().getMillis())
+					.set(NOTES_CHANGE_TIME, note.getChangeTime().getMillis());
+			onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		}
+
+		return existingRecord;
 	}
 
 	@Override
 	public boolean deleteNote(Serializable id) {
-		// TODO implement
-		onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
-		return false;
+		boolean deleted = false;
+		try {
+			final DbxRecord noteRecord = notesTable.get((String) id);
+			if (noteRecord != null) {
+				noteRecord.deleteRecord();
+				deleted = true;
+				onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+			}
+		} catch (DbxException e) {
+			AppLog.e(TAG, "deleteNote()", e);
+			throw new RuntimeException();
+		}
+
+		return deleted;
 	}
 
 	@Override
