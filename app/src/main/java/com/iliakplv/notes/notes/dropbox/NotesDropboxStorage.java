@@ -3,7 +3,6 @@ package com.iliakplv.notes.notes.dropbox;
 
 import android.util.Pair;
 
-import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxDatastore;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFields;
@@ -31,6 +30,8 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	private static final String TAG = NotesDropboxStorage.class.getSimpleName();
 	private static final String INVALID_ID = "";
+
+	DbxDatastore datastore;
 
 	// tables
 	private static final String NOTES_TITLE = "title";
@@ -76,31 +77,40 @@ public class NotesDropboxStorage implements NotesStorage {
 
 
 	public NotesDropboxStorage() {
-		final DbxAccount account = DropboxHelper.getAccount();
-		DbxDatastore datastore;
-
 		try {
-			datastore = DbxDatastore.openDefault(account);
+			datastore = DbxDatastore.openDefault(DropboxHelper.getAccount());
 		} catch (DbxException e) {
 			AppLog.e(TAG, "Error opening datastore", e);
 			throw new RuntimeException("Error opening datastore");
 		}
 
-		initTables(datastore);
+		syncDatastore();
+		initTables();
 	}
 
-	public void initTables(DbxDatastore datastore) {
+	// TODO consider adding it to interface and calling from UI or Service
+	private void syncDatastore() {
+		try {
+			datastore.sync();
+		} catch (DbxException e) {
+			AppLog.e(TAG, "syncDatastore()", e);
+			throw new RuntimeException();
+		}
+	}
+
+	public void initTables() {
 		notesTable = datastore.getTable("notes");
 		labelsTable = datastore.getTable("labels");
 		notesLabelsTable = datastore.getTable("notes_labels");
 	}
+
 
 	@Override
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
-			invalidateCache(CACHE_NOTES_LIST);
+			onStorageContentChanged(CACHE_NOTES_LIST);
 		}
 		return orderChanged;
 	}
@@ -200,21 +210,21 @@ public class NotesDropboxStorage implements NotesStorage {
 				.set(NOTES_CREATE_TIME, note.getCreateTime().getMillis())
 				.set(NOTES_CHANGE_TIME, note.getChangeTime().getMillis());
 
-		invalidateCache(CACHE_NOTES_LIST);
+		onStorageContentChanged(CACHE_NOTES_LIST);
 		return temp.getId();
 	}
 
 	@Override
 	public boolean updateNote(Serializable id, AbstractNote note) {
 		// TODO implement
-		invalidateCache((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
 	@Override
 	public boolean deleteNote(Serializable id) {
 		// TODO implement
-		invalidateCache((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
@@ -238,21 +248,21 @@ public class NotesDropboxStorage implements NotesStorage {
 				.set(LABELS_NAME, label.getName())
 				.set(LABELS_COLOR, label.getColor());
 
-		invalidateCache(CACHE_NOTES_LIST | CACHE_LABELS_LIST);
+		onStorageContentChanged(CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return temp.getId();
 	}
 
 	@Override
 	public boolean updateLabel(Serializable id, Label label) {
 		// TODO implement
-		invalidateCache(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
+		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return false;
 	}
 
 	@Override
 	public boolean deleteLabel(Serializable id) {
 		// TODO implement
-		invalidateCache(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
+		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 		return false;
 	}
 
@@ -313,28 +323,30 @@ public class NotesDropboxStorage implements NotesStorage {
 				.set(NOTE_LABELS_NOTE_ID, (String) noteId)
 				.set(NOTE_LABELS_LABEL_ID, (String) labelId);
 
-		invalidateCache((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		onStorageContentChanged((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return temp.getId();
 	}
 
 	@Override
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
 		// TODO implement
-		invalidateCache((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		onStorageContentChanged((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return false;
 	}
 
 	// Cache control
 
-	private void invalidateCache(final int cacheType) {
-		if ((cacheType & CACHE_NOTE) != 0) {
+	private void onStorageContentChanged(final int affectedCacheType) {
+		syncDatastore();
+
+		if ((affectedCacheType & CACHE_NOTE) != 0) {
 			noteCacheActual = false;
 		}
-		if ((cacheType & CACHE_NOTES_LIST) != 0) {
+		if ((affectedCacheType & CACHE_NOTES_LIST) != 0) {
 			notesListCacheActual = false;
 			notifyDatabaseListeners();
 		}
-		if ((cacheType & CACHE_LABELS_LIST) != 0) {
+		if ((affectedCacheType & CACHE_LABELS_LIST) != 0) {
 			labelsListCacheActual = false;
 		}
 	}
