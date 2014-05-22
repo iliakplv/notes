@@ -31,19 +31,29 @@ public class NotesDropboxStorage implements NotesStorage {
 	private static final String TAG = NotesDropboxStorage.class.getSimpleName();
 	private static final String INVALID_ID = "";
 
+	private static final DbxTable.ResolutionRule RESOLUTION_RULE = DbxTable.ResolutionRule.LOCAL;
 	DbxDatastore datastore;
 
 	// tables
+	private static final String NOTES_TABLE = "notes";
 	private static final String NOTES_TITLE = "title";
 	private static final String NOTES_TEXT = "text";
 	private static final String NOTES_CREATE_TIME = "created";
 	private static final String NOTES_CHANGE_TIME = "changed";
+	private static final String[] NOTES_FIELDS =
+			{NOTES_TITLE, NOTES_TEXT, NOTES_CREATE_TIME, NOTES_CHANGE_TIME};
 
+	private static final String LABELS_TABLE = "labels";
 	private static final String LABELS_NAME = "name";
 	private static final String LABELS_COLOR = "color";
+	private static final String[] LABELS_FIELDS =
+			{LABELS_NAME, LABELS_COLOR};
 
-	private static final String NOTE_LABELS_NOTE_ID = "note_id";
-	private static final String NOTE_LABELS_LABEL_ID = "label_id";
+	private static final String NOTES_LABELS_TABLE = "notes_labels";
+	private static final String NOTES_LABELS_NOTE_ID = "note_id";
+	private static final String NOTES_LABELS_LABEL_ID = "label_id";
+	private static final String[] NOTES_LABELS_FIELDS =
+			{NOTES_LABELS_NOTE_ID, NOTES_LABELS_LABEL_ID};
 
 	private DbxTable notesTable;
 	private DbxTable labelsTable;
@@ -99,9 +109,19 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	public void initTables() {
-		notesTable = datastore.getTable("notes");
-		labelsTable = datastore.getTable("labels");
-		notesLabelsTable = datastore.getTable("notes_labels");
+		notesTable = datastore.getTable(NOTES_TABLE);
+		labelsTable = datastore.getTable(LABELS_TABLE);
+		notesLabelsTable = datastore.getTable(NOTES_LABELS_TABLE);
+
+		for (String field : NOTES_FIELDS) {
+			notesTable.setResolutionRule(field, RESOLUTION_RULE);
+		}
+		for (String field : LABELS_FIELDS) {
+			labelsTable.setResolutionRule(field, RESOLUTION_RULE);
+		}
+		for (String field : NOTES_LABELS_FIELDS) {
+			notesLabelsTable.setResolutionRule(field, RESOLUTION_RULE);
+		}
 	}
 
 
@@ -230,16 +250,38 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public Label getLabel(Serializable id) {
-		// TODO implement
-
-		return null;
+		final DbxRecord labelRecord;
+		try {
+			labelRecord = labelsTable.get((String) id);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getLabel()", e);
+			throw new RuntimeException();
+		}
+		return createLabelFromRecord(labelRecord);
 	}
 
 	@Override
 	public List<Label> getAllLabels() {
-		// TODO implement
+		final DbxTable.QueryResult allLabelsRecords;
+		try {
+			allLabelsRecords = labelsTable.query();
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getAllLabels()", e);
+			throw new RuntimeException();
+		}
 
-		return null;
+		final List<Label> result = new ArrayList<Label>();
+		for (DbxRecord labelRecord : allLabelsRecords) {
+			result.add(createLabelFromRecord(labelRecord));
+		}
+		// TODO sort result
+		return result;
+	}
+
+	private static Label createLabelFromRecord(DbxRecord record) {
+		final String name = record.getString(LABELS_NAME);
+		final int color = (int) record.getLong(LABELS_COLOR);
+		return new Label(name, color);
 	}
 
 	@Override
@@ -281,7 +323,7 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	private Set<String> getNotesIdsForLabel(String labelId) {
-		final DbxFields queryParams = new DbxFields().set(NOTE_LABELS_LABEL_ID, labelId);
+		final DbxFields queryParams = new DbxFields().set(NOTES_LABELS_LABEL_ID, labelId);
 		final DbxTable.QueryResult notesLabelsIds;
 
 		try {
@@ -293,7 +335,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 		final Set<String> result = new HashSet<String>();
 		for (DbxRecord record : notesLabelsIds) {
-			result.add(record.getString(NOTE_LABELS_NOTE_ID));
+			result.add(record.getString(NOTES_LABELS_NOTE_ID));
 		}
 		return result;
 	}
@@ -311,8 +353,8 @@ public class NotesDropboxStorage implements NotesStorage {
 				new HashSet<Pair<Serializable, Serializable>>();
 		for (DbxRecord record : allNotesLabelsIds) {
 			result.add(new Pair<Serializable, Serializable>(
-					record.getString(NOTE_LABELS_NOTE_ID),
-					record.getString(NOTE_LABELS_LABEL_ID)));
+					record.getString(NOTES_LABELS_NOTE_ID),
+					record.getString(NOTES_LABELS_LABEL_ID)));
 		}
 		return result;
 	}
@@ -320,8 +362,8 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
 		final DbxRecord temp = notesLabelsTable.insert()
-				.set(NOTE_LABELS_NOTE_ID, (String) noteId)
-				.set(NOTE_LABELS_LABEL_ID, (String) labelId);
+				.set(NOTES_LABELS_NOTE_ID, (String) noteId)
+				.set(NOTES_LABELS_LABEL_ID, (String) labelId);
 
 		onStorageContentChanged((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
 		return temp.getId();
