@@ -6,6 +6,8 @@ import android.util.Pair;
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxDatastore;
 import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxFields;
+import com.dropbox.sync.android.DbxRecord;
 import com.dropbox.sync.android.DbxTable;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
@@ -19,6 +21,8 @@ import com.iliakplv.notes.utils.AppLog;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +55,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	// notes list cache
 	private List<AbstractNote> notesListCache;
-	private volatile String notesListCacheLabelId = INVALID_ID;
+	private volatile Serializable notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
 	private volatile int notesListCacheSize = 0;
 
@@ -60,7 +64,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	// note cache
 	private AbstractNote noteCache;
-	private volatile String noteCacheNoteId = INVALID_ID;
+	private volatile Serializable noteCacheNoteId = INVALID_ID;
 	private volatile boolean noteCacheActual = false;
 
 	// labels cache
@@ -103,7 +107,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public AbstractNote getNote(Serializable id) {
-		refreshNoteCacheIfNeeded(id.toString());
+		refreshNoteCacheIfNeeded((String) id);
 		return noteCache;
 	}
 
@@ -113,29 +117,50 @@ public class NotesDropboxStorage implements NotesStorage {
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
 			try {
-				final String title = notesTable.get(noteId).getString(NOTES_TITLE);
-				final String text = notesTable.get(noteId).getString(NOTES_TEXT);
-				final long createTime = notesTable.get(noteId).getLong(NOTES_CREATE_TIME);
-				final long changeTime = notesTable.get(noteId).getLong(NOTES_CHANGE_TIME);
-				noteCache = new TextNote(title, text);
-				noteCache.setCreateTime(new DateTime(createTime));
-				noteCache.setChangeTime(new DateTime(changeTime));
+				noteCache = createNoteFromRecord(notesTable.get(noteId));
 			} catch (DbxException e) {
 				AppLog.e(TAG, "refreshNoteCacheIfNeeded()", e);
 				throw new RuntimeException();
 			}
+
 			noteCacheNoteId = noteId;
 			noteCacheActual = true;
 		}
 	}
 
-	private void refreshNotesListCacheIfNeeded(String labelId) {
+	private void refreshNotesListCacheIfNeeded(Serializable labelId) {
 		final boolean needToRefresh = !notesListCacheActual || !notesListCacheLabelId.equals(labelId);
 		AppLog.d(TAG, "Notes entries refresh (labelId=" + labelId + "). Cached entries list " +
 				(needToRefresh ? "NOT " : "") + "actual");
 		if (needToRefresh) {
+			// query all notes records
+			final DbxTable.QueryResult allNotesRecords;
+			try {
+				allNotesRecords = notesTable.query();
+			} catch (DbxException e) {
+				AppLog.e(TAG, "query", e);
+				throw new RuntimeException();
+			}
 
-			// TODO implement query
+			// find notes ids for specified label
+			final boolean notesForAllLabels = labelId.equals(NOTES_FOR_ALL_LABELS);
+			final Set<String> noteIdsForLabel = notesForAllLabels ?
+					null :
+					getNotesIdsForLabel((String) labelId);
+
+			// add required notes to cache
+			if (notesListCache != null) {
+				notesListCache.clear();
+			} else {
+				notesListCache = new ArrayList<AbstractNote>();
+			}
+			for (DbxRecord noteRecord : allNotesRecords) {
+				if (notesForAllLabels || noteIdsForLabel.contains(noteRecord.getId())) {
+					notesListCache.add(createNoteFromRecord(noteRecord));
+				}
+			}
+
+			// TODO sort notesListCache
 
 			notesListCacheLabelId = labelId;
 			notesListCacheSize = notesListCache.size();
@@ -143,16 +168,27 @@ public class NotesDropboxStorage implements NotesStorage {
 		}
 	}
 
+	private static AbstractNote createNoteFromRecord(DbxRecord record) {
+		final String title = record.getString(NOTES_TITLE);
+		final String text = record.getString(NOTES_TEXT);
+		final long createTime = record.getLong(NOTES_CREATE_TIME);
+		final long changeTime = record.getLong(NOTES_CHANGE_TIME);
 
-		@Override
+		final AbstractNote note = new TextNote(title, text);
+		note.setCreateTime(new DateTime(createTime));
+		note.setChangeTime(new DateTime(changeTime));
+		return note;
+	}
+
+	@Override
 	public List<AbstractNote> getNotesForLabel(Serializable labelId) {
-		refreshNotesListCacheIfNeeded(labelId.toString());
+		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCache;
 	}
 
 	@Override
 	public int getNotesForLabelCount(Serializable labelId) {
-		refreshNotesListCacheIfNeeded(labelId.toString());
+		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCacheSize;
 	}
 
@@ -226,11 +262,41 @@ public class NotesDropboxStorage implements NotesStorage {
 		return null;
 	}
 
+	private Set<String> getNotesIdsForLabel(String labelId) {
+		final DbxFields queryParams = new DbxFields().set(NOTE_LABELS_LABEL_ID, labelId);
+		final DbxTable.QueryResult notesLabelsIds;
+
+		try {
+			notesLabelsIds = notesLabelsTable.query(queryParams);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getNotesIdsForLabel", e);
+			throw new RuntimeException();
+		}
+
+		final Set<String> result = new HashSet<String>();
+		for (DbxRecord record : notesLabelsIds) {
+			result.add(record.getString(NOTE_LABELS_NOTE_ID));
+		}
+		return result;
+	}
+
 	@Override
 	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds() {
-		// TODO implement [if needed]
-
-		return null;
+		final DbxTable.QueryResult allNotesLabelsIds;
+		try {
+			allNotesLabelsIds = notesLabelsTable.query();
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getAllNotesLabelsIds()", e);
+			throw new RuntimeException();
+		}
+		final HashSet<Pair<Serializable, Serializable>> result =
+				new HashSet<Pair<Serializable, Serializable>>();
+		for (DbxRecord record : allNotesLabelsIds) {
+			result.add(new Pair<Serializable, Serializable>(
+					record.getString(NOTE_LABELS_NOTE_ID),
+					record.getString(NOTE_LABELS_LABEL_ID)));
+		}
+		return result;
 	}
 
 	@Override

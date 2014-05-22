@@ -45,7 +45,7 @@ public interface NotesStorage {
 
 	public List<Label> getLabelsForNote(Serializable noteId);
 	public Set<Serializable> getLabelsIdsForNote(Serializable noteId);
-	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds();
+	public Set<Pair<Serializable, Serializable>> getAllNotesLabelsIds();    // [not used]
 
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId);
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId);
