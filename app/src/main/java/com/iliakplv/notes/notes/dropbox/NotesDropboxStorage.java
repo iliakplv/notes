@@ -74,7 +74,6 @@ public class NotesDropboxStorage implements NotesStorage {
 	private volatile int notesListCacheSize = 0;
 
 	// list sort
-	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
 	private NoteComparator noteComparator = new NoteComparator();
 	private LabelComparator labelComparator = new LabelComparator();
 
@@ -132,9 +131,8 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public boolean setNotesSortOrder(NotesUtils.NoteSortOrder notesSortOrder) {
-		boolean orderChanged = this.notesSortOrder != notesSortOrder;
+		boolean orderChanged = noteComparator.getSortOrder() != notesSortOrder;
 		if (orderChanged) {
-			this.notesSortOrder = notesSortOrder;
 			noteComparator.setSortOrder(notesSortOrder);
 			onStorageContentChanged(CACHE_NOTES_LIST);
 		}
