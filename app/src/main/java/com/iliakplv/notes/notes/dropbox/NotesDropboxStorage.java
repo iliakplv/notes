@@ -11,6 +11,8 @@ import com.dropbox.sync.android.DbxTable;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.LabelComparator;
+import com.iliakplv.notes.notes.NoteComparator;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.storage.NotesStorage;
@@ -21,6 +23,7 @@ import org.joda.time.DateTime;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +75,8 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	// list sort
 	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
+	private NoteComparator noteComparator = new NoteComparator();
+	private LabelComparator labelComparator = new LabelComparator();
 
 	// note cache
 	private AbstractNote noteCache;
@@ -130,6 +135,7 @@ public class NotesDropboxStorage implements NotesStorage {
 		boolean orderChanged = this.notesSortOrder != notesSortOrder;
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
+			noteComparator.setSortOrder(notesSortOrder);
 			onStorageContentChanged(CACHE_NOTES_LIST);
 		}
 		return orderChanged;
@@ -190,7 +196,7 @@ public class NotesDropboxStorage implements NotesStorage {
 				}
 			}
 
-			// TODO sort notesListCache
+			Collections.sort(notesListCache, noteComparator);
 
 			notesListCacheLabelId = labelId;
 			notesListCacheSize = notesListCache.size();
@@ -316,7 +322,7 @@ public class NotesDropboxStorage implements NotesStorage {
 				labelsListCache.add(createLabelFromRecord(labelRecord));
 			}
 
-			// TODO sort labelsListCache
+			Collections.sort(labelsListCache, labelComparator);
 
 			labelsListCacheActual = true;
 		}
