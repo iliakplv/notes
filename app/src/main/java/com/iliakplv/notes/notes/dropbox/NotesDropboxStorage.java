@@ -425,7 +425,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 		final Set<Serializable> result = new HashSet<Serializable>();
 		for (DbxRecord record : notesLabelsIds) {
-			result.add(record.getString(NOTES_LABELS_NOTE_ID));
+			result.add(record.getString(NOTES_LABELS_LABEL_ID));
 		}
 		return result;
 	}
