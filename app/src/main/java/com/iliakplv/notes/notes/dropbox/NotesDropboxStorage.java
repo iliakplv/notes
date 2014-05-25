@@ -344,30 +344,72 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public boolean updateLabel(Serializable id, Label label) {
-		// TODO implement
-		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
-		return false;
+		final DbxRecord labelRecord;
+		try {
+			labelRecord = labelsTable.get((String) id);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "updateLabel()", e);
+			throw new RuntimeException();
+		}
+		final boolean existingRecord = labelRecord != null;
+		if (existingRecord) {
+			labelRecord
+					.set(LABELS_NAME, label.getName())
+					.set(LABELS_COLOR, label.getColor());
+			onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
+		}
+		return existingRecord;
 	}
 
 	@Override
 	public boolean deleteLabel(Serializable id) {
-		// TODO implement
-		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
-		return false;
+		boolean deleted = false;
+		try {
+			final DbxRecord labelRecord = labelsTable.get((String) id);
+			if (labelRecord != null) {
+				labelRecord.deleteRecord();
+				deleted = true;
+				onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
+			}
+		} catch (DbxException e) {
+			AppLog.e(TAG, "deleteLabel()", e);
+			throw new RuntimeException();
+		}
+		return deleted;
 	}
 
 	@Override
 	public List<Label> getLabelsForNote(Serializable noteId) {
-		// TODO implement
+		final List<Label> allLabels = getAllLabels();
+		final Set<Serializable> labelsIdsForNote = getLabelsIdsForNote(noteId);
 
-		return null;
+		final List<Label> result = new ArrayList<Label>();
+		for (Label label : allLabels) {
+			if (labelsIdsForNote.contains(label.getId())) {
+				result.add(label);
+			}
+		}
+
+		return result;
 	}
 
 	@Override
 	public Set<Serializable> getLabelsIdsForNote(Serializable noteId) {
-		// TODO implement
+		final DbxFields queryParams = new DbxFields().set(NOTES_LABELS_NOTE_ID, (String) noteId);
 
-		return null;
+		final DbxTable.QueryResult notesLabelsIds;
+		try {
+			notesLabelsIds = notesLabelsTable.query(queryParams);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "getLabelsIdsForNote()", e);
+			throw new RuntimeException();
+		}
+
+		final Set<Serializable> result = new HashSet<Serializable>();
+		for (DbxRecord record : notesLabelsIds) {
+			result.add(record.getString(NOTES_LABELS_NOTE_ID));
+		}
+		return result;
 	}
 
 	private Set<String> getNotesIdsForLabel(String labelId) {
@@ -377,7 +419,7 @@ public class NotesDropboxStorage implements NotesStorage {
 		try {
 			notesLabelsIds = notesLabelsTable.query(queryParams);
 		} catch (DbxException e) {
-			AppLog.e(TAG, "getNotesIdsForLabel", e);
+			AppLog.e(TAG, "getNotesIdsForLabel()", e);
 			throw new RuntimeException();
 		}
 
@@ -419,9 +461,27 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
-		// TODO implement
-		onStorageContentChanged((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
-		return false;
+		final DbxFields queryParams = new DbxFields()
+				.set(NOTES_LABELS_NOTE_ID, (String) noteId)
+				.set(NOTES_LABELS_LABEL_ID, (String) labelId);
+
+		final DbxTable.QueryResult notesLabels;
+		try {
+			notesLabels = notesLabelsTable.query(queryParams);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "deleteLabelFromNote()", e);
+			throw new RuntimeException();
+		}
+
+		boolean deleted = false;
+		for (DbxRecord record : notesLabels) {
+			record.deleteRecord();
+			deleted = true;
+		}
+		if (deleted) {
+			onStorageContentChanged((noteCacheNoteId.equals(noteId) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
+		}
+		return deleted;
 	}
 
 	// Cache control
