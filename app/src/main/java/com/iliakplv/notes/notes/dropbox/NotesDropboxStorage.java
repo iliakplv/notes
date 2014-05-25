@@ -221,6 +221,7 @@ public class NotesDropboxStorage implements NotesStorage {
 		final AbstractNote note = new TextNote(title, text);
 		note.setCreateTime(new DateTime(createTime));
 		note.setChangeTime(new DateTime(changeTime));
+		note.setId(record.getId());
 		return note;
 	}
 
@@ -344,7 +345,9 @@ public class NotesDropboxStorage implements NotesStorage {
 	private static Label createLabelFromRecord(DbxRecord record) {
 		final String name = record.getString(LABELS_NAME);
 		final int color = (int) record.getLong(LABELS_COLOR);
-		return new Label(name, color);
+		final Label label = new Label(name, color);
+		label.setId(record.getId());
+		return label;
 	}
 
 	@Override
