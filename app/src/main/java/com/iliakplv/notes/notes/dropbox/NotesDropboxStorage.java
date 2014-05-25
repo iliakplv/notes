@@ -506,16 +506,18 @@ public class NotesDropboxStorage implements NotesStorage {
 	private void onStorageContentChanged(final int affectedCacheType) {
 		syncDatastore();
 
+		// cache invalidation
 		if ((affectedCacheType & CACHE_NOTE) != 0) {
 			noteCacheActual = false;
 		}
 		if ((affectedCacheType & CACHE_NOTES_LIST) != 0) {
 			notesListCacheActual = false;
-			notifyDatabaseListeners();
 		}
 		if ((affectedCacheType & CACHE_LABELS_LIST) != 0) {
 			labelsListCacheActual = false;
 		}
+
+		notifyDatabaseListeners();
 	}
 
 	// Listeners

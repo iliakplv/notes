@@ -28,12 +28,14 @@ import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.notes.storage.Storage;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class NavigationDrawerFragment extends Fragment implements LabelEditDialog.LabelEditDialogCallback {
+public class NavigationDrawerFragment extends Fragment implements
+		LabelEditDialog.LabelEditDialogCallback, NotesStorageListener {
 
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
@@ -142,6 +144,13 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 		if (fromSavedInstanceState && currentSelectedPosition != NO_LABEL_SELECTED) {
 			selectItem(currentSelectedPosition);
 		}
+		storage.addStorageListener(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		storage.removeStorageListener(this);
 	}
 
 	public boolean isDrawerOpen() {
@@ -309,6 +318,18 @@ public class NavigationDrawerFragment extends Fragment implements LabelEditDialo
 
 	private ActionBar getActionBar() {
 		return getActivity().getActionBar();
+	}
+
+	@Override
+	public void onContentChanged() {
+		mainActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (labelsListAdapter != null) {
+					labelsListAdapter.notifyDataSetChanged();
+				}
+			}
+		});
 	}
 
 
