@@ -102,7 +102,6 @@ public class NotesDropboxStorage implements NotesStorage {
 		initTables();
 	}
 
-	// TODO consider adding it to interface and calling from UI or Service
 	private void syncDatastore() {
 		try {
 			datastore.sync();
@@ -114,7 +113,7 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public void sync() {
-		// Cache invalidation, listeners notification. Sync called from here
+		// Cache invalidation, listeners notification. Sync also called from here
 		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST |CACHE_LABELS_LIST);
 	}
 
