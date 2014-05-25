@@ -358,6 +358,12 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 
+	@Override
+	public void sync() {
+		// do nothing
+	}
+
+
 	/*********************************************
 	 *
 	 *            Inner classes

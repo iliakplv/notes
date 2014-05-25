@@ -55,4 +55,8 @@ public interface NotesStorage {
 
 	public boolean addStorageListener(NotesStorageListener listener);
 	public boolean removeStorageListener(NotesStorageListener listener);
+
+	// synchronization
+
+	public void sync();
 }

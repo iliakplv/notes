@@ -179,6 +179,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			case R.id.action_settings:
 				showAppSettings();
 				return true;
+
+			// TODO
+			case R.id.action_sync:
+				storage.sync();
+				return true;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}

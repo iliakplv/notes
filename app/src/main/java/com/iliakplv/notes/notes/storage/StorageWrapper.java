@@ -104,4 +104,10 @@ import java.util.Set;
 	public boolean removeStorageListener(NotesStorageListener listener) {
 		return target.removeStorageListener(listener);
 	}
+
+	// sync
+
+	public void sync() {
+		target.sync();
+	}
 }

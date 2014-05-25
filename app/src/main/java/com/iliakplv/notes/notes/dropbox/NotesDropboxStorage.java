@@ -112,6 +112,12 @@ public class NotesDropboxStorage implements NotesStorage {
 		}
 	}
 
+	@Override
+	public void sync() {
+		// Cache invalidation, listeners notification. Sync called from here
+		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST |CACHE_LABELS_LIST);
+	}
+
 	public void initTables() {
 		notesTable = datastore.getTable(NOTES_TABLE);
 		labelsTable = datastore.getTable(LABELS_TABLE);
