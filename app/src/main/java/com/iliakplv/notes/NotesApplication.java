@@ -34,7 +34,8 @@ public class NotesApplication extends Application {
 				TimeUnit.SECONDS,
 				new LinkedBlockingQueue<Runnable>());
 
-		Storage.initDefault();
+//		TODO Storage.initDefault();
+		Storage.init(Storage.Type.Dropbox);
 	}
 
 	@Override
