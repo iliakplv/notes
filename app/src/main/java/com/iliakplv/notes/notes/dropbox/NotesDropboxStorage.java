@@ -141,7 +141,11 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public AbstractNote getNote(Serializable id) {
-		refreshNoteCacheIfNeeded((String) id);
+		final String stringId = (String) id;
+		if (!DbxTable.isValidId(stringId)) {
+			return null;
+		}
+		refreshNoteCacheIfNeeded(stringId);
 		return noteCache;
 	}
 
@@ -281,9 +285,14 @@ public class NotesDropboxStorage implements NotesStorage {
 
 	@Override
 	public Label getLabel(Serializable id) {
+		final String stringId = (String) id;
+		if (!DbxTable.isValidId(stringId)) {
+			return null;
+		}
+
 		final DbxRecord labelRecord;
 		try {
-			labelRecord = labelsTable.get((String) id);
+			labelRecord = labelsTable.get(stringId);
 		} catch (DbxException e) {
 			AppLog.e(TAG, "getLabel()", e);
 			throw new RuntimeException();
