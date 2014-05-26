@@ -89,8 +89,6 @@ public class NotesDropboxStorage implements NotesStorage {
 	// listeners
 	private List<NotesStorageListener> storageListeners;
 
-	// TODO 'smart' delete
-	// TODO 'clear storage' method
 
 	public NotesDropboxStorage() {
 		try {
@@ -276,9 +274,11 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public boolean deleteNote(Serializable id) {
 		boolean deleted = false;
+		final String stringId = (String) id;
 		try {
-			final DbxRecord noteRecord = notesTable.get((String) id);
+			final DbxRecord noteRecord = notesTable.get(stringId);
 			if (noteRecord != null) {
+				deleteNoteLabels(true, stringId);
 				noteRecord.deleteRecord();
 				deleted = true;
 				onStorageContentChanged((noteCacheNoteId.equals(id) ? CACHE_NOTE : 0) | CACHE_NOTES_LIST);
@@ -289,6 +289,23 @@ public class NotesDropboxStorage implements NotesStorage {
 		}
 
 		return deleted;
+	}
+
+	private void deleteNoteLabels(boolean forNote, String id) {
+		final DbxFields queryParams =
+				new DbxFields().set(forNote ? NOTES_LABELS_NOTE_ID : NOTES_LABELS_LABEL_ID, id);
+
+		final DbxTable.QueryResult notesLabelsIds;
+		try {
+			notesLabelsIds = notesLabelsTable.query(queryParams);
+		} catch (DbxException e) {
+			AppLog.e(TAG, "deleteNoteLabels()", e);
+			throw new RuntimeException();
+		}
+
+		for (DbxRecord record : notesLabelsIds) {
+			record.deleteRecord();
+		}
 	}
 
 	@Override
@@ -383,9 +400,11 @@ public class NotesDropboxStorage implements NotesStorage {
 	@Override
 	public boolean deleteLabel(Serializable id) {
 		boolean deleted = false;
+		final String stringId = (String) id;
 		try {
-			final DbxRecord labelRecord = labelsTable.get((String) id);
+			final DbxRecord labelRecord = labelsTable.get(stringId);
 			if (labelRecord != null) {
+				deleteNoteLabels(false, stringId);
 				labelRecord.deleteRecord();
 				deleted = true;
 				onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
@@ -503,9 +522,26 @@ public class NotesDropboxStorage implements NotesStorage {
 		return deleted;
 	}
 
+	// TODO !!! do not clear dropbox storage in case of unlinking account from app !!!
 	@Override
 	public void clear() {
-		// TODO
+		final DbxTable[] allTables = {notesLabelsTable, labelsTable, notesTable};
+
+		for (DbxTable table : allTables) {
+			final DbxTable.QueryResult allTableRecords;
+			try {
+				allTableRecords = table.query();
+			} catch (DbxException e) {
+				AppLog.e(TAG, "clear()", e);
+				throw new RuntimeException();
+			}
+
+			for (DbxRecord record : allTableRecords) {
+				record.deleteRecord();
+			}
+		}
+
+		onStorageContentChanged(CACHE_NOTE | CACHE_NOTES_LIST | CACHE_LABELS_LIST);
 	}
 
 	// Cache control
