@@ -522,7 +522,6 @@ public class NotesDropboxStorage implements NotesStorage {
 		return deleted;
 	}
 
-	// TODO !!! do not clear dropbox storage in case of unlinking account from app !!!
 	@Override
 	public void clear() {
 		final DbxTable[] allTables = {notesLabelsTable, labelsTable, notesTable};

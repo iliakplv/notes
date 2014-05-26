@@ -22,14 +22,14 @@ public final class StorageDataTransfer {
 	private static Set<Pair<Serializable, Serializable>> notesLabelsBackup;
 
 
-	public static synchronized void backupFromStorage() {
+	private static void backupFromStorage() {
 		notesBackup = storage.getNotesForLabel(NotesStorage.NOTES_FOR_ALL_LABELS);
 		labelsBackup = storage.getAllLabels();
 		notesLabelsBackup = storage.getAllNotesLabelsIds();
 		backupPerformed = true;
 	}
 
-	public static synchronized void restoreToStorage() {
+	private static void restoreToStorage() {
 		if (!backupPerformed) {
 			throw new IllegalStateException("Backup not performed!");
 		}
@@ -60,14 +60,23 @@ public final class StorageDataTransfer {
 		}
 	}
 
-	public static synchronized void clearBackup() {
+	private static void clearBackup() {
 		notesBackup = null;
 		labelsBackup = null;
 		notesLabelsBackup = null;
 		backupPerformed = false;
 	}
 
-	public static synchronized boolean isBackupPerformed() {
-		return backupPerformed;
+
+	public static synchronized void transferDataFromDatabaseToDropbox() {
+		// TODO check that current storage is database
+		backupFromStorage();
+		if (!backupPerformed) {
+			throw new IllegalStateException();
+		}
+		storage.clear();
+		Storage.init(Storage.Type.Dropbox);
+		restoreToStorage();
+		clearBackup();
 	}
 }
