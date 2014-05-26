@@ -110,4 +110,10 @@ import java.util.Set;
 	public void sync() {
 		target.sync();
 	}
+
+	// clear
+
+	public void clear() {
+		target.clear();
+	}
 }

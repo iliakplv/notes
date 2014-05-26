@@ -59,4 +59,8 @@ public interface NotesStorage {
 	// synchronization
 
 	public void sync();
+
+	// all data delete
+
+	public void clear();
 }

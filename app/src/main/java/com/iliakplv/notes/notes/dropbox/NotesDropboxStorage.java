@@ -503,6 +503,11 @@ public class NotesDropboxStorage implements NotesStorage {
 		return deleted;
 	}
 
+	@Override
+	public void clear() {
+		// TODO
+	}
+
 	// Cache control
 
 	private void onStorageContentChanged(final int affectedCacheType) {

@@ -31,7 +31,7 @@ public final class StorageDataTransfer {
 
 	public static synchronized void restoreToStorage() {
 		if (!backupPerformed) {
-			throw new IllegalStateException("Backup not performed");
+			throw new IllegalStateException("Backup not performed!");
 		}
 
 		// Ids mapping

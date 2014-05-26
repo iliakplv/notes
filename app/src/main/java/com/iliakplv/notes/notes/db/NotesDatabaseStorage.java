@@ -257,6 +257,11 @@ public class NotesDatabaseStorage implements NotesStorage {
 				result = adapter.deleteNoteLabel(noteId, labelId);
 				break;
 
+			case DeleteAllData:
+				adapter.deleteAllData();
+				result = null;
+				break;
+
 			default:
 				throw new IllegalArgumentException("Wrong transaction type: " + transactionType.name());
 		}
@@ -327,6 +332,8 @@ public class NotesDatabaseStorage implements NotesStorage {
 
 			case InsertLabelToNote:
 			case DeleteLabelFromNote:
+
+			case DeleteAllData:
 				return true;
 		}
 		return false;
@@ -342,6 +349,8 @@ public class NotesDatabaseStorage implements NotesStorage {
 
 			case InsertLabelToNote:
 			case DeleteLabelFromNote:
+
+			case DeleteAllData:
 				return true;
 		}
 		return false;
@@ -352,6 +361,8 @@ public class NotesDatabaseStorage implements NotesStorage {
 			case InsertLabel:
 			case UpdateLabel:
 			case DeleteLabel:
+
+			case DeleteAllData:
 				return true;
 		}
 		return false;
@@ -361,6 +372,11 @@ public class NotesDatabaseStorage implements NotesStorage {
 	@Override
 	public void sync() {
 		// do nothing
+	}
+
+	@Override
+	public void clear() {
+		performDatabaseTransaction(TransactionType.DeleteAllData);
 	}
 
 
@@ -388,7 +404,9 @@ public class NotesDatabaseStorage implements NotesStorage {
 		GetLabelsIdsForNote,
 		GetNotesForLabel,
 		InsertLabelToNote,
-		DeleteLabelFromNote
+		DeleteLabelFromNote,
+
+		DeleteAllData
 	}
 
 }

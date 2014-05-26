@@ -377,6 +377,12 @@ import java.util.Set;
 		return "";
 	}
 
+	void deleteAllData() {
+		db.delete(NOTES_LABELS_TABLE, null, null);
+		db.delete(LABELS_TABLE, null, null);
+		db.delete(NOTES_TABLE, null, null);
+	}
+
 
 	// Database open and close
 
