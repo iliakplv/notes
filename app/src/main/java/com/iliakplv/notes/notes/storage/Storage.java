@@ -10,7 +10,7 @@ public final class Storage {
 	private static final Type DEFAULT = Type.Database;
 
 	private static final StorageWrapper storageWrapper = new StorageWrapper();
-	private static volatile boolean initialized = false;
+	private static volatile Type storageType = null;
 
 
 	public static NotesStorage getStorage() {
@@ -19,15 +19,19 @@ public final class Storage {
 	}
 
 	private static void checkInit() {
-		if (!initialized) {
+		if (storageType == null) {
 			throw new IllegalStateException("Storage must be initialized before usage!");
 		}
 	}
 
-	public static void init(Type storageType) {
-		AppLog.d(LOG_TAG, "init() call. Storage type: " + storageType.toString());
-		initialized = false;
-		switch (storageType) {
+	public static Type getStorageType() {
+		return storageType;
+	}
+
+	public static void init(Type newStorageType) {
+		AppLog.d(LOG_TAG, "init() call. Storage type: " + newStorageType.toString());
+
+		switch (newStorageType) {
 			case Database:
 				storageWrapper.setTarget(new NotesDatabaseStorage());
 				break;
@@ -38,9 +42,9 @@ public final class Storage {
 
 			default:
 				throw new IllegalArgumentException("Unknown storage type: "
-						+ storageType.toString());
+						+ newStorageType.toString());
 		}
-		initialized = true;
+		storageType = newStorageType;
 	}
 
 	public static void initDefault() {
