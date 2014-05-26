@@ -89,6 +89,8 @@ public class NotesDropboxStorage implements NotesStorage {
 	// listeners
 	private List<NotesStorageListener> storageListeners;
 
+	// TODO 'smart' delete
+	// TODO 'clear storage' method
 
 	public NotesDropboxStorage() {
 		try {
