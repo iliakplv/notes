@@ -11,11 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
+import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 
 import java.io.Serializable;
 
@@ -180,13 +183,32 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				showAppSettings();
 				return true;
 
-			// TODO
+			// TODO [temp]
 			case R.id.action_sync:
-				storage.sync();
+				if (Storage.getCurrentStorageType() == Storage.Type.Database) {
+					DropboxHelper.tryLinkAccount(this);
+				} else {
+					storage.sync();
+				}
 				return true;
 
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	// TODO [temp]
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
+
+		NotesApplication.executeInBackground(new Runnable() {
+			@Override
+			public void run() {
+				StorageDataTransfer.transferDataFromDatabaseToDropbox();
+			}
+		});
 	}
 
 	public void showAppSettings() {

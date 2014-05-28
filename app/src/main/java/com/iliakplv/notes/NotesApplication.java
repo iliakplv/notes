@@ -26,7 +26,7 @@ public class NotesApplication extends Application {
 		context = getApplicationContext();
 
 		initThreadPool();
-		Storage.init(Storage.Type.Dropbox); // TODO init with null
+		Storage.init(null);
 	}
 
 	private void initThreadPool() {

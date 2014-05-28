@@ -69,11 +69,15 @@ public final class StorageDataTransfer {
 
 
 	public static synchronized void transferDataFromDatabaseToDropbox() {
-		// TODO check that current storage is database
+		if (Storage.getCurrentStorageType() != Storage.Type.Database) {
+			throw new IllegalStateException("Current storage type is " + Storage.getCurrentStorageType());
+		}
+
 		backupFromStorage();
 		if (!backupPerformed) {
 			throw new IllegalStateException();
 		}
+
 		storage.clear();
 		Storage.init(Storage.Type.Dropbox);
 		restoreToStorage();
