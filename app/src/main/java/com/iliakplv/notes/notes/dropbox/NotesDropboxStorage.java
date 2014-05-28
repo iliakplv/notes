@@ -199,7 +199,10 @@ public class NotesDropboxStorage implements NotesStorage {
 			}
 			for (DbxRecord noteRecord : allNotesRecords) {
 				if (notesForAllLabels || noteIdsForLabel.contains(noteRecord.getId())) {
-					notesListCache.add(createNoteFromRecord(noteRecord));
+					final AbstractNote noteFromRecord = createNoteFromRecord(noteRecord);
+					if (noteFromRecord != null) {
+						notesListCache.add(noteFromRecord);
+					}
 				}
 			}
 
@@ -212,6 +215,10 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	private static AbstractNote createNoteFromRecord(DbxRecord record) {
+		if (record == null) {
+			return null;
+		}
+
 		final String title = record.getString(NOTES_TITLE);
 		final String text = record.getString(NOTES_TEXT);
 		final long createTime = record.getLong(NOTES_CREATE_TIME);
@@ -351,7 +358,10 @@ public class NotesDropboxStorage implements NotesStorage {
 				labelsListCache = new ArrayList<Label>();
 			}
 			for (DbxRecord labelRecord : allLabelsRecords) {
-				labelsListCache.add(createLabelFromRecord(labelRecord));
+				final Label labelFromRecord = createLabelFromRecord(labelRecord);
+				if (labelFromRecord != null) {
+					labelsListCache.add(labelFromRecord);
+				}
 			}
 
 			Collections.sort(labelsListCache, labelComparator);
@@ -361,6 +371,10 @@ public class NotesDropboxStorage implements NotesStorage {
 	}
 
 	private static Label createLabelFromRecord(DbxRecord record) {
+		if (record == null) {
+			return null;
+		}
+
 		final String name = record.getString(LABELS_NAME);
 		final int color = (int) record.getLong(LABELS_COLOR);
 		final Label label = new Label(name, color);
