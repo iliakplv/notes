@@ -3,6 +3,7 @@ package com.iliakplv.notes.notes.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.notes.db.NotesDatabaseStorage;
 import com.iliakplv.notes.notes.dropbox.NotesDropboxStorage;
 import com.iliakplv.notes.utils.AppLog;
@@ -38,7 +39,7 @@ public final class Storage {
 	 * Storage initialization
 	 * @param newStorageType new storage type or null for last used or default storage
 	 */
-	public static void init(Context context, Type newStorageType) {
+	public static void init(Type newStorageType) {
 		AppLog.d(TAG, "init() call. Initialized: " + initialized +
 				" Current storage: " + String.valueOf(currentStorageType) +
 				" New storage: " + String.valueOf(newStorageType));
@@ -47,6 +48,7 @@ public final class Storage {
 			return;
 		}
 
+		final Context context = NotesApplication.getContext();
 		final boolean lastUsedOrDefault = newStorageType == null;
 		if (lastUsedOrDefault) {
 			final SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
