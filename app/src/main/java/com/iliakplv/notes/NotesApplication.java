@@ -12,8 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NotesApplication extends Application {
 
-	private static final String LOG_TAG = NotesApplication.class.getSimpleName();
-
+	private static final String TAG = NotesApplication.class.getSimpleName();
 	private static Context context;
 
 	private static final int NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS = 1;
@@ -22,25 +21,27 @@ public class NotesApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		AppLog.d(LOG_TAG, "onCreate() call");
+		AppLog.d(TAG, "onCreate() call");
 
 		context = getApplicationContext();
 
+		initThreadPool();
+		Storage.init(context, null);
+	}
+
+	private void initThreadPool() {
 		final int processors = Runtime.getRuntime().availableProcessors();
-		AppLog.d(LOG_TAG, "Detected " + processors + " processors. Creating thread pool...");
+		AppLog.d(TAG, "Detected " + processors + " processors. Creating thread pool...");
 		executor = new ThreadPoolExecutor(processors,
 				processors,
 				NON_CORE_THREADS_KEEP_ALIVE_TIME_SECONDS,
 				TimeUnit.SECONDS,
 				new LinkedBlockingQueue<Runnable>());
-
-//		TODO Storage.initDefault();
-		Storage.init(Storage.Type.Dropbox);
 	}
 
 	@Override
 	public void onTerminate() {
-		AppLog.d(LOG_TAG, "onTerminate() call");
+		AppLog.d(TAG, "onTerminate() call");
 		super.onTerminate();
 	}
 
@@ -52,5 +53,4 @@ public class NotesApplication extends Application {
 	public static void executeInBackground(Runnable task) {
 		executor.execute(task);
 	}
-
 }
