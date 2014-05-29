@@ -15,8 +15,6 @@ import java.util.List;
 
 public class StorageTest extends TestCase {
 
-//	TODO FIX !!!
-	
 	private static final int ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 
 	List<Serializable> notesIds;
