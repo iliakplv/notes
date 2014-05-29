@@ -207,7 +207,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			@Override
 			public void run() {
 				StorageDataTransfer.transferDataFromDatabaseToDropbox(Storage.Type.Dropbox);
-				storage.sync();
 			}
 		});
 	}
