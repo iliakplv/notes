@@ -5,6 +5,7 @@ import android.util.Pair;
 
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.utils.AppLog;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -13,23 +14,25 @@ import java.util.Set;
 
 public final class StorageDataTransfer {
 
+	private static final String TAG = StorageDataTransfer.class.getSimpleName();
+
 	private static final NotesStorage storage = Storage.getStorage();
 
-	private static boolean backupPerformed = false;
 
 	private static List<AbstractNote> notesBackup;
 	private static List<Label> labelsBackup;
 	private static Set<Pair<Serializable, Serializable>> notesLabelsBackup;
+	private static boolean backupPerformed = false;
 
 
-	private static void backupFromStorage() {
+	private static void backupCurrentStorage() {
 		notesBackup = storage.getNotesForLabel(NotesStorage.NOTES_FOR_ALL_LABELS);
 		labelsBackup = storage.getAllLabels();
 		notesLabelsBackup = storage.getAllNotesLabelsIds();
 		backupPerformed = true;
 	}
 
-	private static void restoreToStorage() {
+	private static void restoreBackup() {
 		if (!backupPerformed) {
 			throw new IllegalStateException("Backup not performed!");
 		}
@@ -60,6 +63,10 @@ public final class StorageDataTransfer {
 		}
 	}
 
+	private static void clearCurrentStorage() {
+		storage.clear();
+	}
+
 	private static void clearBackup() {
 		notesBackup = null;
 		labelsBackup = null;
@@ -68,19 +75,29 @@ public final class StorageDataTransfer {
 	}
 
 
-	public static synchronized void transferDataFromDatabaseToDropbox() {
-		if (Storage.getCurrentStorageType() != Storage.Type.Database) {
-			throw new IllegalStateException("Current storage type is " + Storage.getCurrentStorageType());
+	public static synchronized void transferDataFromDatabaseToDropbox(Storage.Type newStorageType) {
+		if (newStorageType == null) {
+			throw new NullPointerException("New storage type is null");
+		}
+		if (Storage.getCurrentStorageType() == newStorageType) {
+			return;
 		}
 
-		backupFromStorage();
+		backupCurrentStorage();
 		if (!backupPerformed) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Backup not performed");
 		}
+		clearCurrentStorage();
 
-		storage.clear();
-		Storage.init(Storage.Type.Dropbox);
-		restoreToStorage();
-		clearBackup();
+		try {
+			Storage.init(newStorageType);
+		} catch (Exception e) {
+			AppLog.e(TAG, "Exception during storage initialization", e);
+		} finally {
+			restoreBackup();
+			clearBackup();
+		}
 	}
+
+
 }

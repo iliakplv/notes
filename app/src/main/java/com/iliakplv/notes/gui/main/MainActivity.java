@@ -183,7 +183,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				showAppSettings();
 				return true;
 
-			// TODO [temp]
+			// TODO temp !!!
 			case R.id.action_sync:
 				if (Storage.getCurrentStorageType() == Storage.Type.Database) {
 					DropboxHelper.tryLinkAccount(this);
@@ -196,7 +196,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		return super.onOptionsItemSelected(item);
 	}
 
-	// TODO [temp]
+	// TODO temp !!!
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -206,7 +206,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		NotesApplication.executeInBackground(new Runnable() {
 			@Override
 			public void run() {
-				StorageDataTransfer.transferDataFromDatabaseToDropbox();
+				StorageDataTransfer.transferDataFromDatabaseToDropbox(Storage.Type.Dropbox);
+				storage.sync();
 			}
 		});
 	}
