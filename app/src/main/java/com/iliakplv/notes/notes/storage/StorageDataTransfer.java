@@ -93,11 +93,9 @@ public final class StorageDataTransfer {
 			Storage.init(newStorageType);
 		} catch (Exception e) {
 			AppLog.e(TAG, "Exception during storage initialization", e);
-		} finally {
-			restoreBackup();
-			clearBackup();
 		}
+
+		restoreBackup();
+		clearBackup();
 	}
-
-
 }
