@@ -75,7 +75,7 @@ public final class StorageDataTransfer {
 	}
 
 
-	public static synchronized void transferDataFromDatabaseToDropbox(Storage.Type newStorageType) {
+	public static synchronized void changeStorageType(Storage.Type newStorageType) {
 		if (newStorageType == null) {
 			throw new NullPointerException("New storage type is null");
 		}

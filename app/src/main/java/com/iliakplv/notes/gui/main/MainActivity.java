@@ -206,7 +206,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		NotesApplication.executeInBackground(new Runnable() {
 			@Override
 			public void run() {
-				StorageDataTransfer.transferDataFromDatabaseToDropbox(Storage.Type.Dropbox);
+				StorageDataTransfer.changeStorageType(Storage.Type.Dropbox);
 			}
 		});
 	}
