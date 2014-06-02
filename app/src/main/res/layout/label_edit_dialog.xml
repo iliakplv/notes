@@ -77,17 +77,17 @@
 			<CheckBox
 				style="@style/LabelEditColorCheckBox"
 				android:id="@+id/color_6"
-				android:background="@color/label_color_light_blue"/>
+				android:background="@color/label_color_blue"/>
 
 			<CheckBox
 				style="@style/LabelEditColorCheckBox"
 				android:id="@+id/color_7"
-				android:background="@color/label_color_dark_blue"/>
+				android:background="@color/label_color_purple"/>
 
 			<CheckBox
 				style="@style/LabelEditColorCheckBox"
 				android:id="@+id/color_8"
-				android:background="@color/label_color_purple"/>
+				android:background="@color/label_color_grey"/>
 
 		</LinearLayout>
 

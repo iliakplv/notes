@@ -3,23 +3,25 @@
 
 
 
-	<color name="note_list_item_title">#ff000000</color>
-	<color name="note_list_item_subtitle">#ff6a6a6a</color>
+	<color name="note_list_item_black">#ff000000</color>
+	<color name="note_list_item_grey">#ff6a6a6a</color>
+	<color name="note_list_item_placeholder">#ffa2a2a2</color>
+	<color name="note_list_item_label_letter_color">#ff0f0f0f</color>
 
 	<color name="navigation_drawer_background">#e0404040</color>
 
-
 	<color name="note_details_title">#ff6a6a6a</color>
 	<color name="note_details_body">#ff000000</color>
-
 
 	<color name="label_color_default">#ffffffff</color>
 	<color name="label_color_red">#ffe14f4f</color>
 	<color name="label_color_orange">#ffff9710</color>
 	<color name="label_color_yellow">#fff9e02a</color>
 	<color name="label_color_green">#ff8cc63f</color>
-	<color name="label_color_light_blue">#ff39b3d7</color>
-	<color name="label_color_dark_blue">#ff3d7792</color>
-	<color name="label_color_purple">#ffa21d71</color>
+	<color name="label_color_blue">#ff3d829d</color>
+	<color name="label_color_purple">#ffc173d5</color>
+	<color name="label_color_grey">#ff848484</color>
+
+	<color name="color_transparent">#00000000</color>
 
 </resources>

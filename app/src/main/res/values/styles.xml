@@ -12,10 +12,6 @@
 		<item name="android:paddingRight">@dimen/main_side_padding</item>
 	</style>
 
-	<style name="MainActivity.DualPane">
-		<item name="android:orientation">horizontal</item>
-	</style>
-
 
 	<!--
 		Notes List
@@ -38,22 +34,23 @@
 	</style>
 
 	<style name="NoteListItemText.Title">
-		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
 		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
 		<item name="android:layout_marginBottom">@dimen/note_list_item_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteListItemText.Subtitle">
-		<item name="android:textColor">@color/note_list_item_subtitle</item>
+		<item name="android:textColor">@color/note_list_item_grey</item>
 		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
 	</style>
 
-	<style name="NoteDetailsLabel">
-		<item name="android:gravity">right|top</item>
+	<style name="NoteDetailsLabel" parent="android:Widget.TextView">
+		<item name="android:gravity">center</item>
 		<item name="android:layout_width">@dimen/note_list_item_label_width</item>
 		<item name="android:layout_height">@dimen/note_list_item_label_height</item>
 		<item name="android:layout_marginLeft">@dimen/note_list_item_label_margin_left</item>
-		<item name="android:layout_marginTop">@dimen/note_list_item_label_margin_top</item>
+		<item name="android:textSize">@dimen/note_list_item_label_letter_text_size</item>
+		<item name="android:textColor">@color/note_list_item_label_letter_color</item>
 		<item name="android:visibility">gone</item>
 	</style>
 
@@ -95,7 +92,7 @@
 	<style name="LabelEditTitle" parent="android:Widget.TextView">
 		<item name="android:layout_width">@dimen/label_edit_title_width</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:textColor">@color/note_list_item_title</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
 		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
 		<item name="android:lines">1</item>
 	</style>

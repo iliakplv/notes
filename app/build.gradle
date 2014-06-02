@@ -1,32 +1,67 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+	compileSdkVersion 19
+	buildToolsVersion '19.0.3'
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 19
-	    versionCode 3
-	    versionName "1.9"
+	defaultConfig {
+		minSdkVersion 14
+		targetSdkVersion 19
 
-	    testPackageName "com.iliakplv.notes.tests"
-	    testInstrumentationRunner "android.test.InstrumentationTestRunner"
-    }
+//      TODO [on release] Update version
+		versionCode 4
+		versionName '2.0'
+
+		testPackageName 'com.iliakplv.notes.tests'
+		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+	}
 
 	buildTypes {
-		release {
+		debug {
 			runProguard false
+			zipAlign true
+			debuggable true
+		}
+		release {
+			runProguard true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+			zipAlign true
+			debuggable false
+//			signingConfig release
 		}
 	}
 
 	testOptions {
 		resultsDir = "$project.buildDir/tests"
 	}
+
+	signingConfigs {
+		release {
+//          TODO [on release] Replace with actual values
+			keyAlias 'KEY_ALIAS'
+			keyPassword 'KEY_PASSWORD'
+			storeFile file('KEYSTORE_FILE')
+			storePassword 'KEYSTORE_PASSWORD'
+		}
+	}
+}
+
+task nativeLibsToJar(type: Zip) {
+	destinationDir file("$buildDir/native-libs")
+	baseName 'native-libs'
+	extension 'jar'
+	from fileTree(dir: 'libs', include: '**/*.so')
+	into 'lib/'
+}
+
+tasks.withType(Compile) {
+	compileTask -> compileTask.dependsOn(nativeLibsToJar)
 }
 
 dependencies {
 	compile 'com.android.support:support-v4:+'
-	compile "joda-time:joda-time:2.3"
+	compile 'joda-time:joda-time:2.3'
+
+	compile files('libs/dropbox-sync-sdk-android.jar')
+	compile files("$buildDir/native-libs/native-libs.jar")
 }

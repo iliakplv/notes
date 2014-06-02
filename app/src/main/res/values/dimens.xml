@@ -13,7 +13,7 @@
 	<dimen name="note_list_item_label_height">16dp</dimen>
 	<dimen name="note_list_item_label_margin_left_from_title">4dp</dimen>
 	<dimen name="note_list_item_label_margin_left">1dp</dimen>
-	<dimen name="note_list_item_label_margin_top">6dp</dimen>
+	<dimen name="note_list_item_label_letter_text_size">14sp</dimen>
 
 	<dimen name="note_details_padding">6dp</dimen>
 	<dimen name="note_details_title_bottom_margin">4dp</dimen>

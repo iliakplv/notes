@@ -13,9 +13,21 @@
 	<string name="common_no">Нет</string>
 
 	<string name="action_bar_add">Новая заметка</string>
+	<string name="action_bar_labels">Изменить метки</string>
+	<string name="action_bar_share">Отправить</string>
+	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_settings">Настройки</string>
 
-	<string name="empty_note_placeholder">Заметка</string>
+	<string name="action_sort">Сортировка</string>
+	<string name="action_sort_by_title">По заголовку</string>
+	<string name="action_sort_by_create_asc">По созданию (сначала старые)</string>
+	<string name="action_sort_by_create_desc">По созданию (сначала новые)</string>
+	<string name="action_sort_by_change">По последнему изменению</string>
+
+	<string name="empty_note_title_placeholder">(без заголовка)</string>
+	<string name="empty_note_placeholder">(пустая заметка)</string>
+	<string name="empty_note_not_saved">Пустая заметка не сохранена</string>
+	<string name="empty_note_not_shared">Эта заметка пуста</string>
 
 	<string name="note_action_labels">Изменить метки</string>
 	<string name="note_action_info">Свойства</string>
@@ -23,6 +35,7 @@
 	<string name="note_info_modified">Изменена: %s</string>
 	<string name="note_action_delete">Удалить</string>
 	<string name="note_action_delete_confirm_dialog_text">Удалить эту заметку?</string>
+	<string name="note_action_no_labels_dialog_text">Не создано ни одной метки.\nСоздать новую для этой заметки?</string>
 
 	<string name="note_details_title_hint">Заголовок</string>
 	<string name="note_details_body_hint">Текст</string>
@@ -36,5 +49,21 @@
 
 	<string name="label_title_hint">Метка</string>
 	<string name="label_edit_color_select">Цвет метки</string>
+
+	<string name="color_default">белый</string>
+	<string name="color_red">красный</string>
+	<string name="color_orange">оранжевый</string>
+	<string name="color_yellow">желтый</string>
+	<string name="color_green">зеленый</string>
+	<string name="color_blue">синий</string>
+	<string name="color_purple">фиолетовый</string>
+	<string name="color_grey">серый</string>
+
+	<string name="more_labels">…</string>
+
+	<string name="settings_linkify_title">Ссылки в тексте заметки</string>
+	<string name="settings_linkify_subtitle">Делать ссылки и телефонные номера кликабельными</string>
+	<string name="settings_show_drawer_title">Начинать с панели навигации</string>
+	<string name="settings_show_drawer_subtitle">Всегда открывать панель навигации при запуске приложения</string>
 
 </resources>

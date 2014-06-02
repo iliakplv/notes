@@ -1,12 +1,14 @@
 package com.iliakplv.notes.notes;
 
-
 import com.iliakplv.notes.utils.StringUtils;
 
+import java.io.Serializable;
 
 public class Label {
 
 	public static final int DEFAULT_COLOR_INDEX = 0;
+
+	private Serializable id = NotesUtils.DEFAULT_ID;
 
 	private String name;
 	private int color;
@@ -38,4 +40,11 @@ public class Label {
 		this.color = color;
 	}
 
+	public Serializable getId() {
+		return id;
+	}
+
+	public void setId(Serializable id) {
+		this.id = NotesUtils.getValidNoteId(id);
+	}
 }

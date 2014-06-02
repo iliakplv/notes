@@ -3,54 +3,64 @@ package com.iliakplv.notes.gui.main;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.gui.settings.SettingsActivity;
+import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.dropbox.DropboxHelper;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.Storage;
+import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 
-/**
- * Author: Ilya Kopylov
- * Date:  16.08.2013
- */
-public class MainActivity extends Activity
-		implements NotesDatabaseFacade.NoteChangeListener, NavigationDrawerFragment.NavigationDrawerListener {
+import java.io.Serializable;
 
-	private static final String ARG_CURRENT_NOTE_ID = "current_note_id";
-	public static final int NO_DETAILS = 0;
+public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
-	private int currentNoteId = NO_DETAILS;
-	private boolean listeningExistingNote = false;
+	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
+	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
+	public static final Integer NEW_NOTE = 0;
 
-	private NotesListFragment notesListFragment;
-	private NoteDetailsFragment noteDetailsFragment;
+	private final NotesStorage storage = Storage.getStorage();
+
+	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private CharSequence title;
 
 
 	private boolean isDetailsShown() {
-		return currentNoteId != NO_DETAILS;
+		return detailsShown;
 	}
+
+	public void setDetailsShown(boolean shown) {
+		detailsShown = shown;
+		invalidateOptionsMenu();
+	}
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		restoreNotesSortOrder();
 		setupNavigationDrawer();
 
 		if (savedInstanceState == null) {
-			notesListFragment = new NotesListFragment();
+			final NotesListFragment notesListFragment = new NotesListFragment();
 			notesListFragment.setArguments(getIntent().getExtras());
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.fragment_container, notesListFragment);
+			ft.add(R.id.fragment_container, notesListFragment, NotesListFragment.TAG);
 			ft.commit();
 		} else {
-			onDetailsChanged(savedInstanceState.getInt(ARG_CURRENT_NOTE_ID));
+			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
 		}
 
 	}
@@ -66,88 +76,55 @@ public class MainActivity extends Activity
 	}
 
 	@Override
-	public void onSelectedLabel(int labelId, String newTitle) {
+	public void onLabelSelected(Serializable labelId, String newTitle) {
 		title = newTitle;
-		if (notesListFragment != null) {
-			notesListFragment.showNotesForLabel(labelId);
+		final NotesListFragment noteListFragment =
+				(NotesListFragment) getFragmentManager().findFragmentByTag(NotesListFragment.TAG);
+		if (noteListFragment != null) {
+			noteListFragment.showNotesForLabel(labelId);
 		}
 	}
 
-	public void restoreActionBar() {
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(title);
-	}
+	public void onNoteSelected(Serializable noteId) {
+		setDetailsShown(true);
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		startListeningNote();
-	}
+		final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
+		final Bundle args = new Bundle();
+		args.putSerializable(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+		noteDetailsFragment.setArguments(args);
 
-
-	public void onNoteSelected(int noteId) {
-		onDetailsChanged(noteId);
-
-		if (isDetailsShown()) {
-			noteDetailsFragment = new NoteDetailsFragment();
-			final Bundle args = new Bundle();
-			args.putInt(NoteDetailsFragment.ARG_NOTE_ID, noteId);
-			noteDetailsFragment.setArguments(args);
-
-			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, noteDetailsFragment);
-			ft.addToBackStack(null);
-			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			ft.commit();
-		}
-	}
-
-	private void onDetailsChanged(int newNoteId) {
-		currentNoteId = newNoteId;
-		invalidateOptionsMenu();
-
-		// subscribe/unsubscribe to note changes
-		if (isDetailsShown()) {
-			startListeningNote();
-		} else {
-			stopListeningNote();
-		}
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.fragment_container, noteDetailsFragment, NoteDetailsFragment.TAG);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		ft.commit();
 	}
 
 	public void createNewNote() {
-		NotesApplication.executeInBackground(new Runnable() {
-			@Override
-			public void run() {
-				final int newNoteId = NotesDatabaseFacade.getInstance().insertNote(new TextNote());
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						onNoteSelected(newNoteId);
-					}
-				});
-			}
-		});
+		onNoteSelected(NEW_NOTE);
 	}
 
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		stopListeningNote();
+	public NavigationDrawerFragment getNavigationDrawerFragment() {
+		return navigationDrawerFragment;
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(ARG_CURRENT_NOTE_ID, currentNoteId);
+		outState.putBoolean(ARG_DETAILS_SHOWN, detailsShown);
 	}
 
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		onDetailsChanged(NO_DETAILS);
+		if (isDetailsShown()) {
+			setDetailsShown(false);
+			final NoteDetailsFragment noteDetailsFragment =
+					(NoteDetailsFragment) getFragmentManager().findFragmentByTag(NoteDetailsFragment.TAG);
+			if (noteDetailsFragment != null) {
+				noteDetailsFragment.onBackPressed();
+			}
+		}
 	}
 
 
@@ -156,55 +133,103 @@ public class MainActivity extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!navigationDrawerFragment.isDrawerOpen()) {
-			getMenuInflater().inflate(R.menu.main, menu);
+			if (isDetailsShown()) {
+				getMenuInflater().inflate(R.menu.note_menu, menu);
+			} else {
+				getMenuInflater().inflate(R.menu.main_menu, menu);
+				final SubMenu sortMenu =
+						menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
+				getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
+			}
 			restoreActionBar();
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	private void restoreActionBar() {
+		final ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setTitle(title);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_add) {
-			createNewNote();
-			return true;
+		final int itemId = item.getItemId();
+		switch (itemId) {
+
+			// main menu
+			case R.id.action_add:
+				createNewNote();
+				return true;
+
+			// sort menu
+			case R.id.sort_by_title:
+				setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
+				return true;
+			case R.id.sort_by_create_asc:
+				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
+				return true;
+			case R.id.sort_by_create_desc:
+				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
+				return true;
+			case R.id.sort_by_change:
+				setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
+				return true;
+
+			// global menu
+			case R.id.action_settings:
+				showAppSettings();
+				return true;
+
+			// TODO temp !!!
+			case R.id.action_sync:
+				if (Storage.getCurrentStorageType() == Storage.Type.Database) {
+					DropboxHelper.tryLinkAccount(this);
+				} else {
+					storage.sync();
+				}
+				return true;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-
-	// listener
-
+	// TODO temp !!!
 	@Override
-	public void onNoteChanged() {
-		if (listeningExistingNote) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (listeningExistingNote) {
-						onNoteSelected(currentNoteId);
-					}
-				}
-			});
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
+
+		NotesApplication.executeInBackground(new Runnable() {
+			@Override
+			public void run() {
+				StorageDataTransfer.transferDataFromDatabaseToDropbox(Storage.Type.Dropbox);
+			}
+		});
+	}
+
+	public void showAppSettings() {
+		final Intent settingsIntent = new Intent(this, SettingsActivity.class);
+		startActivity(settingsIntent);
+	}
+
+	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
+		if (storage.setNotesSortOrder(order)) {
+			final SharedPreferences.Editor editor = getPreferences(Activity.MODE_PRIVATE).edit();
+			editor.putInt(PREFS_KEY_SORT_ORDER, order.ordinal());
+			editor.commit();
 		}
 	}
 
-	@Override
-	public int getNoteId() {
-		return currentNoteId;
-	}
-
-	private void startListeningNote() {
-		if (!listeningExistingNote && isDetailsShown()) {
-			NotesDatabaseFacade.getInstance().addNoteChangeListener(this);
-			listeningExistingNote = true;
+	private void restoreNotesSortOrder() {
+		final SharedPreferences prefs = getPreferences(Activity.MODE_PRIVATE);
+		int orderOrdinal = prefs.getInt(PREFS_KEY_SORT_ORDER, -1);
+		if (orderOrdinal != -1) {
+			setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
 		}
 	}
 
-	private void stopListeningNote() {
-		if (listeningExistingNote) {
-			NotesDatabaseFacade.getInstance().removeNoteChangeListener(this);
-			listeningExistingNote = false;
-		}
-	}
 }

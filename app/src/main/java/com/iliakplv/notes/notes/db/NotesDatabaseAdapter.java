@@ -1,13 +1,14 @@
 package com.iliakplv.notes.notes.db;
 
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Pair;
 
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
 
 import org.joda.time.DateTime;
@@ -17,17 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: Ilya Kopylov
- * Date:  21.08.2013
- */
-class NotesDatabaseAdapter {
+/* package */ class NotesDatabaseAdapter {
 
 	// Database
 	private static final String DATABASE_NAME = "notes.db";
 	private static final int CURRENT_VERSION = NotesDatabaseOpenHelper.DATABASE_VERSION_LABELS;
-
-	static final int ALL_ENTRIES = 0;
+	private static final int ALL_ENTRIES = 0;
 
 	// Common keys
 	private static final String KEY_ID = "_id";
@@ -64,6 +60,12 @@ class NotesDatabaseAdapter {
 	private static final String NOTES_LABELS_TABLE = "notes_labels";
 	private static final String NOTES_LABELS_NOTE_ID = "note_id";
 	private static final String NOTES_LABELS_LABEL_ID = "label_id";
+
+	private static final int NOTE_LABELS_NOTE_ID_COLUMN = 1;
+	private static final int NOTE_LABELS_LABEL_ID_COLUMN = 2;
+
+	private static final String[] NOTES_LABELS_PROJECTION = {KEY_ID,
+			NOTES_LABELS_NOTE_ID, NOTES_LABELS_LABEL_ID};
 
 
 	// Schema creation
@@ -102,8 +104,8 @@ class NotesDatabaseAdapter {
 
 	// notes queries
 
-	NotesDatabaseEntry<AbstractNote> getNote(int id) {
-		final List<NotesDatabaseEntry<AbstractNote>> list = notesQuery(id);
+	AbstractNote getNote(int id) {
+		final List<AbstractNote> list = notesQuery(id, null);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -111,15 +113,15 @@ class NotesDatabaseAdapter {
 		}
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getAllNotes() {
-		return notesQuery(ALL_ENTRIES);
+	List<AbstractNote> getAllNotes(NotesUtils.NoteSortOrder order) {
+		return notesQuery(ALL_ENTRIES, order);
 	}
 
-	private List<NotesDatabaseEntry<AbstractNote>> notesQuery(int id) {
+	private List<AbstractNote> notesQuery(int id, NotesUtils.NoteSortOrder order) {
 		Cursor cursor = db.query(NOTES_TABLE, NOTES_PROJECTION,
-				whereClauseForId(id), null, null, null, null);
+				whereClauseForId(id), null, null, null, sortOrderClause(order));
 
-		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
+		List<AbstractNote> result = new ArrayList<AbstractNote>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -127,8 +129,8 @@ class NotesDatabaseAdapter {
 						cursor.getString(NOTES_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
-				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				note.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(note);
 			} while (cursor.moveToNext());
 		}
 
@@ -153,21 +155,26 @@ class NotesDatabaseAdapter {
 
 	// labels queries
 
-	List<NotesDatabaseEntry<Label>> getAllLabels() {
+	Label getLabel(int id) { // returns list with one label
+		final List<Label> labels = labelsQuery(id);
+		return labels.isEmpty() ? null : labels.get(0);
+	}
+
+	List<Label> getAllLabels() { // sorted by name
 		return labelsQuery(ALL_ENTRIES);
 	}
 
-	private List<NotesDatabaseEntry<Label>> labelsQuery(int id) {
+	private List<Label> labelsQuery(int id) {
 		Cursor cursor = db.query(LABELS_TABLE, LABELS_PROJECTION,
-				whereClauseForId(id), null, null, null, null);
+				whereClauseForId(id), null, null, null, LABELS_NAME);
 
-		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+		List<Label> result = new ArrayList<Label>();
 
 		if (cursor.moveToFirst()) {
 			do {
 				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
-				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				label.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(label);
 			} while (cursor.moveToNext());
 		}
 
@@ -192,21 +199,36 @@ class NotesDatabaseAdapter {
 
 	// notes_labels queries
 
-	List<NotesDatabaseEntry<Label>> getLabelsForNote(int noteId) {
-		final Cursor cursor = getLabelsForNoteCursor(noteId);
-		List<NotesDatabaseEntry<Label>> result = new ArrayList<NotesDatabaseEntry<Label>>();
+	Set<Pair<Integer, Integer>> getAllNotesLabelsIds() {
+		final Cursor cursor = db.query(NOTES_LABELS_TABLE, NOTES_LABELS_PROJECTION,
+				null, null, null, null, null);
+
+		final Set<Pair<Integer, Integer>> result = new HashSet<Pair<Integer, Integer>>();
+		if (cursor.moveToFirst()) {
+			do {
+				result.add(new Pair<Integer, Integer>(cursor.getInt(NOTE_LABELS_NOTE_ID_COLUMN),
+						cursor.getInt(NOTE_LABELS_LABEL_ID_COLUMN)));
+			} while (cursor.moveToNext());
+		}
+
+		return result;
+	}
+
+	List<Label> getLabelsForNote(int noteId) { // sorted by label name
+		final Cursor cursor = getLabelsForNoteCursor(noteId, true);
+		List<Label> result = new ArrayList<Label>();
 		if (cursor.moveToFirst()) {
 			do {
 				Label label = new Label(cursor.getString(LABELS_NAME_COLUMN), cursor.getInt(LABELS_COLOR_COLUMN));
-				NotesDatabaseEntry<Label> entry = new NotesDatabaseEntry<Label>(label, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				label.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(label);
 			} while (cursor.moveToNext());
 		}
 		return result;
 	}
 
 	Set<Integer> getLabelsIdsForNote(int noteId) {
-		final Cursor cursor = getLabelsForNoteCursor(noteId);
+		final Cursor cursor = getLabelsForNoteCursor(noteId, false);
 		Set<Integer> result = new HashSet<Integer>();
 		if (cursor.moveToFirst()) {
 			do {
@@ -216,24 +238,27 @@ class NotesDatabaseAdapter {
 		return result;
 	}
 
-	private Cursor getLabelsForNoteCursor(int noteId) {
+	private Cursor getLabelsForNoteCursor(int noteId, boolean orderByName) {
+		final String orderSuffix = orderByName ?
+				" ORDER BY " + LABELS_NAME:
+				"";
 		final String query = "SELECT " + projectionToString(LABELS_PROJECTION) +
 				" FROM " + LABELS_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_LABEL_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_NOTE_ID, noteId) + ")" +
-				" ORDER BY " + KEY_ID + " DESC;";
+				orderSuffix + ";";
 		return db.rawQuery(query, null);
 	}
 
-	List<NotesDatabaseEntry<AbstractNote>> getNotesForLabel(int labelId) {
+	List<AbstractNote> getNotesForLabel(int labelId, NotesUtils.NoteSortOrder order) {
 		final String query = "SELECT " + projectionToString(NOTES_PROJECTION) +
 				" FROM " + NOTES_TABLE + " WHERE " + KEY_ID +
 				" IN (SELECT " + NOTES_LABELS_NOTE_ID + " FROM " + NOTES_LABELS_TABLE +
 				" WHERE " + whereClause(NOTES_LABELS_LABEL_ID, labelId) + ")" +
-				" ORDER BY " + KEY_ID + " ASC;";
+				" ORDER BY " + sortOrderClause(order) + ";";
 		Cursor cursor = db.rawQuery(query, null);
 
-		List<NotesDatabaseEntry<AbstractNote>> result = new ArrayList<NotesDatabaseEntry<AbstractNote>>();
+		List<AbstractNote> result = new ArrayList<AbstractNote>();
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -241,8 +266,8 @@ class NotesDatabaseAdapter {
 						cursor.getString(NOTES_BODY_COLUMN));
 				note.setCreateTime(new DateTime(cursor.getLong(NOTES_CREATE_DATE_COLUMN)));
 				note.setChangeTime(new DateTime(cursor.getLong(NOTES_CHANGE_DATE_COLUMN)));
-				NotesDatabaseEntry<AbstractNote> entry = new NotesDatabaseEntry<AbstractNote>(note, cursor.getInt(KEY_ID_COLUMN));
-				result.add(entry);
+				note.setId(cursor.getInt(KEY_ID_COLUMN));
+				result.add(note);
 			} while (cursor.moveToNext());
 		}
 
@@ -277,6 +302,27 @@ class NotesDatabaseAdapter {
 
 
 	// Util methods
+
+	private static String sortOrderClause(NotesUtils.NoteSortOrder order) {
+		if (order == null) {
+			return null;
+		}
+		switch (order) {
+			case Title:
+				return NOTES_NAME;
+
+			case CreateDateAscending:
+				return NOTES_CREATE_DATE + " ASC";
+			case CreateDateDescending:
+				return NOTES_CREATE_DATE + " DESC";
+
+			case ChangeDate:
+				return NOTES_CHANGE_DATE + " DESC";
+
+			default:
+				throw new IllegalArgumentException("Unsupported sort order: " + order.toString());
+		}
+	}
 
 	private static ContentValues contentValuesForNote(AbstractNote note) {
 		final ContentValues cv = new ContentValues();
@@ -329,6 +375,12 @@ class NotesDatabaseAdapter {
 			return sb.toString();
 		}
 		return "";
+	}
+
+	void deleteAllData() {
+		db.delete(NOTES_LABELS_TABLE, null, null);
+		db.delete(LABELS_TABLE, null, null);
+		db.delete(NOTES_TABLE, null, null);
 	}
 
 

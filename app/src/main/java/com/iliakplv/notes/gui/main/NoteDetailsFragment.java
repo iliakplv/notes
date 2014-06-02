@@ -1,38 +1,54 @@
 package com.iliakplv.notes.gui.main;
 
-
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import com.iliakplv.notes.BuildConfig;
+import android.widget.Toast;
+
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.gui.main.dialogs.NoteLabelsDialog;
+import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.AbstractNote;
+import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.TextNote;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.Storage;
+import com.iliakplv.notes.utils.AppLog;
 import com.iliakplv.notes.utils.StringUtils;
 
-/**
- * Author: Ilya Kopylov
- * Date:  16.08.2013
- */
+import java.io.Serializable;
+
 public class NoteDetailsFragment extends Fragment {
 
-	private static final String LOG_TAG = NoteDetailsFragment.class.getSimpleName();
+	public static final String TAG = NoteDetailsFragment.class.getSimpleName();
 
 	final static String ARG_NOTE_ID = "note_id";
 
-	private int noteId = MainActivity.NO_DETAILS;
-	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
-	private NotesDatabaseEntry<AbstractNote> noteEntry;
+	private final static String PREFS_KEY_LINKIFY = "linkify_note_text";
+	private final static int LINKIFY_MASK = Linkify.WEB_URLS |
+			Linkify.EMAIL_ADDRESSES |
+			Linkify.PHONE_NUMBERS;
+
+	private Serializable noteId = MainActivity.NEW_NOTE;
+	private boolean newNoteCreationMode = true;
+
+	private final NotesStorage storage = Storage.getStorage();
 
 	private EditText title;
 	private EditText body;
 
+
+	private static boolean isNewNoteId(Serializable id) {
+		return MainActivity.NEW_NOTE.equals(id);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,73 +59,149 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) {
+			noteId = savedInstanceState.getSerializable(ARG_NOTE_ID);
+		}
 		final Bundle args = getArguments();
 		if (args != null) {
-			noteId = args.getInt(ARG_NOTE_ID);
+			final Serializable noteIdFromArgs = args.getSerializable(ARG_NOTE_ID);
+			newNoteCreationMode = isNewNoteId(noteIdFromArgs);
+			if (isNewNoteId(noteId)) {
+				// not restored from savedInstanceState
+				// use value from args
+				noteId = noteIdFromArgs;
+			}
 		}
-		updateNoteDetailsView(noteId);
+		AppLog.d(TAG, "onCreate() call. Note id = " + noteId +
+				", newNoteCreationMode == " + newNoteCreationMode);
+		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		updateNoteDetailsView();
 	}
 
 
-	public void updateNoteDetailsView(int noteId) {
-		// try save changes on previously shown note
-		trySaveCurrentNote();
-
-		// show new note
-		this.noteId = noteId;
-		noteEntry = noteId > 0 ? dbFacade.getNote(noteId) : null;
-		final boolean gotNoteToShow = noteEntry != null;
-
+	public void updateNoteDetailsView() {
+		final boolean gotNoteToShow = !isNewNoteId(noteId) && storage.getNote(noteId) != null;
 		if (gotNoteToShow) {
-			final AbstractNote note = noteEntry.getEntry();
-			title.setHint(NotesListFragment.getTitleForNote(TextNote.EMPTY, noteEntry.getId()));
+			final AbstractNote note = storage.getNote(noteId);
 			title.setText(note.getTitle());
 			body.setText(note.getBody());
+
+			final SharedPreferences sp =
+					PreferenceManager.getDefaultSharedPreferences(getActivity());
+			if (sp.getBoolean(PREFS_KEY_LINKIFY, false)) {
+				Linkify.addLinks(body, LINKIFY_MASK);
+			}
 		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		// try save changes
-		trySaveCurrentNote();
+		trySaveCurrentNote(false);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(ARG_NOTE_ID, noteId);
+		AppLog.d(TAG, "onSaveInstanceState() call. Note id = " + noteId);
+		outState.putSerializable(ARG_NOTE_ID, noteId);
 	}
 
-	private void trySaveCurrentNote() {
-		final String LOG_PREFIX = "trySaveCurrentNote(): ";
-		if (BuildConfig.DEBUG) {
-			Log.d(LOG_TAG, LOG_PREFIX + "call");
+	public void onBackPressed() {
+		final boolean empty = StringUtils.isNullOrEmpty(title.getText().toString()) &&
+				StringUtils.isNullOrEmpty(body.getText().toString());
+		final boolean savedInStorage = !isNewNoteId(noteId);
+		final boolean hasLabels = savedInStorage && !storage.getLabelsIdsForNote(noteId).isEmpty();
+
+		if (newNoteCreationMode && empty && !hasLabels) {
+			if (savedInStorage) {
+				storage.deleteNote(noteId);
+			}
+			Toast.makeText(getActivity(), R.string.empty_note_not_saved, Toast.LENGTH_SHORT).show();
 		}
-		if (noteEntry != null) {
-			final String newTitle = title.getText().toString();
-			final String newBody = body.getText().toString();
-			final AbstractNote currentNote = noteEntry.getEntry();
-			if (!StringUtils.equals(currentNote.getBody(), newBody) ||
-					!StringUtils.equals(currentNote.getTitle(), newTitle)) {
-				currentNote.setTitle(newTitle);
-				currentNote.setBody(newBody);
-				currentNote.updateChangeTime();
-				final boolean updated = dbFacade.updateNote(noteEntry.getId(), currentNote);
-				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "Note data changed. Database " + (updated ? "" : "NOT ") + "updated");
-				}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.action_share:
+				shareNote();
+				return true;
+
+			case R.id.action_labels:
+				showLabelsDialog();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void shareNote() {
+		NotesUtils.shareNote(getActivity(),
+				title.getText().toString(),
+				body.getText().toString(),
+				true);
+	}
+
+	private void showLabelsDialog() {
+		trySaveCurrentNote(true);
+
+		final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
+		final FragmentManager fragmentManager = getActivity().getFragmentManager();
+		if (noLabelsCreated) {
+			SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
+		} else {
+			NoteLabelsDialog.show(fragmentManager, noteId);
+		}
+	}
+
+	// returns true if new note created
+	private boolean trySaveCurrentNote(boolean saveIfEmpty) {
+		final String LOG_PREFIX = "trySaveCurrentNote(): ";
+
+		final String newTitle = title.getText().toString();
+		final String newBody = body.getText().toString();
+
+		boolean newNoteCreated = false;
+		if (isNewNoteId(noteId)) {
+			if (saveIfEmpty ||
+					!StringUtils.isNullOrEmpty(newTitle) ||
+					!StringUtils.isNullOrEmpty(newBody)) {
+				// (perform on UI thread)
+				noteId = storage.insertNote(new TextNote(newTitle, newBody));
+				newNoteCreated = true;
+				AppLog.d(TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
-				if (BuildConfig.DEBUG) {
-					Log.d(LOG_TAG, LOG_PREFIX + "Note data unchanged. End");
-				}
+				AppLog.d(TAG, LOG_PREFIX + "New note empty. Not saved.");
 			}
 		} else {
-			if (BuildConfig.DEBUG) {
-				Log.d(LOG_TAG, LOG_PREFIX + "Note entry is null. End");
+			final AbstractNote note = storage.getNote(noteId);
+			if (note != null) {
+				final AbstractNote currentNote = note;
+
+				// update current note if changed
+				if (!StringUtils.equals(currentNote.getBody(), newBody) ||
+						!StringUtils.equals(currentNote.getTitle(), newTitle)) {
+					currentNote.setTitle(newTitle);
+					currentNote.setBody(newBody);
+					currentNote.updateChangeTime();
+					final boolean updated = storage.updateNote(noteId, currentNote);
+					AppLog.d(TAG, LOG_PREFIX + "Note data changed. Database "
+							+ (updated ? "" : "NOT (!) ") + "updated.");
+				} else {
+					AppLog.d(TAG, LOG_PREFIX + "Note data unchanged.");
+				}
+			} else {
+				AppLog.d(TAG, LOG_PREFIX + "Note entry is null (!)");
 			}
 		}
+		return newNoteCreated;
 	}
 }

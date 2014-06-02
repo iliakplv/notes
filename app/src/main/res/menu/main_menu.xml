@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/action_add"
+		android:title="@string/action_bar_add"
+		android:icon="@drawable/ic_menu_add"
+		android:showAsAction="always"/>
+
+	<!-- Sort menu here (order = 1). See MainActivity.java -->
+
+	<item
+		android:id="@+id/action_sync"
+		android:title="[sync]"
+		android:orderInCategory="99"
+		android:showAsAction="never"/>
+
+	<item
+		android:id="@+id/action_settings"
+		android:title="@string/action_settings"
+		android:orderInCategory="100"
+		android:showAsAction="never"/>
+
+</menu> 

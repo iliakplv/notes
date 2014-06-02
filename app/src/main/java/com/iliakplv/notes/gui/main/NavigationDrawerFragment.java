@@ -1,12 +1,8 @@
 package com.iliakplv.notes.gui.main;
 
-
 import android.app.Activity;
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -23,41 +19,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.gui.main.dialogs.LabelEditDialog;
+import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
-import com.iliakplv.notes.notes.db.NotesDatabaseEntry;
-import com.iliakplv.notes.notes.db.NotesDatabaseFacade;
+import com.iliakplv.notes.notes.NotesUtils;
+import com.iliakplv.notes.notes.storage.NotesStorage;
+import com.iliakplv.notes.notes.storage.NotesStorageListener;
+import com.iliakplv.notes.notes.storage.Storage;
 
+import java.io.Serializable;
 import java.util.List;
 
-
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements
+		LabelEditDialog.LabelEditDialogCallback, NotesStorageListener {
 
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+	private static final String PREF_SHOW_DRAWER_ON_START = "show_drawer_on_start";
 
-	public static final int ALL_LABELS = NotesDatabaseFacade.ALL_LABELS;
-	public static final int ALL_LABELS_HEADER_POSITION = 0;
+	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
+	private static final int ALL_LABELS_HEADER_POSITION = 0;
+	private static final int NO_LABEL_SELECTED = -1;
 
-	private static final int[] COLORS_CHECKBOXES_IDS = {
-			R.id.color_1,
-			R.id.color_2,
-			R.id.color_3,
-			R.id.color_4,
-			R.id.color_5,
-			R.id.color_6,
-			R.id.color_7,
-			R.id.color_8
-	};
-
-
-	private final NotesDatabaseFacade dbFacade = NotesDatabaseFacade.getInstance();
+	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
 
 	private ActionBarDrawerToggle drawerToggle;
@@ -66,10 +54,10 @@ public class NavigationDrawerFragment extends Fragment {
 	private ListView labelsListView;
 	private LabelsListAdapter labelsListAdapter;
 
-	// TODO use it to save state
-	private int currentSelectedPosition = ALL_LABELS_HEADER_POSITION;
+	private int currentSelectedPosition = NO_LABEL_SELECTED;
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
+	private boolean showDrawerOnStart;
 
 
 	public NavigationDrawerFragment() {
@@ -79,11 +67,17 @@ public class NavigationDrawerFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+		showDrawerOnStart = sp.getBoolean(PREF_SHOW_DRAWER_ON_START, false);
 
+		if (!userLearnedDrawer && showDrawerOnStart) {
+			// disable user-learned-drawer behaviour if user have selected to show drawer on start
+			setUserLearnedDrawer();
+		}
 		if (savedInstanceState != null) {
-			currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			currentSelectedPosition =
+					savedInstanceState.getInt(STATE_SELECTED_POSITION, NO_LABEL_SELECTED);
 			fromSavedInstanceState = true;
 		}
 	}
@@ -127,17 +121,14 @@ public class NavigationDrawerFragment extends Fragment {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
-				final List<NotesDatabaseEntry<Label>> labels = dbFacade.getAllLabels();
+				final List<Label> labels = storage.getAllLabels();
 				final int labelItemIndex = position - 1;
 
 				if (labelItemIndex >= 0 && labelItemIndex < labels.size()) { // not header or footer
-					final NotesDatabaseEntry<Label> labelEntry = labels.get(labelItemIndex);
-					new AlertDialog.Builder(mainActivity).
-							setTitle(labelEntry.getEntry().getName()).
-							setItems(R.array.label_actions, new LabelActionDialogClickListener(labelEntry)).
-							setNegativeButton(R.string.common_cancel, null).
-							create().show();
-
+					final Label label = labels.get(labelItemIndex);
+					SimpleItemDialog.show(SimpleItemDialog.DialogType.LabelActions,
+							label.getId(),
+							mainActivity.getFragmentManager());
 				}
 				return true;
 			}
@@ -145,6 +136,21 @@ public class NavigationDrawerFragment extends Fragment {
 		});
 
 		return labelsListView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (fromSavedInstanceState && currentSelectedPosition != NO_LABEL_SELECTED) {
+			selectItem(currentSelectedPosition);
+		}
+		storage.addStorageListener(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		storage.removeStorageListener(this);
 	}
 
 	public boolean isDrawerOpen() {
@@ -184,19 +190,14 @@ public class NavigationDrawerFragment extends Fragment {
 				if (!isAdded()) {
 					return;
 				}
-
 				if (!userLearnedDrawer) {
-					userLearnedDrawer = true;
-					SharedPreferences sp = PreferenceManager
-							.getDefaultSharedPreferences(getActivity());
-					sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+					setUserLearnedDrawer();
 				}
-
-				getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+				getActivity().invalidateOptionsMenu();
 			}
 		};
 
-		if (!userLearnedDrawer && !fromSavedInstanceState) {
+		if (showDrawerOnStart || (!userLearnedDrawer && !fromSavedInstanceState)) {
 			this.drawerLayout.openDrawer(fragmentContainerView);
 		}
 
@@ -206,94 +207,61 @@ public class NavigationDrawerFragment extends Fragment {
 				drawerToggle.syncState();
 			}
 		});
-
 		this.drawerLayout.setDrawerListener(drawerToggle);
 	}
 
+	private void setUserLearnedDrawer() {
+		userLearnedDrawer = true;
+		final SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+	}
+
 	private void selectItem(int position) {
-		currentSelectedPosition = position;
-		if (mainActivity != null) {
-			if (position == labelsListView.getCount() - 1) {
-				showLabelEditDialog(null);
+		if (position == labelsListView.getCount() - 1) {
+			createNewLabel();
+		} else {
+			currentSelectedPosition = position;
+			if (drawerLayout != null) {
+				drawerLayout.closeDrawer(fragmentContainerView);
+			}
+
+			final Serializable labelId;
+			final String newTitle;
+			if (position == ALL_LABELS_HEADER_POSITION) {
+				labelId = ALL_LABELS;
+				newTitle = getString(R.string.labels_drawer_all_notes);
 			} else {
-				if (drawerLayout != null) {
-					drawerLayout.closeDrawer(fragmentContainerView);
-				}
-
-				final List<NotesDatabaseEntry<Label>> allLabels = dbFacade.getAllLabels();
-				final int labelId;
-				final String newTitle;
-				if (position == ALL_LABELS_HEADER_POSITION) {
-					labelId = ALL_LABELS;
-					newTitle = getString(R.string.labels_drawer_all_notes);
-				} else {
-					NotesDatabaseEntry<Label> labelEntry = allLabels.get(position - 1);
-					labelId = labelEntry.getId();
-					newTitle = labelEntry.getEntry().getName();
-				}
-
-				// TODO doesn't work after rotation
-				mainActivity.onSelectedLabel(labelId, newTitle);
+				final List<Label> allLabels = storage.getAllLabels();
+				final Label label = allLabels.get(position - 1);
+				labelId = label.getId();
+				newTitle = NotesUtils.getTitleForLabel(label);
 			}
+
+			mainActivity.onLabelSelected(labelId, newTitle);
 		}
 	}
 
-	private void showLabelEditDialog(final NotesDatabaseEntry<Label> labelToEdit) {
-		final boolean editMode = labelToEdit != null; // if null - create mode
-
-		final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		final View labelDialogView = inflater.inflate(R.layout.label_edit_dialog, null);
-
-		// label name
-		if (editMode) {
-			((TextView) labelDialogView.findViewById(R.id.label_name)).setText(labelToEdit.getEntry().getName());
-		}
-
-		// label color
-		final int selectedColor = editMode ? labelToEdit.getEntry().getColor() : Label.DEFAULT_COLOR_INDEX;
-		final LabelEditDialogCheckBoxListener checkBoxListener =
-				new LabelEditDialogCheckBoxListener((CheckBox) labelDialogView.findViewById(COLORS_CHECKBOXES_IDS[selectedColor]));
-		for (int id : COLORS_CHECKBOXES_IDS) {
-			labelDialogView.findViewById(id).setOnClickListener(checkBoxListener);
-		}
-
-		// dialog creation
-		new AlertDialog.Builder(mainActivity)
-				.setView(labelDialogView)
-				.setPositiveButton(R.string.common_save, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						final String labelName = ((EditText) labelDialogView.findViewById(R.id.label_name)).getText().toString();
-						NotesApplication.executeInBackground(new Runnable() {
-							@Override
-							public void run() {
-								final Label newLabel = new Label(labelName, getIndexOfSelectedColor(labelDialogView));
-								if (editMode) {
-									dbFacade.updateLabel(labelToEdit.getId(), newLabel);
-								} else {
-									dbFacade.insertLabel(newLabel);
-								}
-								mainActivity.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										labelsListAdapter.notifyDataSetChanged();
-									}
-								});
-							}
-						});
-					}
-				})
-				.setNegativeButton(R.string.common_cancel, null)
-				.create().show();
+	public void createNewLabel() {
+		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
 	}
 
-	private int getIndexOfSelectedColor(View labelEditDialogView) {
-		for (int i = 0; i < COLORS_CHECKBOXES_IDS.length; i++) {
-			if (((CheckBox) labelEditDialogView.findViewById(COLORS_CHECKBOXES_IDS[i])).isChecked()) {
-				return i;
+	public void showLabelEditDialog(Serializable labelId) {
+		LabelEditDialog.show(mainActivity.getFragmentManager(),
+				labelId,
+				this);
+	}
+
+	@Override
+	public void onLabelChanged() {
+		mainActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (labelsListAdapter != null) {
+					labelsListAdapter.notifyDataSetChanged();
+				}
 			}
-		}
-		return 0;
+		});
 	}
 
 	@Override
@@ -327,7 +295,7 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		if (drawerLayout != null && isDrawerOpen()) {
-			inflater.inflate(R.menu.drawer, menu);
+			inflater.inflate(R.menu.drawer_menu, menu);
 			showGlobalContextActionBar();
 		}
 		super.onCreateOptionsMenu(menu, inflater);
@@ -338,17 +306,6 @@ public class NavigationDrawerFragment extends Fragment {
 		if (drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
-
-//	    if (item.getItemId() == R.id.show_bookmarks) {
-//
-//		    FragmentManager fragmentManager = getFragmentManager();
-//		    fragmentManager.beginTransaction()
-//				    .replace(R.id.container,new BookmarksListFragment())
-//				    .commit();
-//
-//		    return true;
-//	    }
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -363,21 +320,33 @@ public class NavigationDrawerFragment extends Fragment {
 		return getActivity().getActionBar();
 	}
 
+	@Override
+	public void onContentChanged() {
+		mainActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (labelsListAdapter != null) {
+					labelsListAdapter.notifyDataSetChanged();
+				}
+			}
+		});
+	}
+
 
 	/**
 	 * ******************************************
-	 * <p/>
+	 *
 	 * Inner classes
-	 * <p/>
+	 *
 	 * *******************************************
 	 */
 
-	private class LabelsListAdapter extends ArrayAdapter<NotesDatabaseEntry<Label>> {
+	private class LabelsListAdapter extends ArrayAdapter<Label> {
 
 		private int[] labelsColors;
 
 		public LabelsListAdapter() {
-			super(mainActivity, 0, dbFacade.getAllLabels());
+			super(mainActivity, 0, storage.getAllLabels());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
@@ -390,92 +359,24 @@ public class NavigationDrawerFragment extends Fragment {
 				view = LayoutInflater.from(getContext()).inflate(R.layout.label_list_item, parent, false);
 			}
 
-			final NotesDatabaseEntry<com.iliakplv.notes.notes.Label> entry = dbFacade.getAllLabels().get(position);
+			final Label label = storage.getAllLabels().get(position);
 			final View color = view.findViewById(R.id.label_color);
 			final TextView name = (TextView) view.findViewById(R.id.label_name);
-			name.setText(entry.getEntry().getName());
-			color.setBackgroundColor(labelsColors[entry.getEntry().getColor()]);
+			final int labelColor = labelsColors[label.getColor()];
+			name.setText(NotesUtils.getTitleForLabel(label));
+			name.setTextColor(labelColor);
+			color.setBackgroundColor(labelColor);
 
 			return view;
 		}
 
 		@Override
 		public int getCount() {
-			return dbFacade.getAllLabels().size();
-		}
-
-	}
-
-	private class LabelActionDialogClickListener implements DialogInterface.OnClickListener {
-
-		private final int EDIT_INDEX = 0;
-		private final int DELETE_INDEX = 1;
-
-		private NotesDatabaseEntry<Label> labelEntry;
-
-		public LabelActionDialogClickListener(NotesDatabaseEntry<Label> labelEntry) {
-			if (labelEntry == null) {
-				throw new NullPointerException("Label entry is null");
-			}
-			this.labelEntry = labelEntry;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialogInterface, int i) {
-			switch (i) {
-				case EDIT_INDEX:
-					showLabelEditDialog(labelEntry);
-					break;
-				case DELETE_INDEX:
-					showDeleteDialog();
-					break;
-			}
-		}
-
-		private void showDeleteDialog() {
-			new AlertDialog.Builder(mainActivity).
-					setTitle(labelEntry.getEntry().getName()).
-					setMessage("\n" + getString(R.string.label_action_delete_confirm_dialog_text) + "\n").
-					setNegativeButton(R.string.common_no, null).
-					setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-							NotesApplication.executeInBackground(new Runnable() {
-								@Override
-								public void run() {
-									dbFacade.deleteLabel(labelEntry.getId());
-									mainActivity.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											labelsListAdapter.notifyDataSetChanged();
-										}
-									});
-								}
-							});
-						}
-					}).create().show();
-		}
-	}
-
-	private class LabelEditDialogCheckBoxListener implements View.OnClickListener {
-
-		private CheckBox currentSelectedCheckBox;
-
-		public LabelEditDialogCheckBoxListener(CheckBox selectedCheckBox) {
-			currentSelectedCheckBox = selectedCheckBox;
-			currentSelectedCheckBox.setChecked(true);
-		}
-
-		@Override
-		public void onClick(View newSelectedCheckBox) {
-			currentSelectedCheckBox.setChecked(false);
-			currentSelectedCheckBox = (CheckBox) newSelectedCheckBox;
+			return storage.getAllLabels().size();
 		}
 	}
 
 	public static interface NavigationDrawerListener {
-
-		void onSelectedLabel(int id, String newTitle);
-
+		void onLabelSelected(Serializable id, String newTitle);
 	}
 }

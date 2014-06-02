@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/action_labels"
+		android:title="@string/action_bar_labels"
+		android:icon="@drawable/ic_menu_mark"
+		android:showAsAction="always"/>
+
+	<item
+		android:id="@+id/action_share"
+		android:title="@string/action_bar_share"
+		android:icon="@drawable/ic_menu_share"
+		android:showAsAction="ifRoom"/>
+
+	<item android:id="@+id/action_settings"
+	      android:title="@string/action_settings"
+	      android:orderInCategory="100"
+	      android:showAsAction="never" />
+
+</menu>
