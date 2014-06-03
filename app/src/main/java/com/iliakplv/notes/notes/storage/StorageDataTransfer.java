@@ -64,6 +64,9 @@ public final class StorageDataTransfer {
 	}
 
 	private static void clearCurrentStorage() {
+		if (!backupPerformed) {
+			throw new IllegalStateException("Backup not performed!");
+		}
 		storage.clear();
 	}
 
