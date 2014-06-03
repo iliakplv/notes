@@ -33,9 +33,7 @@ public final class StorageDataTransfer {
 	}
 
 	private static void restoreBackup() {
-		if (!backupPerformed) {
-			throw new IllegalStateException("Backup not performed!");
-		}
+		checkBackupPerformed();
 
 		// Ids mapping
 		final HashMap<Serializable, Serializable> notesOldToNewIdsMap =
@@ -63,10 +61,14 @@ public final class StorageDataTransfer {
 		}
 	}
 
-	private static void clearCurrentStorage() {
+	private static void checkBackupPerformed() {
 		if (!backupPerformed) {
 			throw new IllegalStateException("Backup not performed!");
 		}
+	}
+
+	private static void clearCurrentStorage() {
+		checkBackupPerformed();
 		storage.clear();
 	}
 
@@ -100,7 +102,7 @@ public final class StorageDataTransfer {
 		}
 
 		// restore data to new initialized storage or
-		// to old storage if new has not been initialized and old has been cleared
+		// to old storage if new storage has not been initialized and old has been cleared
 		if (newStorageInitialized || clearCurrentStorage) {
 			restoreBackup();
 		}
