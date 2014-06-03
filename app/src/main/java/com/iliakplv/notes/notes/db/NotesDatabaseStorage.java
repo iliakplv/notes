@@ -51,7 +51,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
 			notesListCacheActual = false;
-			notifyDatabaseListeners();
+			notifyListeners();
 		}
 		return orderChanged;
 	}
@@ -282,13 +282,13 @@ public class NotesDatabaseStorage implements NotesStorage {
 		}
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
-			notifyDatabaseListeners();
+			notifyListeners();
 		}
 	}
 
 	// Listeners
 
-	private void notifyDatabaseListeners() {
+	private void notifyListeners() {
 		if (databaseListeners != null) {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override

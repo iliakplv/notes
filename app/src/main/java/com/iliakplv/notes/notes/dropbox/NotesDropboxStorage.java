@@ -573,12 +573,12 @@ public class NotesDropboxStorage implements NotesStorage {
 			labelsListCacheActual = false;
 		}
 
-		notifyDatabaseListeners();
+		notifyListeners();
 	}
 
 	// Listeners
 
-	private void notifyDatabaseListeners() {
+	private void notifyListeners() {
 		if (storageListeners != null) {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override
