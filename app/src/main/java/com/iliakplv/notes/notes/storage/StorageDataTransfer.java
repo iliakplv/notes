@@ -75,7 +75,7 @@ public final class StorageDataTransfer {
 	}
 
 
-	public static synchronized void changeStorageType(Storage.Type newStorageType) {
+	public static synchronized void changeStorageType(Storage.Type newStorageType, boolean clearCurrentStorage) {
 		if (newStorageType == null) {
 			throw new NullPointerException("New storage type is null");
 		}
@@ -84,18 +84,24 @@ public final class StorageDataTransfer {
 		}
 
 		backupCurrentStorage();
-		if (!backupPerformed) {
-			throw new IllegalStateException("Backup not performed");
+		if (clearCurrentStorage) {
+			clearCurrentStorage();
 		}
-		clearCurrentStorage();
 
+		boolean newStorageInitialized = false;
 		try {
 			Storage.init(newStorageType);
+			newStorageInitialized = true;
 		} catch (Exception e) {
 			AppLog.e(TAG, "Exception during storage initialization", e);
 		}
 
-		restoreBackup();
+		// restore data to new initialized storage or
+		// to old storage if new has not been initialized and old has been cleared
+		if (newStorageInitialized || clearCurrentStorage) {
+			restoreBackup();
+		}
+
 		clearBackup();
 	}
 }

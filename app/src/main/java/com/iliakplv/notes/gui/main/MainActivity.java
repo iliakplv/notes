@@ -202,13 +202,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		super.onActivityResult(requestCode, resultCode, data);
 
 		DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
-
-		NotesApplication.executeInBackground(new Runnable() {
-			@Override
-			public void run() {
-				StorageDataTransfer.changeStorageType(Storage.Type.Dropbox);
-			}
-		});
+		if (DropboxHelper.hasLinkedAccount()) {
+			NotesApplication.executeInBackground(new Runnable() {
+				@Override
+				public void run() {
+					StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
+				}
+			});
+		}
 	}
 
 	public void showAppSettings() {

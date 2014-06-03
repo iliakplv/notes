@@ -1,6 +1,7 @@
 package com.iliakplv.notes.notes.dropbox;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
@@ -19,14 +20,13 @@ public final class DropboxHelper {
 	private static final String APP_KEY = "cyla6oz3c3vuje3";
 	private static final String APP_SECRET = "blt7jatmxpojwiz";
 
-	private static DbxAccountManager accountManager;
-	private static DbxAccount account;
+	private static DbxAccountManager accountManager = null;
+	private static DbxAccount account = null;
 
 
 	// call from activity
 	public static void tryLinkAccount(Activity accountLinkActivity) {
-		accountManager = DbxAccountManager.getInstance(accountLinkActivity.getApplicationContext(), APP_KEY, APP_SECRET);
-
+		initAccountManagerIfNeeded(accountLinkActivity.getApplicationContext());
 		if (accountManager.hasLinkedAccount()) {
 			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
 			account = accountManager.getLinkedAccount();
@@ -47,16 +47,26 @@ public final class DropboxHelper {
 		}
 	}
 
+	private static void initAccountManagerIfNeeded(Context context) {
+		if (accountManager == null) {
+			accountManager = DbxAccountManager.getInstance(context, APP_KEY, APP_SECRET);
+		}
+	}
+
+	public static synchronized boolean hasLinkedAccount() {
+		if (account != null) {
+			return true;
+		} else {
+			initAccountManagerIfNeeded(NotesApplication.getContext());
+			return accountManager.hasLinkedAccount();
+		}
+	}
 
 	public static synchronized DbxAccount getAccount() {
 		if (account == null) {
-			if (accountManager == null) {
-				accountManager = DbxAccountManager.getInstance(NotesApplication.getContext(), APP_KEY, APP_SECRET);
-			}
+			initAccountManagerIfNeeded(NotesApplication.getContext());
 			if (accountManager.hasLinkedAccount()) {
 				account = accountManager.getLinkedAccount();
-			} else {
-				throw new RuntimeException("No linked dropbox account!");
 			}
 		}
 		return account;
