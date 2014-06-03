@@ -27,9 +27,10 @@ public final class DropboxHelper {
 	// call from activity
 	public static void tryLinkAccount(Activity accountLinkActivity) {
 		initAccountManagerIfNeeded(accountLinkActivity.getApplicationContext());
+
 		if (accountManager.hasLinkedAccount()) {
-			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
 			account = accountManager.getLinkedAccount();
+			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
 		} else {
 			accountManager.startLink(accountLinkActivity, REQUEST_LINK_TO_DBX);
 		}
