@@ -32,7 +32,7 @@ public class NoteComparator implements Comparator<AbstractNote> {
 	public int compare(AbstractNote lhs, AbstractNote rhs) {
 		switch (order) {
 			case Title:
-				return lhs.getTitle().compareTo(rhs.getTitle());
+				return lhs.getTitle().compareToIgnoreCase(rhs.getTitle());
 			case CreateDateAscending:
 				return lhs.getCreateTime().compareTo(rhs.getCreateTime());
 			case CreateDateDescending:
