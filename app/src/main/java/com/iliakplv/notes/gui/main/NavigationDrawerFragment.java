@@ -323,7 +323,6 @@ public class NavigationDrawerFragment extends Fragment implements
 
 	@Override
 	public void onContentChanged() {
-		// TODO check this
 		mainActivity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
