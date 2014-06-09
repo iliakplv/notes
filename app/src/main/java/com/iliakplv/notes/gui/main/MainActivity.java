@@ -215,7 +215,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else {
 			final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
 			if (!dataTransferStarted) {
-				DropboxHelper.tryLinkAccount(this);
+				DropboxHelper.tryLinkAccountFromActivity(this);
 			}
 		}
 	}

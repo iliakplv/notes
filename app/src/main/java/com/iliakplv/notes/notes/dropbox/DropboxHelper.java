@@ -25,7 +25,7 @@ public final class DropboxHelper {
 
 
 	// call from activity
-	public static void tryLinkAccount(Activity accountLinkActivity) {
+	public static void tryLinkAccountFromActivity(Activity accountLinkActivity) {
 		initAccountManagerIfNeeded(accountLinkActivity.getApplicationContext());
 
 		if (accountManager.hasLinkedAccount()) {
