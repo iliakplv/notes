@@ -137,14 +137,30 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				getMenuInflater().inflate(R.menu.note_menu, menu);
 			} else {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
-				final SubMenu sortMenu =
-						menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
-				getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
+				inflateSortMenu(menu);
 			}
+			updateDropboxActionTitle(menu);
 			restoreActionBar();
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	private void inflateSortMenu(Menu menu) {
+		final SubMenu sortMenu =
+				menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
+		getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
+	}
+
+	private void updateDropboxActionTitle(Menu menu) {
+		final MenuItem dropboxItem = menu.findItem(R.id.action_dropbox);
+		if (dropboxItem !=  null) {
+			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
+				dropboxItem.setTitle(R.string.action_dropbox_refresh);
+			} else {
+				dropboxItem.setTitle(R.string.action_dropbox_link);
+			}
+		}
 	}
 
 	private void restoreActionBar() {
@@ -183,33 +199,32 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				showAppSettings();
 				return true;
 
-			// TODO temp !!!
-			case R.id.action_sync:
-				if (Storage.getCurrentStorageType() == Storage.Type.Database) {
-					DropboxHelper.tryLinkAccount(this);
-				} else {
-					storage.sync();
-				}
+			// dropbox
+			case R.id.action_dropbox:
+				performDropboxAction();
 				return true;
 
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	// TODO temp !!!
+	private void performDropboxAction() {
+		// TODO refactor !!!
+		if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
+			storage.sync();
+		} else {
+			final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
+			if (!dataTransferStarted) {
+				DropboxHelper.tryLinkAccount(this);
+			}
+		}
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
-		if (DropboxHelper.hasLinkedAccount()) {
-			NotesApplication.executeInBackground(new Runnable() {
-				@Override
-				public void run() {
-					StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
-				}
-			});
-		}
+		startDataTransferToDropboxIfNeeded();
 	}
 
 	public void showAppSettings() {
@@ -231,6 +246,30 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (orderOrdinal != -1) {
 			setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
 		}
+	}
+
+	private boolean startDataTransferToDropboxIfNeeded() {
+		// TODO refactor !!!
+		boolean startDataTransfer =
+				Storage.getCurrentStorageType() == Storage.Type.Database &&
+				DropboxHelper.hasLinkedAccount();
+
+		if (startDataTransfer) {
+			NotesApplication.executeInBackground(new Runnable() {
+				@Override
+				public void run() {
+					StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
+					MainActivity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							invalidateOptionsMenu();
+						}
+					});
+				}
+			});
+		}
+
+		return startDataTransfer;
 	}
 
 }

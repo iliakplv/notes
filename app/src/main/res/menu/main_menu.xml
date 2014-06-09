@@ -9,8 +9,8 @@
 	<!-- Sort menu here (order = 1). See MainActivity.java -->
 
 	<item
-		android:id="@+id/action_sync"
-		android:title="[sync]"
+		android:id="@+id/action_dropbox"
+		android:title="@string/action_dropbox_refresh"
 		android:orderInCategory="99"
 		android:showAsAction="never"/>
 

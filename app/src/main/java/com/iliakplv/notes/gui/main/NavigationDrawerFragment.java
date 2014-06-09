@@ -294,6 +294,7 @@ public class NavigationDrawerFragment extends Fragment implements
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Dropbox action title
 		if (drawerLayout != null && isDrawerOpen()) {
 			inflater.inflate(R.menu.drawer_menu, menu);
 			showGlobalContextActionBar();
@@ -322,6 +323,7 @@ public class NavigationDrawerFragment extends Fragment implements
 
 	@Override
 	public void onContentChanged() {
+		// TODO check this
 		mainActivity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
