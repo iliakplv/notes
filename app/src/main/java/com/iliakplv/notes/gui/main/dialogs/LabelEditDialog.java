@@ -61,6 +61,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 				savedInstanceState.getInt(EXTRA_SELECTED_COLOR) :
 				label.getColor();
 
+		// TODO radio group
 		final LabelEditDialogCheckBoxListener checkBoxListener =
 				new LabelEditDialogCheckBoxListener((CheckBox) labelDialogView.findViewById(COLORS_CHECKBOXES_IDS[selectedColor]));
 		for (int i = 0; i < COLORS_CHECKBOXES_IDS.length; i++) {
