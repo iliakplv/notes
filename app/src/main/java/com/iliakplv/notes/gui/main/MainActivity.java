@@ -20,6 +20,7 @@ import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.notes.storage.StorageDataTransfer;
+import com.iliakplv.notes.utils.ConnectivityUtils;
 
 import java.io.Serializable;
 
@@ -212,14 +213,18 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void performDropboxAction() {
-		if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
-			storage.sync();
-			Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
-		} else {
-			final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
-			if (!dataTransferStarted) {
-				DropboxHelper.tryLinkAccountFromActivity(this);
+		if (ConnectivityUtils.isNetworkConnected()) {
+			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
+				storage.sync();
+				Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
+			} else {
+				final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
+				if (!dataTransferStarted) {
+					DropboxHelper.tryLinkAccountFromActivity(this);
+				}
 			}
+		} else {
+			Toast.makeText(this, R.string.no_connection_toast, Toast.LENGTH_SHORT).show();
 		}
 	}
 

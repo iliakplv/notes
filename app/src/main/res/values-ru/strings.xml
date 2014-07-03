@@ -69,4 +69,6 @@
 	<string name="settings_show_drawer_title">Начинать с панели навигации</string>
 	<string name="settings_show_drawer_subtitle">Всегда открывать панель навигации при запуске приложения</string>
 
+	<string name="no_connection_toast">Нет подключения к сети!</string>
+
 </resources>
