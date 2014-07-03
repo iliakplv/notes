@@ -18,6 +18,7 @@
 	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_dropbox_link">Привязать аккаунт Dropbox</string>
 	<string name="action_dropbox_refresh">Обновить</string>
+	<string name="action_dropbox_refresh_toast">Синхронизация…</string>
 	<string name="action_settings">Настройки</string>
 
 	<string name="action_sort">Сортировка</string>

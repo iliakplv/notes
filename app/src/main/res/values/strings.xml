@@ -18,6 +18,7 @@
 	<string name="action_bar_share_title">Share note</string>
 	<string name="action_dropbox_link">Link Dropbox account</string>
 	<string name="action_dropbox_refresh">Refresh</string>
+	<string name="action_dropbox_refresh_toast">Sync has been started…</string>
 	<string name="action_settings">Settings</string>
 
 	<string name="action_sort">Sort</string>

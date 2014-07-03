@@ -11,8 +11,9 @@
 	<item
 		android:id="@+id/action_dropbox"
 		android:title="@string/action_dropbox_refresh"
+		android:icon="@drawable/ic_popup_sync"
 		android:orderInCategory="99"
-		android:showAsAction="never"/>
+		android:showAsAction="always"/>
 
 	<item
 		android:id="@+id/action_settings"

@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
@@ -157,8 +158,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (dropboxItem !=  null) {
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 				dropboxItem.setTitle(R.string.action_dropbox_refresh);
+				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			} else {
 				dropboxItem.setTitle(R.string.action_dropbox_link);
+				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 			}
 		}
 	}
@@ -209,9 +212,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void performDropboxAction() {
-		// TODO refactor !!!
 		if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 			storage.sync();
+			Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
 		} else {
 			final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
 			if (!dataTransferStarted) {
@@ -249,7 +252,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private boolean startDataTransferToDropboxIfNeeded() {
-		// TODO refactor !!!
 		boolean startDataTransfer =
 				Storage.getCurrentStorageType() == Storage.Type.Database &&
 				DropboxHelper.hasLinkedAccount();
