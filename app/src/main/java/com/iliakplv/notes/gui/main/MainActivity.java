@@ -158,7 +158,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (dropboxItem !=  null) {
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 				dropboxItem.setTitle(R.string.action_dropbox_refresh);
-				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 			} else {
 				dropboxItem.setTitle(R.string.action_dropbox_link);
 				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
