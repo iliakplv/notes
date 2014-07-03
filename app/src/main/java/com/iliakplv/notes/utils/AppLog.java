@@ -8,6 +8,9 @@ public class AppLog {
 
 	private static final boolean ENABLED = BuildConfig.DEBUG;
 
+	private AppLog() {
+		throw new AssertionError("Instance creation not allowed!");
+	}
 
 	public static void d(String tag, String msg) {
 		if (ENABLED) {
