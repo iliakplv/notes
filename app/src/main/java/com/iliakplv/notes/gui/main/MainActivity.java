@@ -118,14 +118,25 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		if (isDetailsShown()) {
+		if (navigationDrawerFragment.isDrawerOpen()) {
+			// 1. close drawer if opened
+			navigationDrawerFragment.closeDrawer();
+		} else if (isDetailsShown()) {
+			// 2. close note details if shown
+			super.onBackPressed();
 			setDetailsShown(false);
 			final NoteDetailsFragment noteDetailsFragment =
 					(NoteDetailsFragment) getFragmentManager().findFragmentByTag(NoteDetailsFragment.TAG);
 			if (noteDetailsFragment != null) {
 				noteDetailsFragment.onBackPressed();
 			}
+		} else if (navigationDrawerFragment.isLabelSelected()) {
+			// 3. return to all labels if any label selected
+			navigationDrawerFragment.selectAllLabels();
+			restoreActionBar();
+		} else {
+			// 4. exit from app
+			super.onBackPressed();
 		}
 	}
 

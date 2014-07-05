@@ -41,8 +41,8 @@ public class NavigationDrawerFragment extends Fragment implements
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
-	private static final int ALL_LABELS_HEADER_POSITION = 0;
 	private static final int NO_LABEL_SELECTED = -1;
+	private static final int ALL_LABELS_HEADER_POSITION = 0;
 
 	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
@@ -57,9 +57,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
 
-
-	public NavigationDrawerFragment() {
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -146,17 +143,12 @@ public class NavigationDrawerFragment extends Fragment implements
 		storage.removeStorageListener(this);
 	}
 
-	public boolean isDrawerOpen() {
-		return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
-	}
-
 	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
 		fragmentContainerView = getActivity().findViewById(fragmentId);
 		this.drawerLayout = drawerLayout;
-
 		this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-		ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
@@ -173,7 +165,6 @@ public class NavigationDrawerFragment extends Fragment implements
 				if (!isAdded()) {
 					return;
 				}
-
 				getActivity().invalidateOptionsMenu();
 			}
 
@@ -210,6 +201,16 @@ public class NavigationDrawerFragment extends Fragment implements
 		sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
 	}
 
+	public boolean isDrawerOpen() {
+		return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
+	}
+
+	public void closeDrawer() {
+		if (isDrawerOpen()) {
+			drawerLayout.closeDrawer(fragmentContainerView);
+		}
+	}
+
 	private void selectItem(int position) {
 		if (position == labelsListView.getCount() - 1) {
 			createNewLabel();
@@ -235,7 +236,15 @@ public class NavigationDrawerFragment extends Fragment implements
 		}
 	}
 
-	public void createNewLabel() {
+	public boolean isLabelSelected() {
+		return currentSelectedPosition > ALL_LABELS_HEADER_POSITION;
+	}
+
+	public void selectAllLabels(){
+		selectItem(ALL_LABELS_HEADER_POSITION);
+	}
+
+	private void createNewLabel() {
 		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
 	}
 
