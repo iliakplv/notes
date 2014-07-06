@@ -37,12 +37,9 @@ import java.util.List;
 public class NavigationDrawerFragment extends Fragment implements
 		LabelEditDialog.LabelEditDialogCallback, NotesStorageListener {
 
-	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
-	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
-	private static final int NO_LABEL_SELECTED = -1;
+	public static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int ALL_LABELS_HEADER_POSITION = 0;
+	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
@@ -53,7 +50,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	private ListView labelsListView;
 	private LabelsListAdapter labelsListAdapter;
 
-	private int currentSelectedPosition = NO_LABEL_SELECTED;
 	private boolean fromSavedInstanceState;
 	private boolean userLearnedDrawer;
 
@@ -61,15 +57,9 @@ public class NavigationDrawerFragment extends Fragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		fromSavedInstanceState = savedInstanceState != null;
 		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
-		if (savedInstanceState != null) {
-			currentSelectedPosition =
-					savedInstanceState.getInt(STATE_SELECTED_POSITION, NO_LABEL_SELECTED);
-			fromSavedInstanceState = true;
-		}
 	}
 
 	@Override
@@ -131,9 +121,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (fromSavedInstanceState && currentSelectedPosition != NO_LABEL_SELECTED) {
-			selectItem(currentSelectedPosition);
-		}
 		storage.addStorageListener(this);
 	}
 
@@ -213,35 +200,22 @@ public class NavigationDrawerFragment extends Fragment implements
 
 	private void selectItem(int position) {
 		if (position == labelsListView.getCount() - 1) {
+			// 'New label' position
 			createNewLabel();
 		} else {
-			currentSelectedPosition = position;
-			if (drawerLayout != null) {
-				drawerLayout.closeDrawer(fragmentContainerView);
-			}
+			closeDrawer();
 
 			final Serializable labelId;
-			final String newTitle;
 			if (position == ALL_LABELS_HEADER_POSITION) {
 				labelId = ALL_LABELS;
-				newTitle = getString(R.string.labels_drawer_all_notes);
 			} else {
 				final List<Label> allLabels = storage.getAllLabels();
 				final Label label = allLabels.get(position - 1);
 				labelId = label.getId();
-				newTitle = NotesUtils.getTitleForLabel(label);
 			}
 
-			mainActivity.onLabelSelected(labelId, newTitle);
+			mainActivity.onLabelSelected(labelId);
 		}
-	}
-
-	public boolean isLabelSelected() {
-		return currentSelectedPosition > ALL_LABELS_HEADER_POSITION;
-	}
-
-	public void selectAllLabels(){
-		selectItem(ALL_LABELS_HEADER_POSITION);
 	}
 
 	private void createNewLabel() {
@@ -269,11 +243,7 @@ public class NavigationDrawerFragment extends Fragment implements
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		try {
-			mainActivity = (MainActivity) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException("Activity must implement NavigationDrawerListener.");
-		}
+		mainActivity = (MainActivity) activity;
 	}
 
 	@Override
@@ -285,7 +255,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition);
 	}
 
 	@Override
@@ -312,7 +281,7 @@ public class NavigationDrawerFragment extends Fragment implements
 	}
 
 	private void showGlobalContextActionBar() {
-		ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setTitle(R.string.app_name);
@@ -379,6 +348,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	}
 
 	public static interface NavigationDrawerListener {
-		void onLabelSelected(Serializable id, String newTitle);
+		void onLabelSelected(Serializable id);
 	}
 }

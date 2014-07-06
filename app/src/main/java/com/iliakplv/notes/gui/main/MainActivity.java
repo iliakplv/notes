@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
+import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
@@ -27,6 +28,7 @@ import java.io.Serializable;
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
+	private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final Integer NEW_NOTE = 0;
 
@@ -34,6 +36,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private volatile boolean detailsShown = false;
 	private NavigationDrawerFragment navigationDrawerFragment;
+
+	private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
 	private CharSequence title;
 
 
@@ -63,6 +67,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			ft.commit();
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
+			selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
 		}
 
 	}
@@ -70,7 +75,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private void setupNavigationDrawer() {
 		navigationDrawerFragment = (NavigationDrawerFragment)
 				getFragmentManager().findFragmentById(R.id.navigation_drawer);
-		title = getTitle();
 
 		navigationDrawerFragment.setUp(
 				R.id.navigation_drawer,
@@ -78,12 +82,36 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	@Override
-	public void onLabelSelected(Serializable labelId, String newTitle) {
-		title = newTitle;
+	protected void onResume() {
+		super.onResume();
+		updateLabelSelection();
+	}
+
+	@Override
+	public void onLabelSelected(Serializable labelId) {
+		selectedLabelId = labelId;
+		updateLabelSelection();
+	}
+
+	private void updateLabelSelection() {
+		updateNotesList();
+		updateActionBarTitle();
+	}
+
+	private void updateNotesList() {
 		final NotesListFragment noteListFragment =
 				(NotesListFragment) getFragmentManager().findFragmentByTag(NotesListFragment.TAG);
 		if (noteListFragment != null) {
-			noteListFragment.showNotesForLabel(labelId);
+			noteListFragment.showNotesForLabel(selectedLabelId);
+		}
+	}
+
+	private void updateActionBarTitle() {
+		if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)){
+			title = getString(R.string.labels_drawer_all_notes);
+		} else {
+			final Label label = storage.getLabel(selectedLabelId);
+			title = label != null ? NotesUtils.getTitleForLabel(label) : getString(R.string.app_name);
 		}
 	}
 
@@ -114,6 +142,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(ARG_DETAILS_SHOWN, detailsShown);
+		outState.putSerializable(ARG_SELECTED_LABEL_ID, selectedLabelId);
 	}
 
 	@Override
@@ -130,9 +159,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			if (noteDetailsFragment != null) {
 				noteDetailsFragment.onBackPressed();
 			}
-		} else if (navigationDrawerFragment.isLabelSelected()) {
+		} else if (!NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
 			// 3. return to all labels if any label selected
-			navigationDrawerFragment.selectAllLabels();
+			onLabelSelected(NavigationDrawerFragment.ALL_LABELS);
 			restoreActionBar();
 		} else {
 			// 4. exit from app
