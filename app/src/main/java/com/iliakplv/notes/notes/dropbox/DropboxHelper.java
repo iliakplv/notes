@@ -1,13 +1,18 @@
 package com.iliakplv.notes.notes.dropbox;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.iliakplv.notes.NotesApplication;
+import com.iliakplv.notes.notes.storage.Storage;
 
 
 /**
@@ -22,6 +27,8 @@ public final class DropboxHelper {
 
 	private static DbxAccountManager accountManager = null;
 	private static DbxAccount account = null;
+
+	private static ConnectivityReceiver connectivityReceiver;
 
 
 	// call from activity
@@ -71,5 +78,41 @@ public final class DropboxHelper {
 			}
 		}
 		return account;
+	}
+
+	public static void initSynchronization() {
+		if (connectivityReceiver == null &&
+				hasLinkedAccount() &&
+				Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
+			
+			connectivityReceiver = new ConnectivityReceiver();
+			NotesApplication.getContext().registerReceiver(connectivityReceiver,
+					new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+	public static void disableSynchronization() {
+		if (connectivityReceiver != null) {
+			NotesApplication.getContext().unregisterReceiver(connectivityReceiver);
+			connectivityReceiver = null;
+		}
+	}
+
+
+	/**
+	 * ***************** Inner classes *******************
+	 */
+
+	private static final class ConnectivityReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final ConnectivityManager cm =
+					(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			if (activeNetwork != null && activeNetwork.isConnected()) {
+				Storage.getStorage().sync();
+			}
+		}
 	}
 }

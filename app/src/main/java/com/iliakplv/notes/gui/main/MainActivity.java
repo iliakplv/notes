@@ -306,6 +306,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				@Override
 				public void run() {
 					StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
+					DropboxHelper.initSynchronization();
 					MainActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
