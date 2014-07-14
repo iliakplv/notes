@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.iliakplv.notes.NotesApplication;
+import com.iliakplv.notes.analytics.Event;
+import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.notes.storage.Storage;
 
 
@@ -40,6 +42,7 @@ public final class DropboxHelper {
 			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
 		} else {
 			accountManager.startLink(accountLinkActivity, REQUEST_LINK_TO_DBX);
+			EventTracker.getInstance().track(Event.DropboxLinkAttempt);
 		}
 	}
 
@@ -49,8 +52,10 @@ public final class DropboxHelper {
 			if (resultCode == Activity.RESULT_OK) {
 				account = accountManager.getLinkedAccount();
 				Toast.makeText(accountLinkActivity, "Dropbox account has been linked", Toast.LENGTH_LONG).show();
+				EventTracker.getInstance().track(Event.DropboxLinkSuccess);
 			} else {
 				Toast.makeText(accountLinkActivity, "Dropbox account link failed!", Toast.LENGTH_LONG).show();
+				EventTracker.getInstance().track(Event.DropboxLinkFail);
 			}
 		}
 	}
@@ -112,6 +117,7 @@ public final class DropboxHelper {
 			final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 			if (activeNetwork != null && activeNetwork.isConnected()) {
 				Storage.getStorage().sync();
+				EventTracker.getInstance().track(Event.DropboxSyncAuto);
 			}
 		}
 	}

@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.analytics.Event;
+import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -128,6 +130,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
+
+		if (NEW_NOTE.equals(noteId)) {
+			EventTracker.getInstance().track(Event.NoteCreateClick);
+		} else {
+			EventTracker.getInstance().track(Event.NoteShow);
+		}
 	}
 
 	public void createNewNote() {
@@ -227,15 +235,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			// sort menu
 			case R.id.sort_by_title:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
+				EventTracker.getInstance().track(Event.NotesSortOrderSelect);
 				return true;
 			case R.id.sort_by_create_asc:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
+				EventTracker.getInstance().track(Event.NotesSortOrderSelect);
 				return true;
 			case R.id.sort_by_create_desc:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
+				EventTracker.getInstance().track(Event.NotesSortOrderSelect);
 				return true;
 			case R.id.sort_by_change:
 				setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
+				EventTracker.getInstance().track(Event.NotesSortOrderSelect);
 				return true;
 
 			// global menu
@@ -257,6 +269,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 				storage.sync();
 				Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
+				EventTracker.getInstance().track(Event.DropboxSyncManual);
 			} else {
 				final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
 				if (!dataTransferStarted) {
@@ -278,6 +291,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	public void showAppSettings() {
 		final Intent settingsIntent = new Intent(this, SettingsActivity.class);
 		startActivity(settingsIntent);
+		EventTracker.getInstance().track(Event.SettingsOpening);
 	}
 
 	private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
