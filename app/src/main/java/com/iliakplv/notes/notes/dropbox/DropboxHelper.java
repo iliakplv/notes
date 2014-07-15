@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
@@ -110,15 +111,38 @@ public final class DropboxHelper {
 
 	private static final class ConnectivityReceiver extends BroadcastReceiver {
 
+		private static final int AUTO_SYNC_INTERVAL_MILLIS = 1000;
+		private static final String LAST_AUTO_SYNC_TIME = "last_auto_sync_time";
+
+		private final SharedPreferences sharedPreferences;
+
+		private ConnectivityReceiver() {
+			sharedPreferences = NotesApplication.getContext()
+					.getSharedPreferences(ConnectivityReceiver.class.getSimpleName(), Activity.MODE_PRIVATE);
+		}
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final ConnectivityManager cm =
 					(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 			final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
 			if (activeNetwork != null && activeNetwork.isConnected()) {
-				Storage.getStorage().sync();
-				EventTracker.getInstance().track(Event.DropboxSyncAuto);
+				if (isSyncIntervalExceeded()) {
+					Storage.getStorage().sync();
+					updateLastSyncTime();
+					EventTracker.getInstance().track(Event.DropboxSyncAuto);
+				}
 			}
+		}
+
+		private void updateLastSyncTime() {
+			sharedPreferences.edit().putLong(LAST_AUTO_SYNC_TIME, System.currentTimeMillis()).apply();
+		}
+
+		private boolean isSyncIntervalExceeded() {
+			return System.currentTimeMillis() - sharedPreferences.getLong(LAST_AUTO_SYNC_TIME, 0)
+					>= AUTO_SYNC_INTERVAL_MILLIS;
 		}
 	}
 }
