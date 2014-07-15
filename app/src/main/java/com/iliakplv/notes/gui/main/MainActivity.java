@@ -298,7 +298,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (storage.setNotesSortOrder(order)) {
 			final SharedPreferences.Editor editor = getPreferences(Activity.MODE_PRIVATE).edit();
 			editor.putInt(PREFS_KEY_SORT_ORDER, order.ordinal());
-			editor.commit();
+			editor.apply();
 		}
 	}
 
