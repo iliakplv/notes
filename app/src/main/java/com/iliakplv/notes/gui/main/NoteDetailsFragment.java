@@ -163,20 +163,18 @@ public class NoteDetailsFragment extends Fragment {
 	}
 
 	// returns true if new note created
-	private boolean trySaveCurrentNote(boolean saveIfEmpty) {
+	private void trySaveCurrentNote(boolean saveIfEmpty) {
 		final String LOG_PREFIX = "trySaveCurrentNote(): ";
 
 		final String newTitle = title.getText().toString();
 		final String newBody = body.getText().toString();
 
-		boolean newNoteCreated = false;
 		if (isNewNoteId(noteId)) {
 			if (saveIfEmpty ||
 					!StringUtils.isNullOrEmpty(newTitle) ||
 					!StringUtils.isNullOrEmpty(newBody)) {
 				// (perform on UI thread)
 				noteId = storage.insertNote(new TextNote(newTitle, newBody));
-				newNoteCreated = true;
 				AppLog.d(TAG, LOG_PREFIX + "New note saved. Id = " + noteId);
 			} else {
 				AppLog.d(TAG, LOG_PREFIX + "New note empty. Not saved.");
@@ -202,6 +200,5 @@ public class NoteDetailsFragment extends Fragment {
 				AppLog.d(TAG, LOG_PREFIX + "Note entry is null (!)");
 			}
 		}
-		return newNoteCreated;
 	}
 }

@@ -46,12 +46,12 @@ import java.util.Set;
 	}
 
 	public boolean updateNote(Serializable id, AbstractNote note) {
-		EventTracker.getInstance().track(Event.NoteEdit);
+		// track event
 		return target.updateNote(id, note);
 	}
 
 	public boolean deleteNote(Serializable id) {
-		EventTracker.getInstance().track(Event.NoteDelete);
+		// track event
 		return target.deleteNote(id);
 	}
 

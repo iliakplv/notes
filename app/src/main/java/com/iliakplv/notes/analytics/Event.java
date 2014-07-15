@@ -6,39 +6,45 @@ public enum Event {
 
 	// TODO create events for use-cases those can be started from different points
 	// notes labels dialog, note share, label creation from note details
-	// TODO track note/label real save/delete !!!
-	// TODO do not track note temp save/delete !!!
 	// TODO disable event tracking during data transfer !!!
+	// TODO test
 
 
-//	Notes
+/*	Notes */
 
+	// tracked from UI
 	NoteCreateClick,
 	NoteShow,
+	// TODO tracked from storage
 	NoteEdit,
 	NoteDelete,
+	// tracked from UI
 	NoteInfoShow,
 	NoteShareDialogShow,
 	NotesSortOrderSelect,
 
-//	Labels
+/*	Labels */
 
+	// tracked from UI
 	LabelCreateClick,
 	LabelSelect,
+	// tracked from storage
 	LabelEdit,
 	LabelDelete,
 	LabelAddToNote,
 	LabelRemoveFromNote,
 
-//	Dropbox
-	
+/*	Dropbox */
+
+	// tracked from dropbox class
 	DropboxLinkAttempt,
 	DropboxLinkSuccess,
 	DropboxLinkFail,
 	DropboxSyncAuto,
+	// tracked from UI
 	DropboxSyncManual,
 	
-//	Other
+/*	Other */
 
 	SettingsOpening
 }
