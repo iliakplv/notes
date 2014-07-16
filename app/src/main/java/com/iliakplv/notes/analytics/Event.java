@@ -13,13 +13,13 @@ public enum Event {
 	// tracked from UI
 	NoteCreateClick,
 	NoteShow,
-	// TODO tracked from storage
-	NoteEdit,
-	NoteDelete,
-	// tracked from UI
 	NoteInfoShow,
 	NoteShareDialogShow,
 	NotesSortOrderSelect,
+	// tracked from storage
+	NoteCreate,
+	NoteEdit,
+	NoteDelete,
 
 /*	Labels */
 
@@ -27,6 +27,7 @@ public enum Event {
 	LabelCreateClick,
 	LabelSelect,
 	// tracked from storage
+	LabelCreate,
 	LabelEdit,
 	LabelDelete,
 	LabelAddToNote,

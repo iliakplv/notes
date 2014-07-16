@@ -42,16 +42,17 @@ import java.util.Set;
 	}
 
 	public Serializable insertNote(AbstractNote note) {
+		EventTracker.track(Event.NoteCreate);
 		return target.insertNote(note);
 	}
 
 	public boolean updateNote(Serializable id, AbstractNote note) {
-		// track event
+		EventTracker.track(Event.NoteEdit);
 		return target.updateNote(id, note);
 	}
 
 	public boolean deleteNote(Serializable id) {
-		// track event
+		EventTracker.track(Event.NoteDelete);
 		return target.deleteNote(id);
 	}
 
@@ -66,6 +67,7 @@ import java.util.Set;
 	}
 
 	public Serializable insertLabel(Label label) {
+		EventTracker.track(Event.LabelCreate);
 		return target.insertLabel(label);
 	}
 
