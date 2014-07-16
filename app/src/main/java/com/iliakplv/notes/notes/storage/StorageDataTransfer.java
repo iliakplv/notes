@@ -3,6 +3,7 @@ package com.iliakplv.notes.notes.storage;
 
 import android.util.Pair;
 
+import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.utils.AppLog;
@@ -88,6 +89,9 @@ public final class StorageDataTransfer {
 			return;
 		}
 
+		final boolean eventTrackingWasEnabled = EventTracker.isEnabled();
+		EventTracker.setEnabled(false);
+
 		backupCurrentStorage();
 		if (clearCurrentStorage) {
 			clearCurrentStorage();
@@ -108,5 +112,7 @@ public final class StorageDataTransfer {
 		}
 
 		clearBackup();
+
+		EventTracker.setEnabled(eventTrackingWasEnabled);
 	}
 }

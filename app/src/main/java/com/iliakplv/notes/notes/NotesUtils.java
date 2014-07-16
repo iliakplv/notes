@@ -82,7 +82,7 @@ public final class NotesUtils {
 			intent.putExtra(Intent.EXTRA_SUBJECT, subject);
 			intent.putExtra(Intent.EXTRA_TEXT, text);
 			context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_bar_share_title)));
-			EventTracker.getInstance().track(Event.NoteShareDialogShow);
+			EventTracker.track(Event.NoteShareDialogShow);
 		} else if (showToastIfEmpty) {
 			Toast.makeText(context, R.string.empty_note_not_shared, Toast.LENGTH_SHORT).show();
 		}

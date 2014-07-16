@@ -218,13 +218,13 @@ public class NavigationDrawerFragment extends Fragment implements
 
 			mainActivity.onLabelSelected(labelId);
 
-			EventTracker.getInstance().track(Event.LabelSelect);
+			EventTracker.track(Event.LabelSelect);
 		}
 	}
 
 	private void createNewLabel() {
 		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
-		EventTracker.getInstance().track(Event.LabelCreateClick);
+		EventTracker.track(Event.LabelCreateClick);
 	}
 
 	public void showLabelEditDialog(Serializable labelId) {

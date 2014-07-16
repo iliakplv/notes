@@ -206,7 +206,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 					break;
 				case INFO_INDEX:
 					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteInfo);
-					EventTracker.getInstance().track(Event.NoteInfoShow);
+					EventTracker.track(Event.NoteInfoShow);
 					break;
 				case DELETE_INDEX:
 					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteDelete);

@@ -70,12 +70,12 @@ import java.util.Set;
 	}
 
 	public boolean updateLabel(Serializable id, Label label) {
-		EventTracker.getInstance().track(Event.LabelEdit);
+		EventTracker.track(Event.LabelEdit);
 		return target.updateLabel(id, label);
 	}
 
 	public boolean deleteLabel(Serializable id) {
-		EventTracker.getInstance().track(Event.LabelDelete);
+		EventTracker.track(Event.LabelDelete);
 		return target.deleteLabel(id);
 	}
 
@@ -94,12 +94,12 @@ import java.util.Set;
 	}
 
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
-		EventTracker.getInstance().track(Event.LabelAddToNote);
+		EventTracker.track(Event.LabelAddToNote);
 		return target.insertLabelToNote(noteId,labelId);
 	}
 
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
-		EventTracker.getInstance().track(Event.LabelRemoveFromNote);
+		EventTracker.track(Event.LabelRemoveFromNote);
 		return target.deleteLabelFromNote(noteId, labelId);
 	}
 

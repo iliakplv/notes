@@ -43,7 +43,7 @@ public final class DropboxHelper {
 			Toast.makeText(accountLinkActivity, "Dropbox account linked", Toast.LENGTH_LONG).show();
 		} else {
 			accountManager.startLink(accountLinkActivity, REQUEST_LINK_TO_DBX);
-			EventTracker.getInstance().track(Event.DropboxLinkAttempt);
+			EventTracker.track(Event.DropboxLinkAttempt);
 		}
 	}
 
@@ -53,10 +53,10 @@ public final class DropboxHelper {
 			if (resultCode == Activity.RESULT_OK) {
 				account = accountManager.getLinkedAccount();
 				Toast.makeText(accountLinkActivity, "Dropbox account has been linked", Toast.LENGTH_LONG).show();
-				EventTracker.getInstance().track(Event.DropboxLinkSuccess);
+				EventTracker.track(Event.DropboxLinkSuccess);
 			} else {
 				Toast.makeText(accountLinkActivity, "Dropbox account link failed!", Toast.LENGTH_LONG).show();
-				EventTracker.getInstance().track(Event.DropboxLinkFail);
+				EventTracker.track(Event.DropboxLinkFail);
 			}
 		}
 	}
@@ -131,7 +131,7 @@ public final class DropboxHelper {
 				if (isSyncIntervalExceeded()) {
 					Storage.getStorage().sync();
 					updateLastSyncTime();
-					EventTracker.getInstance().track(Event.DropboxSyncAuto);
+					EventTracker.track(Event.DropboxSyncAuto);
 				}
 			}
 		}

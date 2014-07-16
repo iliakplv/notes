@@ -6,8 +6,6 @@ public enum Event {
 
 	// TODO create events for use-cases those can be started from different points
 	// notes labels dialog, note share, label creation from note details
-	// TODO disable event tracking during data transfer !!!
-	// TODO test
 
 
 /*	Notes */
