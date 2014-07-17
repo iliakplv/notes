@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
 	compileSdkVersion 19
-	buildToolsVersion '19.0.3'
+	buildToolsVersion '19.1.0'
 
 	defaultConfig {
 		minSdkVersion 14
@@ -59,7 +59,7 @@ tasks.withType(Compile) {
 }
 
 dependencies {
-	compile 'com.android.support:support-v4:+'
+	compile 'com.android.support:support-v4:20.+'
 	compile 'joda-time:joda-time:2.3'
 
 	compile files('libs/dropbox-sync-sdk-android.jar')

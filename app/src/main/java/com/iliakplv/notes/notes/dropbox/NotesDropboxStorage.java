@@ -573,12 +573,12 @@ public class NotesDropboxStorage implements NotesStorage {
 			labelsListCacheActual = false;
 		}
 
-		notifyDatabaseListeners();
+		notifyListeners();
 	}
 
 	// Listeners
 
-	private void notifyDatabaseListeners() {
+	private void notifyListeners() {
 		if (storageListeners != null) {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override
@@ -610,4 +610,25 @@ public class NotesDropboxStorage implements NotesStorage {
 		return false;
 	}
 
+	@Override
+	public List<NotesStorageListener> detachAllListeners() {
+		if (storageListeners == null) {
+			storageListeners = new LinkedList<NotesStorageListener>();
+		}
+		final List<NotesStorageListener> listeners = storageListeners;
+		storageListeners = null;
+		return listeners;
+	}
+
+	@Override
+	public void attachListeners(List<NotesStorageListener> listeners) {
+		if (listeners == null) {
+			throw new NullPointerException();
+		}
+		if (storageListeners == null) {
+			storageListeners = new LinkedList<NotesStorageListener>();
+		}
+		storageListeners.addAll(listeners);
+		notifyListeners();
+	}
 }

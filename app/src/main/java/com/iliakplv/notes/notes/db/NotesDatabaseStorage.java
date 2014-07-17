@@ -51,7 +51,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 		if (orderChanged) {
 			this.notesSortOrder = notesSortOrder;
 			notesListCacheActual = false;
-			notifyDatabaseListeners();
+			notifyListeners();
 		}
 		return orderChanged;
 	}
@@ -282,13 +282,13 @@ public class NotesDatabaseStorage implements NotesStorage {
 		}
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
-			notifyDatabaseListeners();
+			notifyListeners();
 		}
 	}
 
 	// Listeners
 
-	private void notifyDatabaseListeners() {
+	private void notifyListeners() {
 		if (databaseListeners != null) {
 			NotesApplication.executeInBackground(new Runnable() {
 				@Override
@@ -318,6 +318,28 @@ public class NotesDatabaseStorage implements NotesStorage {
 			return databaseListeners.remove(listener);
 		}
 		return false;
+	}
+
+	@Override
+	public List<NotesStorageListener> detachAllListeners() {
+		if (databaseListeners == null) {
+			databaseListeners = new LinkedList<NotesStorageListener>();
+		}
+		final List<NotesStorageListener> listeners = databaseListeners;
+		databaseListeners = null;
+		return listeners;
+	}
+
+	@Override
+	public void attachListeners(List<NotesStorageListener> listeners) {
+		if (listeners == null) {
+			throw new NullPointerException();
+		}
+		if (databaseListeners == null) {
+			databaseListeners = new LinkedList<NotesStorageListener>();
+		}
+		databaseListeners.addAll(listeners);
+		notifyListeners();
 	}
 
 	private static boolean databaseModificationTransaction(TransactionType transactionType) {

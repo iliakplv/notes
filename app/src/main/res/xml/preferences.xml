@@ -9,11 +9,5 @@
 		android:title="@string/settings_linkify_title"
 		android:summary="@string/settings_linkify_subtitle"/>
 
-	<CheckBoxPreference
-		android:key="show_drawer_on_start"
-		android:defaultValue="false"
-		android:title="@string/settings_show_drawer_title"
-		android:summary="@string/settings_show_drawer_subtitle"/>
-
 </PreferenceScreen>
 

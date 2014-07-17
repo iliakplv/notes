@@ -3,6 +3,7 @@ package com.iliakplv.notes.notes.storage;
 
 import android.util.Pair;
 
+import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.utils.AppLog;
@@ -33,9 +34,7 @@ public final class StorageDataTransfer {
 	}
 
 	private static void restoreBackup() {
-		if (!backupPerformed) {
-			throw new IllegalStateException("Backup not performed!");
-		}
+		checkBackupPerformed();
 
 		// Ids mapping
 		final HashMap<Serializable, Serializable> notesOldToNewIdsMap =
@@ -63,7 +62,14 @@ public final class StorageDataTransfer {
 		}
 	}
 
+	private static void checkBackupPerformed() {
+		if (!backupPerformed) {
+			throw new IllegalStateException("Backup not performed!");
+		}
+	}
+
 	private static void clearCurrentStorage() {
+		checkBackupPerformed();
 		storage.clear();
 	}
 
@@ -75,7 +81,7 @@ public final class StorageDataTransfer {
 	}
 
 
-	public static synchronized void transferDataFromDatabaseToDropbox(Storage.Type newStorageType) {
+	public static synchronized void changeStorageType(Storage.Type newStorageType, boolean clearCurrentStorage) {
 		if (newStorageType == null) {
 			throw new NullPointerException("New storage type is null");
 		}
@@ -83,19 +89,40 @@ public final class StorageDataTransfer {
 			return;
 		}
 
-		backupCurrentStorage();
-		if (!backupPerformed) {
-			throw new IllegalStateException("Backup not performed");
-		}
-		clearCurrentStorage();
+		// event tracking state backup
+		final boolean eventTrackingWasEnabled = EventTracker.isEnabled();
+		EventTracker.setEnabled(false);
+		// listeners backup
+		final List<NotesStorageListener> listeners = Storage.getStorage().detachAllListeners();
 
+// data transfer start
+
+		backupCurrentStorage();
+		if (clearCurrentStorage) {
+			clearCurrentStorage();
+		}
+
+		boolean newStorageInitialized = false;
 		try {
 			Storage.init(newStorageType);
+			newStorageInitialized = true;
 		} catch (Exception e) {
 			AppLog.e(TAG, "Exception during storage initialization", e);
 		}
 
-		restoreBackup();
+		// restore data to new initialized storage or
+		// to old storage if new storage has not been initialized and old has been cleared
+		if (newStorageInitialized || clearCurrentStorage) {
+			restoreBackup();
+		}
+
 		clearBackup();
+
+// data transfer end
+
+		// listeners restore
+		Storage.getStorage().attachListeners(listeners);
+		// event tracking state restore
+		EventTracker.setEnabled(eventTrackingWasEnabled);
 	}
 }

@@ -6,7 +6,7 @@ public class LabelComparator implements Comparator<Label> {
 
 	@Override
 	public int compare(Label lhs, Label rhs) {
-		return lhs.getName().compareTo(rhs.getName());
+		return lhs.getName().compareToIgnoreCase(rhs.getName());
 	}
 
 }
