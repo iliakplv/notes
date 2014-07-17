@@ -64,10 +64,8 @@
 
 	<string name="more_labels">…</string>
 
-	<string name="settings_linkify_title">Links in note text</string>
-	<string name="settings_linkify_subtitle">Make URLs and phone numbers clickable</string>
-	<string name="settings_show_drawer_title">Start from navigation</string>
-	<string name="settings_show_drawer_subtitle">Always show navigation panel when app starts</string>
+	<string name="settings_linkify_title">Links in note</string>
+	<string name="settings_linkify_subtitle">Make clickable links and phone numbers in note\'s text</string>
 
 	<string name="no_connection_toast">No network connection!</string>
 

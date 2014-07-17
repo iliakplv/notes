@@ -64,10 +64,8 @@
 
 	<string name="more_labels">…</string>
 
-	<string name="settings_linkify_title">Ссылки в тексте заметки</string>
-	<string name="settings_linkify_subtitle">Делать ссылки и телефонные номера кликабельными</string>
-	<string name="settings_show_drawer_title">Начинать с панели навигации</string>
-	<string name="settings_show_drawer_subtitle">Всегда открывать панель навигации при запуске приложения</string>
+	<string name="settings_linkify_title">Ссылки в заметке</string>
+	<string name="settings_linkify_subtitle">Делать кликабельными ссылки и телефонные номера в тексте заметки</string>
 
 	<string name="no_connection_toast">Нет подключения к сети!</string>
 
