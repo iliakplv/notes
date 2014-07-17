@@ -92,6 +92,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	public void onLabelSelected(Serializable labelId) {
 		selectedLabelId = labelId;
+		closeNoteDetails();
 		updateLabelSelection();
 	}
 
@@ -161,12 +162,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else if (isDetailsShown()) {
 			// 2. close note details if shown
 			super.onBackPressed();
-			setDetailsShown(false);
-			final NoteDetailsFragment noteDetailsFragment =
-					(NoteDetailsFragment) getFragmentManager().findFragmentByTag(NoteDetailsFragment.TAG);
-			if (noteDetailsFragment != null) {
-				noteDetailsFragment.onBackPressed();
-			}
+			closeNoteDetails();
 		} else if (!NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
 			// 3. return to all labels if any label selected
 			onLabelSelected(NavigationDrawerFragment.ALL_LABELS);
@@ -174,6 +170,18 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else {
 			// 4. exit from app
 			super.onBackPressed();
+		}
+	}
+
+	private void closeNoteDetails() {
+		// todo call onBackPressed()
+		if (isDetailsShown()) {
+			setDetailsShown(false);
+			final NoteDetailsFragment noteDetailsFragment =
+					(NoteDetailsFragment) getFragmentManager().findFragmentByTag(NoteDetailsFragment.TAG);
+			if (noteDetailsFragment != null) {
+				noteDetailsFragment.onBackPressed();
+			}
 		}
 	}
 
