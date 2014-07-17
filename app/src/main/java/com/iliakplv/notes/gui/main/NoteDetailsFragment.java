@@ -45,7 +45,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		setHasOptionsMenu(false);
 		noteId  = getArguments().getSerializable(ARG_NOTE_ID);
 		newNoteCreationMode = MainActivity.NEW_NOTE.equals(noteId);
 		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
@@ -66,26 +66,17 @@ public class NoteDetailsFragment extends Fragment {
 			}
 		}
 
+		linkifyNoteBody();
+
 		return view;
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		linkifyNoteBody();
-	}
-
 	private void linkifyNoteBody() {
-		resetNoteBodyText();
 		final SharedPreferences sp =
 				PreferenceManager.getDefaultSharedPreferences(getActivity());
 		if (sp.getBoolean(PREFS_KEY_LINKIFY, false)) {
 			Linkify.addLinks(body, LINKIFY_MASK);
 		}
-	}
-
-	private void resetNoteBodyText() {
-		body.setText(body.getText().toString());
 	}
 
 	public void onBackPressed() {

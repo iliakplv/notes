@@ -183,13 +183,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!navigationDrawerFragment.isDrawerOpen()) {
-			if (isDetailsShown()) {
-				getMenuInflater().inflate(R.menu.note_menu, menu);
-			} else {
+			if (!isDetailsShown()) {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
 				inflateSortMenu(menu);
+				updateDropboxActionTitle(menu);
 			}
-			updateDropboxActionTitle(menu);
 			restoreActionBar();
 			return true;
 		}
