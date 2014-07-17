@@ -1,11 +1,14 @@
 package com.iliakplv.notes.gui.main;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -43,7 +46,7 @@ public class NoteDetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(false);
+		setHasOptionsMenu(true);
 		noteId  = getArguments().getSerializable(ARG_NOTE_ID);
 		newNoteCreationMode = MainActivity.NEW_NOTE.equals(noteId);
 		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
@@ -115,5 +118,18 @@ public class NoteDetailsFragment extends Fragment {
 				AppLog.d(TAG, LOG_PREFIX + "Note entry is null (!!!)");
 			}
 		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		showGlobalContextActionBar();
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	private void showGlobalContextActionBar() {
+		final ActionBar actionBar = getActivity().getActionBar();
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setTitle(R.string.app_name);
 	}
 }
