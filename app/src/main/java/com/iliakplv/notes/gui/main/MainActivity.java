@@ -161,7 +161,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			navigationDrawerFragment.closeDrawer();
 		} else if (isDetailsShown()) {
 			// 2. close note details if shown
-			super.onBackPressed();
 			closeNoteDetails();
 		} else if (!NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
 			// 3. return to all labels if any label selected
@@ -174,7 +173,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void closeNoteDetails() {
-		// todo call onBackPressed()
 		if (isDetailsShown()) {
 			setDetailsShown(false);
 			final NoteDetailsFragment noteDetailsFragment =
@@ -182,6 +180,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			if (noteDetailsFragment != null) {
 				noteDetailsFragment.onBackPressed();
 			}
+			super.onBackPressed();
 		}
 	}
 

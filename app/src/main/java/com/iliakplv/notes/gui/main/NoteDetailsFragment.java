@@ -119,17 +119,4 @@ public class NoteDetailsFragment extends Fragment {
 			}
 		}
 	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		showGlobalContextActionBar();
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	private void showGlobalContextActionBar() {
-		final ActionBar actionBar = getActivity().getActionBar();
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setTitle(R.string.app_name);
-	}
 }
