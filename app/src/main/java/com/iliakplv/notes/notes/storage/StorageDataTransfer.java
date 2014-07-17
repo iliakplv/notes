@@ -89,8 +89,13 @@ public final class StorageDataTransfer {
 			return;
 		}
 
+		// event tracking state backup
 		final boolean eventTrackingWasEnabled = EventTracker.isEnabled();
 		EventTracker.setEnabled(false);
+		// listeners backup
+		final List<NotesStorageListener> listeners = Storage.getStorage().detachAllListeners();
+
+// data transfer start
 
 		backupCurrentStorage();
 		if (clearCurrentStorage) {
@@ -113,6 +118,11 @@ public final class StorageDataTransfer {
 
 		clearBackup();
 
+// data transfer end
+
+		// listeners restore
+		Storage.getStorage().attachListeners(listeners);
+		// event tracking state restore
 		EventTracker.setEnabled(eventTrackingWasEnabled);
 	}
 }

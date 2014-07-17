@@ -320,6 +320,28 @@ public class NotesDatabaseStorage implements NotesStorage {
 		return false;
 	}
 
+	@Override
+	public List<NotesStorageListener> detachAllListeners() {
+		if (databaseListeners == null) {
+			databaseListeners = new LinkedList<NotesStorageListener>();
+		}
+		final List<NotesStorageListener> listeners = databaseListeners;
+		databaseListeners = null;
+		return listeners;
+	}
+
+	@Override
+	public void attachListeners(List<NotesStorageListener> listeners) {
+		if (listeners == null) {
+			throw new NullPointerException();
+		}
+		if (databaseListeners == null) {
+			databaseListeners = new LinkedList<NotesStorageListener>();
+		}
+		databaseListeners.addAll(listeners);
+		notifyListeners();
+	}
+
 	private static boolean databaseModificationTransaction(TransactionType transactionType) {
 		switch (transactionType) {
 			case InsertNote:

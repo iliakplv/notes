@@ -115,6 +115,16 @@ import java.util.Set;
 		return target.removeStorageListener(listener);
 	}
 
+	@Override
+	public void attachListeners(List<NotesStorageListener> listeners) {
+		target.attachListeners(listeners);
+	}
+
+	@Override
+	public List<NotesStorageListener> detachAllListeners() {
+		return target.detachAllListeners();
+	}
+
 	// sync
 
 	public void sync() {
