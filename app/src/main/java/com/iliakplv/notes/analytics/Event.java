@@ -4,10 +4,6 @@ public enum Event {
 
 	// if event name has 'Click' suffix this event tracks relevant button click
 
-	// TODO create events for use-cases those can be started from different points
-	// notes labels dialog, note share, label creation from note details
-
-
 /*	Notes */
 
 	// tracked from UI

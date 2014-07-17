@@ -78,42 +78,6 @@ public class NoteDetailsFragment extends Fragment {
 		saveNote();
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		final int itemId = item.getItemId();
-		switch (itemId) {
-			case R.id.action_share:
-				shareNote();
-				return true;
-
-			case R.id.action_labels:
-				showLabelsDialog();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	private void shareNote() {
-		NotesUtils.shareNote(getActivity(),
-				title.getText().toString(),
-				body.getText().toString(),
-				true);
-	}
-
-	private void showLabelsDialog() {
-		Toast.makeText(getActivity(), "[not implemented]", Toast.LENGTH_SHORT).show();
-		// TODO implement !!!
-//		saveNote(true);
-//
-//		final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
-//		final FragmentManager fragmentManager = getActivity().getFragmentManager();
-//		if (noLabelsCreated) {
-//			SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteNoLabels, noteId, fragmentManager);
-//		} else {
-//			NoteLabelsDialog.show(fragmentManager, noteId);
-//		}
-	}
-
 	private void saveNote() {
 		final String LOG_PREFIX = "saveNote(): ";
 
