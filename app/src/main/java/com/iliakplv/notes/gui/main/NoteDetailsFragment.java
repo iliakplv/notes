@@ -65,13 +65,27 @@ public class NoteDetailsFragment extends Fragment {
 				body.setText(note.getBody());
 			}
 		}
+
+		return view;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		linkifyNoteBody();
+	}
+
+	private void linkifyNoteBody() {
+		resetNoteBodyText();
 		final SharedPreferences sp =
 				PreferenceManager.getDefaultSharedPreferences(getActivity());
 		if (sp.getBoolean(PREFS_KEY_LINKIFY, false)) {
 			Linkify.addLinks(body, LINKIFY_MASK);
 		}
+	}
 
-		return view;
+	private void resetNoteBodyText() {
+		body.setText(body.getText().toString());
 	}
 
 	public void onBackPressed() {
