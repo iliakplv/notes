@@ -4,9 +4,16 @@
 		android:id="@+id/action_add"
 		android:title="@string/action_bar_add"
 		android:icon="@drawable/ic_menu_add"
-		android:showAsAction="always"/>
+		android:orderInCategory="1"
+		android:showAsAction="ifRoom"/>
 
-	<!-- Sort menu here (order = 1). See MainActivity.java -->
+	<!-- Sort menu here (order = 2). See MainActivity.java -->
+
+	<item android:id="@+id/search"
+	      android:title="@string/action_search"
+	      android:orderInCategory="98"
+	      android:showAsAction="collapseActionView|never"
+	      android:actionViewClass="android.widget.SearchView"/>
 
 	<item
 		android:id="@+id/action_dropbox"

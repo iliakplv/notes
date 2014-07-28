@@ -202,8 +202,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void inflateSortMenu(Menu menu) {
+		final int order = 2;
 		final SubMenu sortMenu =
-				menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
+				menu.addSubMenu(Menu.NONE, Menu.NONE, order, R.string.action_sort);
 		getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
 	}
 
