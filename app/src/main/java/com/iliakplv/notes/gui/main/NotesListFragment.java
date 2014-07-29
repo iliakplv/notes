@@ -147,7 +147,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 		@Override
 		public int getCount() {
-			return storage.getNotesForLabelCount(currentLabelId);
+			return storage.getNotesForLabel(currentLabelId).size();
 		}
 
 		@Override

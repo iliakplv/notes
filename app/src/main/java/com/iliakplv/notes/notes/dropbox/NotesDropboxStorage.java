@@ -72,7 +72,6 @@ public class NotesDropboxStorage implements NotesStorage {
 	private List<AbstractNote> notesListCache;
 	private volatile Serializable notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
-	private volatile int notesListCacheSize = 0;
 
 	// list sort
 	private NoteComparator noteComparator = new NoteComparator();
@@ -214,7 +213,6 @@ public class NotesDropboxStorage implements NotesStorage {
 			Collections.sort(notesListCache, noteComparator);
 
 			notesListCacheLabelId = labelId;
-			notesListCacheSize = notesListCache.size();
 			notesListCacheActual = true;
 		}
 	}
@@ -273,12 +271,6 @@ public class NotesDropboxStorage implements NotesStorage {
 			return searchListCache;
 		}
 		return EMPTY_NOTES_LIST;
-	}
-
-	@Override
-	public int getNotesForLabelCount(Serializable labelId) {
-		refreshNotesListCacheIfNeeded(labelId);
-		return notesListCacheSize;
 	}
 
 	@Override

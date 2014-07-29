@@ -27,7 +27,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 	private List<AbstractNote> notesListCache;
 	private volatile Integer notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
-	private volatile int notesListCacheSize = 0;
 
 	// list sort
 	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
@@ -90,7 +89,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 			notesListCache =
 					(List<AbstractNote>) performDatabaseTransaction(selectTransaction, labelId);
 			notesListCacheLabelId = labelId;
-			notesListCacheSize = notesListCache.size();
 			notesListCacheActual = true;
 		}
 	}
@@ -125,12 +123,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 			return searchListCache;
 		}
 		return EMPTY_NOTES_LIST;
-	}
-
-	@Override
-	public int getNotesForLabelCount(Serializable labelId) {
-		refreshNotesListCacheIfNeeded((Integer) labelId);
-		return notesListCacheSize;
 	}
 
 	@Override

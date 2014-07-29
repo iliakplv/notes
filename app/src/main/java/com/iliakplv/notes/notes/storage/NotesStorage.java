@@ -27,7 +27,6 @@ public interface NotesStorage {
 	public AbstractNote getNote(Serializable id);
 	public List<AbstractNote> getNotesForLabel(Serializable labelId); // for all notes use NOTES_FOR_ALL_LABELS
 	public List<AbstractNote> getNotesForQuery(String searchQuery); // ignores case, spaces and empty strings
-	public int getNotesForLabelCount(Serializable labelId); // for all notes use NOTES_FOR_ALL_LABELS
 
 	public Serializable insertNote(AbstractNote note);
 	public boolean updateNote(Serializable id, AbstractNote note);

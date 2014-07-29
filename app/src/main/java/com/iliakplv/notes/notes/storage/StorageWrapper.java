@@ -42,10 +42,6 @@ import java.util.Set;
 		return target.getNotesForQuery(searchQuery);
 	}
 
-	public int getNotesForLabelCount(Serializable labelId) {
-		return target.getNotesForLabelCount(labelId);
-	}
-
 	public Serializable insertNote(AbstractNote note) {
 		EventTracker.track(Event.NoteCreate);
 		return target.insertNote(note);
