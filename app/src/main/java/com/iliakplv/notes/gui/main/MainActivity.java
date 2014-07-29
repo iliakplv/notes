@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
 	private String searchQuery;
 
-	private CharSequence title;
+	private CharSequence actionBarTitle;
 
 
 	private boolean isDetailsShown() {
@@ -91,7 +91,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateUi();
+		updateUi(searchQuery != null);
 	}
 
 	@Override
@@ -99,21 +99,21 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		selectedLabelId = labelId;
 		searchQuery = null;
 		closeNoteDetails();
-		updateUi();
+		updateUi(true);
 	}
 
-	private void onSearchCalled(String searchQuery) {
+	private void performSearch(String searchQuery) {
 		if (!StringUtils.isBlank(searchQuery)) {
 			this.searchQuery = searchQuery;
-			closeNoteDetails();
-			updateUi();
-			// todo do not update actionbar here
+			updateUi(false);
 		}
 	}
 
-	private void updateUi() {
+	private void updateUi(boolean updateActionBar) {
 		updateNotesList();
-		updateActionBarTitle();
+		if (updateActionBar) { // todo ???
+			updateActionBar();
+		}
 	}
 
 	private void updateNotesList() {
@@ -128,16 +128,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		}
 	}
 
-	private void updateActionBarTitle() {
-		if (searchQuery != null) {
-			title = "'" + searchQuery + "'";
+	private void updateActionBar() {
+		if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
+			actionBarTitle = getString(R.string.labels_drawer_all_notes);
 		} else {
-			if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
-				title = getString(R.string.labels_drawer_all_notes);
-			} else {
-				final Label label = storage.getLabel(selectedLabelId);
-				title = label != null ? NotesUtils.getTitleForLabel(label) : getString(R.string.app_name);
-			}
+			final Label label = storage.getLabel(selectedLabelId);
+			actionBarTitle = label != null ?
+					NotesUtils.getTitleForLabel(label) :
+					getString(R.string.app_name);
 		}
 		restoreActionBar();
 	}
@@ -249,7 +247,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(title);
+		actionBar.setTitle(actionBarTitle);
 	}
 
 	@Override
