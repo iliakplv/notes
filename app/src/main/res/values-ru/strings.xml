@@ -13,9 +13,10 @@
 	<string name="common_no">Нет</string>
 
 	<string name="action_bar_add">Новая заметка</string>
-	<string name="action_bar_labels">Изменить метки</string>
 	<string name="action_bar_share">Отправить</string>
 	<string name="action_bar_share_title">Отправить заметку</string>
+	<string name="action_bar_label_selected">Метка: %s</string>
+	<string name="action_bar_search_results">Поиск: %s</string>
 	<string name="action_dropbox_link">Привязать аккаунт Dropbox</string>
 	<string name="action_dropbox_refresh">Обновить</string>
 	<string name="action_dropbox_refresh_toast">Синхронизация…</string>

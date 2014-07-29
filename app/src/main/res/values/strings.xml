@@ -13,9 +13,10 @@
 	<string name="common_no">No</string>
 
 	<string name="action_bar_add">New note</string>
-	<string name="action_bar_labels">Change labels</string>
 	<string name="action_bar_share">Share</string>
 	<string name="action_bar_share_title">Share note</string>
+	<string name="action_bar_label_selected">Label: %s</string>
+	<string name="action_bar_search_results">Search: %s</string>
 	<string name="action_dropbox_link">Link Dropbox account</string>
 	<string name="action_dropbox_refresh">Refresh</string>
 	<string name="action_dropbox_refresh_toast">Sync has been started…</string>

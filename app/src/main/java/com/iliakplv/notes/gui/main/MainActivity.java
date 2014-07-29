@@ -131,14 +131,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private void updateActionBar() {
 		if (searchQuery != null) {
-			actionBarTitle = " '" + searchQuery + "'";
+			actionBarTitle = getString(R.string.action_bar_search_results, searchQuery);
 		} else {
 			if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
 				actionBarTitle = getString(R.string.labels_drawer_all_notes);
 			} else {
 				final Label label = storage.getLabel(selectedLabelId);
 				actionBarTitle = label != null ?
-						NotesUtils.getTitleForLabel(label) :
+						getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)) :
 						getString(R.string.app_name);
 			}
 		}
@@ -256,10 +256,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (dropboxItem !=  null) {
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 				dropboxItem.setTitle(R.string.action_dropbox_refresh);
-				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 			} else {
 				dropboxItem.setTitle(R.string.action_dropbox_link);
-				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 			}
 		}
 	}
