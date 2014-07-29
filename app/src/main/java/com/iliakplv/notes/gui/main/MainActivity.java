@@ -109,6 +109,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (!StringUtils.isBlank(searchQuery)) {
 			this.searchQuery = searchQuery.trim();
 			updateUi();
+			EventTracker.track(Event.SearchUsed);
 		}
 	}
 
