@@ -251,7 +251,7 @@ public class NotesDropboxStorage implements NotesStorage {
 				try {
 					allNotesRecords = notesTable.query();
 				} catch (DbxException e) {
-					AppLog.e(TAG, "refreshNotesListCacheIfNeeded", e);
+					AppLog.e(TAG, "getNotesForQuery", e);
 					throw new RuntimeException();
 				}
 
