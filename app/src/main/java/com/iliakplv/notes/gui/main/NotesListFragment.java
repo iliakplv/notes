@@ -38,6 +38,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private Serializable currentLabelId = ALL_LABELS;
 
+	private boolean showSearchResults = false;
+	private String searchQuery;
+
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -64,9 +68,15 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		stopListeningStorage();
 	}
 
+	private List<AbstractNote> getNotesList() {
+		return showSearchResults ?
+				storage.getNotesForQuery(searchQuery) :
+				storage.getNotesForLabel(currentLabelId);
+	}
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(storage.getNotesForLabel(currentLabelId).get(position).getId());
+		mainActivity.onNoteSelected(getNotesList().get(position).getId());
 	}
 
 	@Override
@@ -75,7 +85,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	private boolean showNoteActionsDialog(int position) {
-		final Serializable noteId = storage.getNotesForLabel(currentLabelId).get(position).getId();
+		final Serializable noteId = getNotesList().get(position).getId();
 		SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteActions,
 				noteId,
 				mainActivity.getFragmentManager());
@@ -91,6 +101,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	public void showNotesForLabel(Serializable labelId) {
 		currentLabelId = labelId;
+		showSearchResults = false;
+		updateListView();
+	}
+
+	public void showNotesForQuery(String searchQuery) {
+		this.searchQuery = searchQuery;
+		showSearchResults = true;
 		updateListView();
 	}
 
@@ -141,13 +158,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private int [] labelsColors;
 
 		public NotesListAdapter() {
-			super(mainActivity, 0, storage.getNotesForLabel(currentLabelId));
+			super(mainActivity, 0, getNotesList());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
 		@Override
 		public int getCount() {
-			return storage.getNotesForLabel(currentLabelId).size();
+			return getNotesList().size();
 		}
 
 		@Override
@@ -160,7 +177,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			// texts
-			final AbstractNote note = storage.getNotesForLabel(currentLabelId).get(position);
+			final AbstractNote note = getNotesList().get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(NotesUtils.getTitleForNote(note));
@@ -174,13 +191,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			subtitle.setText(note.getBody());
 
 			// labels
-			final boolean showingNotesForAllLabels = ALL_LABELS.equals(currentLabelId);
+			final boolean showOneLabel = !showSearchResults && !ALL_LABELS.equals(currentLabelId);
 			final List<Label> labels;
-			if (showingNotesForAllLabels) {
-				labels = storage.getLabelsForNote(note.getId());
-			} else {
+			if (showOneLabel) {
 				labels = new ArrayList<Label>(1);
 				labels.add(storage.getLabel(currentLabelId));
+			} else {
+				labels = storage.getLabelsForNote(note.getId());
 			}
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
@@ -196,7 +213,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			// show [...] sign
 			// if showing notes for selected label or
 			// if not enough space to show all labels
-			if (!showingNotesForAllLabels || labels.size() > LABELS_IDS.length) {
+			if (showOneLabel || labels.size() > LABELS_IDS.length) {
 				view.findViewById(R.id.more_labels).setVisibility(View.VISIBLE);
 			} else {
 				view.findViewById(R.id.more_labels).setVisibility(View.GONE);

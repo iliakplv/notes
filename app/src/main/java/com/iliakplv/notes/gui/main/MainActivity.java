@@ -24,6 +24,7 @@ import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 import com.iliakplv.notes.utils.ConnectivityUtils;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
 
@@ -31,6 +32,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
 	private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
+	private static final String ARG_SEARCH_QUERY = "search_query";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final Integer NEW_NOTE = 0;
 
@@ -40,6 +42,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private NavigationDrawerFragment navigationDrawerFragment;
 
 	private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
+	private String searchQuery;
+
 	private CharSequence title;
 
 
@@ -70,6 +74,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
 			selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
+			searchQuery = savedInstanceState.getString(ARG_SEARCH_QUERY);
 		}
 
 	}
@@ -86,17 +91,27 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateLabelSelection();
+		updateUi();
 	}
 
 	@Override
 	public void onLabelSelected(Serializable labelId) {
 		selectedLabelId = labelId;
+		searchQuery = null;
 		closeNoteDetails();
-		updateLabelSelection();
+		updateUi();
 	}
 
-	private void updateLabelSelection() {
+	private void onSearchCalled(String searchQuery) {
+		if (!StringUtils.isBlank(searchQuery)) {
+			this.searchQuery = searchQuery;
+			closeNoteDetails();
+			updateUi();
+			// todo do not update actionbar here
+		}
+	}
+
+	private void updateUi() {
 		updateNotesList();
 		updateActionBarTitle();
 	}
@@ -105,17 +120,26 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final NotesListFragment noteListFragment =
 				(NotesListFragment) getFragmentManager().findFragmentByTag(NotesListFragment.TAG);
 		if (noteListFragment != null) {
-			noteListFragment.showNotesForLabel(selectedLabelId);
+			if (searchQuery != null) {
+				noteListFragment.showNotesForQuery(searchQuery);
+			} else {
+				noteListFragment.showNotesForLabel(selectedLabelId);
+			}
 		}
 	}
 
 	private void updateActionBarTitle() {
-		if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)){
-			title = getString(R.string.labels_drawer_all_notes);
+		if (searchQuery != null) {
+			title = "'" + searchQuery + "'";
 		} else {
-			final Label label = storage.getLabel(selectedLabelId);
-			title = label != null ? NotesUtils.getTitleForLabel(label) : getString(R.string.app_name);
+			if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
+				title = getString(R.string.labels_drawer_all_notes);
+			} else {
+				final Label label = storage.getLabel(selectedLabelId);
+				title = label != null ? NotesUtils.getTitleForLabel(label) : getString(R.string.app_name);
+			}
 		}
+		restoreActionBar();
 	}
 
 	public void onNoteSelected(Serializable noteId) {
@@ -152,6 +176,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(ARG_DETAILS_SHOWN, detailsShown);
 		outState.putSerializable(ARG_SELECTED_LABEL_ID, selectedLabelId);
+		outState.putString(ARG_SEARCH_QUERY, searchQuery);
 	}
 
 	@Override
@@ -162,10 +187,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else if (isDetailsShown()) {
 			// 2. close note details if shown
 			closeNoteDetails();
-		} else if (!NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
-			// 3. return to all labels if any label selected
+		} else if (searchQuery != null || !NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
+			// 3. return to all labels if any label selected or search performed
 			onLabelSelected(NavigationDrawerFragment.ALL_LABELS);
-			restoreActionBar();
 		} else {
 			// 4. exit from app
 			super.onBackPressed();
