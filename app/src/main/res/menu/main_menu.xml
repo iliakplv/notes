@@ -5,7 +5,7 @@
 		android:title="@string/action_bar_add"
 		android:icon="@drawable/ic_menu_add"
 		android:orderInCategory="1"
-		android:showAsAction="always"/>
+		android:showAsAction="ifRoom"/>
 
 	<!-- Sort menu here (order = 2). See MainActivity.java -->
 
