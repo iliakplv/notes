@@ -37,6 +37,11 @@ import java.util.Set;
 		return target.getNotesForLabel(labelId);
 	}
 
+	@Override
+	public List<AbstractNote> getNotesForQuery(String searchQuery) {
+		return target.getNotesForQuery(searchQuery);
+	}
+
 	public int getNotesForLabelCount(Serializable labelId) {
 		return target.getNotesForLabelCount(labelId);
 	}

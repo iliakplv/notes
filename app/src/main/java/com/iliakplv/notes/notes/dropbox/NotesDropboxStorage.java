@@ -18,6 +18,7 @@ import com.iliakplv.notes.notes.TextNote;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.AppLog;
+import com.iliakplv.notes.utils.StringUtils;
 
 import org.joda.time.DateTime;
 
@@ -85,6 +86,10 @@ public class NotesDropboxStorage implements NotesStorage {
 	// labels cache
 	private List<Label> labelsListCache;
 	private volatile boolean labelsListCacheActual = false;
+
+	// search cache
+	private List<AbstractNote> searchListCache = new ArrayList<AbstractNote>();
+	private String lastSearchQuery = "";
 
 	// listeners
 	private List<NotesStorageListener> storageListeners;
@@ -235,6 +240,39 @@ public class NotesDropboxStorage implements NotesStorage {
 	public List<AbstractNote> getNotesForLabel(Serializable labelId) {
 		refreshNotesListCacheIfNeeded(labelId);
 		return notesListCache;
+	}
+
+	@Override
+	public List<AbstractNote> getNotesForQuery(String searchQuery) {
+		if (!StringUtils.isBlank(searchQuery)) {
+			searchQuery = StringUtils.normalizeString(searchQuery);
+			if (!lastSearchQuery.equals(searchQuery)) {
+				final DbxTable.QueryResult allNotesRecords;
+				try {
+					allNotesRecords = notesTable.query();
+				} catch (DbxException e) {
+					AppLog.e(TAG, "refreshNotesListCacheIfNeeded", e);
+					throw new RuntimeException();
+				}
+
+				final List<AbstractNote> searchResult = new ArrayList<AbstractNote>();
+				for (DbxRecord noteRecord : allNotesRecords) {
+					final AbstractNote noteFromRecord = createNoteFromRecord(noteRecord);
+					if (noteFromRecord != null) {
+						final String title = StringUtils.normalizeString(noteFromRecord.getTitle());
+						final String body = StringUtils.normalizeString(noteFromRecord.getBody());
+						if (title.contains(searchQuery) || body.contains(searchQuery)) {
+							searchResult.add(noteFromRecord);
+						}
+					}
+				}
+				Collections.sort(searchResult, noteComparator);
+				searchListCache = searchResult;
+				lastSearchQuery = searchQuery;
+			}
+			return searchListCache;
+		}
+		return EMPTY_NOTES_LIST;
 	}
 
 	@Override
@@ -568,6 +606,7 @@ public class NotesDropboxStorage implements NotesStorage {
 		}
 		if ((affectedCacheType & CACHE_NOTES_LIST) != 0) {
 			notesListCacheActual = false;
+			lastSearchQuery = "";
 		}
 		if ((affectedCacheType & CACHE_LABELS_LIST) != 0) {
 			labelsListCacheActual = false;

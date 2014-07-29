@@ -14,6 +14,14 @@ public final class StringUtils {
 		return s == null || s.length() == 0;
 	}
 
+	public static boolean isBlank(String s) {
+		return s == null || s.trim().length() == 0;
+	}
+
+	public static String normalizeString(String s) {
+		return s == null ? null : s.trim().toLowerCase();
+	}
+
 	public static String wrapWithEmptyLines(String string) {
 		return "\n" + string + "\n";
 	}
