@@ -27,6 +27,7 @@
 	<string name="action_sort_by_create_desc">By creation (newest first)</string>
 	<string name="action_sort_by_change">By last changing</string>
 	<string name="action_search">Search</string>
+	<string name="search_hint">Search note</string>
 
 	<string name="empty_note_title_placeholder">(no title)</string>
 	<string name="empty_note_placeholder">(empty note)</string>
