@@ -19,6 +19,7 @@ import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.analytics.Event;
 import com.iliakplv.notes.analytics.EventTracker;
+import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -275,7 +276,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final int itemId = item.getItemId();
 		switch (itemId) {
 
-			// main menu
 			case R.id.action_add:
 				createNewNote();
 				return true;
@@ -298,16 +298,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				EventTracker.track(Event.NotesSortOrderSelect);
 				return true;
 
-			// global menu
-			case R.id.action_settings:
-				showAppSettings();
-				return true;
-
 			// dropbox
 			case R.id.action_dropbox:
 				performDropboxAction();
 				return true;
 
+			case R.id.action_settings:
+				showAppSettings();
+				return true;
+
+			case R.id.action_about:
+				AboutDialog.show(getFragmentManager());
+				EventTracker.track(Event.AboutOpening);
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

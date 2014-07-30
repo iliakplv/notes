@@ -43,5 +43,6 @@ public enum Event {
 	
 /*	Other */
 
-	SettingsOpening
+	SettingsOpening,
+	AboutOpening
 }

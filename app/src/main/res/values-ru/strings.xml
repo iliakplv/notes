@@ -9,6 +9,7 @@
 	<string name="common_ok">OK</string>
 	<string name="common_save">Сохранить</string>
 	<string name="common_cancel">Отмена</string>
+	<string name="common_close">Закрыть</string>
 	<string name="common_yes">Да</string>
 	<string name="common_no">Нет</string>
 
@@ -21,6 +22,7 @@
 	<string name="action_dropbox_refresh">Обновить</string>
 	<string name="action_dropbox_refresh_toast">Синхронизация…</string>
 	<string name="action_settings">Настройки</string>
+	<string name="action_about">О программе</string>
 
 	<string name="action_sort">Сортировка</string>
 	<string name="action_sort_by_title">По заголовку</string>
