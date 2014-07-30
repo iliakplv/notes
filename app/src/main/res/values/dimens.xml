@@ -27,4 +27,7 @@
 	<dimen name="label_edit_radio_button_side_margin">5dp</dimen>
 	<dimen name="label_edit_radio_button_bottom_margin">24dp</dimen>
 
+	<dimen name="about_dialog_text_size">16sp</dimen>
+	<dimen name="about_dialog_text_margin">14dp</dimen>
+
 </resources>

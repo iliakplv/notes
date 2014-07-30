@@ -74,4 +74,9 @@
 
 	<string name="no_connection_toast">No network connection!</string>
 
+	<string name="about_version">Version: %s</string>
+	<string name="about_author">Created by Ilya Kopylov</string>
+	<string name="about_contact">For more information please contact author by email iliakplv@gmail.com</string>
+	<string name="about_sources">Source code can be found on\nhttps://github.com/iliakplv/notes</string>
+
 </resources>
