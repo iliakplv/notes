@@ -88,8 +88,8 @@ public final class DropboxHelper {
 
 	public static void initSynchronization() {
 		if (connectivityReceiver == null &&
-				hasLinkedAccount() &&
-				Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
+				Storage.getCurrentStorageType() == Storage.Type.Dropbox &&
+				hasLinkedAccount()) {
 			
 			connectivityReceiver = new ConnectivityReceiver();
 			NotesApplication.getContext().registerReceiver(connectivityReceiver,

@@ -8,12 +8,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.iliakplv.notes.R;
+import com.iliakplv.notes.utils.AppLog;
 
 public class AboutDialog extends DialogFragment {
 	private static final String FRAGMENT_TAG = AboutDialog.class.getSimpleName();
@@ -37,7 +37,7 @@ public class AboutDialog extends DialogFragment {
 			appVersion = context.getPackageManager()
 					.getPackageInfo(context.getPackageName(), 0).versionName;
 		} catch (PackageManager.NameNotFoundException e) {
-			Log.wtf("About", "Can't get app version", e);
+			AppLog.wtf("About", "Can't get app version", e);
 		}
 
 		((TextView) view.findViewById(R.id.version))

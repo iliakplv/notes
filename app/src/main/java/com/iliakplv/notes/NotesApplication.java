@@ -27,8 +27,11 @@ public class NotesApplication extends Application {
 
 		context = getApplicationContext();
 		initThreadPool();
+		EventTracker.setEnabled(false);
+		initStorage();
+	}
 
-		EventTracker.setEnabled(true);
+	private void initStorage() {
 		Storage.init(null);
 		DropboxHelper.initSynchronization();
 	}

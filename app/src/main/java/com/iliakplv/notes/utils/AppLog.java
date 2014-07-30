@@ -34,6 +34,12 @@ public class AppLog {
 		}
 	}
 
+	public static void wtf(String tag, String msg, Throwable e) {
+		if (ENABLED) {
+			Log.wtf(tag, msg, e);
+		}
+	}
+
 	public static void i(String tag, String msg) {
 		if (ENABLED) {
 			Log.i(tag, msg);
