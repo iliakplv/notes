@@ -76,7 +76,7 @@
 
 	<string name="about_version">Версия: %s</string>
 	<string name="about_author">Разработчик Илья Копылов</string>
-	<string name="about_contact">Для долучения дополнительной информации свяжитесь с разработчиком по email iliakplv@gmail.com</string>
+	<string name="about_contact">Для получения дополнительной информации свяжитесь с разработчиком по email iliakplv@gmail.com</string>
 	<string name="about_sources">Исходный код приложения:\nhttps://github.com/iliakplv/notes</string>
 
 </resources>
