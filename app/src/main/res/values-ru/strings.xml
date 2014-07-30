@@ -21,6 +21,9 @@
 	<string name="action_dropbox_link">Привязать аккаунт Dropbox</string>
 	<string name="action_dropbox_refresh">Обновить</string>
 	<string name="action_dropbox_refresh_toast">Синхронизация…</string>
+	<string name="action_dropbox_link_succeded_toast">Вход в аккаунт Dropbox выполнен</string>
+	<string name="action_dropbox_link_failed_toast">Ошибка входа в аккаунт Dropbox!</string>
+	<string name="action_dropbox_already_linked_toast">Вход в аккаунт Dropbox выполнен</string>
 	<string name="action_settings">Настройки</string>
 	<string name="action_about">О программе</string>
 
