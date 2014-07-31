@@ -183,7 +183,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
 			title.setText(NotesUtils.getTitleForNoteInList(note));
-			if (!NotesUtils.isNoteTitleEmpty(note)) {
+			if (!NotesUtils.isNoteTitleBlank(note)) {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_black));
 				title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
 						getResources().getDimension(R.dimen.note_list_item_large_text_size));
@@ -233,7 +233,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		private String getLetterForLabelName(String name) {
-			return StringUtils.isNullOrEmpty(name) ? "" : name.substring(0, 1).toUpperCase();
+			return StringUtils.isBlank(name) ? "" : name.trim().substring(0, 1).toUpperCase();
 		}
 	}
 
