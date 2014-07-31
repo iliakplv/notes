@@ -27,6 +27,11 @@
 	<string name="action_settings">Настройки</string>
 	<string name="action_about">О программе</string>
 
+	<string name="dropbox_link_dialog_title">Аккаунт Dropbox</string>
+	<string name="dropbox_link_dialog_message">Вы можете войти в существующий аккаунт Dropbox или создать новый. После успешного входа в аккаунт все ваши заметки и метки будут перемещены в облачное хранилище Dropbox.</string>
+	<string name="dropbox_link_dialog_yes">Продолжаем</string>
+	<string name="dropbox_link_dialog_no">Не сейчас</string>
+
 	<string name="action_sort">Сортировка</string>
 	<string name="action_sort_by_title">По заголовку</string>
 	<string name="action_sort_by_create_asc">По созданию (сначала старые)</string>

@@ -20,6 +20,7 @@ import com.iliakplv.notes.R;
 import com.iliakplv.notes.analytics.Event;
 import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
+import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -324,12 +325,16 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			} else {
 				final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
 				if (!dataTransferStarted) {
-					DropboxHelper.tryLinkAccountFromActivity(this);
+					DropboxAccountLinkingDialog.show(getFragmentManager());
 				}
 			}
 		} else {
 			Toast.makeText(this, R.string.no_connection_toast, Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	public void tryLinkDropboxAccount() {
+		DropboxHelper.tryLinkAccountFromActivity(this);
 	}
 
 	@Override
