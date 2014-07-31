@@ -85,7 +85,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForNote(note)).
 				setMessage(info).
-				setNegativeButton(R.string.common_ok, null).
+				setNegativeButton(R.string.common_close, null).
 				create();
 	}
 
