@@ -9,26 +9,38 @@
 	<string name="common_ok">OK</string>
 	<string name="common_save">Сохранить</string>
 	<string name="common_cancel">Отмена</string>
+	<string name="common_close">Закрыть</string>
 	<string name="common_yes">Да</string>
 	<string name="common_no">Нет</string>
 
 	<string name="action_bar_add">Новая заметка</string>
-	<string name="action_bar_labels">Изменить метки</string>
 	<string name="action_bar_share">Отправить</string>
 	<string name="action_bar_share_title">Отправить заметку</string>
+	<string name="action_bar_label_selected">Метка: %s</string>
+	<string name="action_bar_search_results">Поиск: %s</string>
 	<string name="action_dropbox_link">Привязать аккаунт Dropbox</string>
 	<string name="action_dropbox_refresh">Обновить</string>
 	<string name="action_dropbox_refresh_toast">Синхронизация…</string>
+	<string name="action_dropbox_link_succeded_toast">Вход в аккаунт Dropbox выполнен</string>
+	<string name="action_dropbox_link_failed_toast">Ошибка входа в аккаунт Dropbox!</string>
+	<string name="action_dropbox_already_linked_toast">Вход в аккаунт Dropbox выполнен</string>
 	<string name="action_settings">Настройки</string>
+	<string name="action_about">О приложении</string>
+
+	<string name="dropbox_link_dialog_title">Аккаунт Dropbox</string>
+	<string name="dropbox_link_dialog_message">Вы можете войти в существующий аккаунт Dropbox или создать новый. После успешного входа в аккаунт все ваши заметки и метки будут перемещены в облачное хранилище Dropbox.</string>
+	<string name="dropbox_link_dialog_yes">Продолжаем</string>
+	<string name="dropbox_link_dialog_no">Не сейчас</string>
 
 	<string name="action_sort">Сортировка</string>
 	<string name="action_sort_by_title">По заголовку</string>
 	<string name="action_sort_by_create_asc">По созданию (сначала старые)</string>
 	<string name="action_sort_by_create_desc">По созданию (сначала новые)</string>
 	<string name="action_sort_by_change">По последнему изменению</string>
+	<string name="action_search">Поиск</string>
+	<string name="search_hint">Поиск заметок</string>
 
-	<string name="empty_note_title_placeholder">(без заголовка)</string>
-	<string name="empty_note_placeholder">(пустая заметка)</string>
+	<string name="empty_note_placeholder">пустая заметка</string>
 	<string name="empty_note_not_saved">Пустая заметка не сохранена</string>
 	<string name="empty_note_not_shared">Эта заметка пуста</string>
 
@@ -50,8 +62,8 @@
 	<string name="label_action_delete">Удалить</string>
 	<string name="label_action_delete_confirm_dialog_text">Удалить эту метку?</string>
 
-	<string name="label_title_hint">Метка</string>
-	<string name="label_edit_color_select">Цвет метки</string>
+	<string name="label_title_hint">Название метки</string>
+	<string name="label_edit_color_select">Выберите цвет</string>
 
 	<string name="color_default">белый</string>
 	<string name="color_red">красный</string>
@@ -68,5 +80,10 @@
 	<string name="settings_linkify_subtitle">Делать кликабельными ссылки и телефонные номера в тексте заметки</string>
 
 	<string name="no_connection_toast">Нет подключения к сети!</string>
+
+	<string name="about_version">Версия: %s</string>
+	<string name="about_author">Разработчик Илья Копылов</string>
+	<string name="about_contact">Для получения дополнительной информации свяжитесь с разработчиком по email iliakplv@gmail.com</string>
+	<string name="about_sources">Исходный код приложения:\nhttps://github.com/iliakplv/notes</string>
 
 </resources>

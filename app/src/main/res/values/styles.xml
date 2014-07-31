@@ -21,8 +21,8 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:orientation">vertical</item>
-		<item name="android:paddingLeft">@dimen/note_list_item_side_padding</item>
-		<item name="android:paddingRight">@dimen/note_list_item_side_padding</item>
+		<item name="android:paddingLeft">@dimen/note_list_item_horizontal_padding</item>
+		<item name="android:paddingRight">@dimen/note_list_item_horizontal_padding</item>
 		<item name="android:paddingTop">@dimen/note_list_item_vertical_padding</item>
 		<item name="android:paddingBottom">@dimen/note_list_item_vertical_padding</item>
 	</style>
@@ -35,13 +35,13 @@
 
 	<style name="NoteListItemText.Title">
 		<item name="android:textColor">@color/note_list_item_black</item>
-		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
+		<item name="android:textSize">@dimen/note_list_item_large_text_size</item>
 		<item name="android:layout_marginBottom">@dimen/note_list_item_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteListItemText.Subtitle">
 		<item name="android:textColor">@color/note_list_item_grey</item>
-		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
+		<item name="android:textSize">@dimen/note_list_item_small_text_size</item>
 	</style>
 
 	<style name="NoteDetailsLabel" parent="android:Widget.TextView">
@@ -75,6 +75,7 @@
 		<item name="android:textSize">@dimen/note_details_title_text_size</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:hint">@string/note_details_title_hint</item>
+		<item name="android:inputType">textCapSentences</item>
 		<item name="android:layout_marginBottom">@dimen/note_details_title_bottom_margin</item>
 	</style>
 
@@ -93,14 +94,26 @@
 		<item name="android:layout_width">@dimen/label_edit_title_width</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textColor">@color/note_list_item_black</item>
-		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
-		<item name="android:lines">1</item>
+		<item name="android:textSize">@dimen/note_list_item_large_text_size</item>
+		<item name="android:inputType">textCapSentences</item>
 	</style>
 
 	<style name="LabelEditColorCheckBox">
 		<item name="android:layout_width">56dp</item>
 		<item name="android:layout_height">48dp</item>
 		<item name="android:layout_marginLeft">@dimen/label_edit_radio_button_side_margin</item>
+	</style>
+
+
+	<!--
+		About
+	-->
+
+	<style name="AboutText" parent="android:Widget.TextView">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textSize">@dimen/about_dialog_text_size</item>
+		<item name="android:layout_marginBottom">@dimen/about_dialog_text_margin</item>
 	</style>
 
 </resources>

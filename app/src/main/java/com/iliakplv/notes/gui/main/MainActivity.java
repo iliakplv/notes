@@ -3,6 +3,8 @@ package com.iliakplv.notes.gui.main;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,12 +12,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.analytics.Event;
 import com.iliakplv.notes.analytics.EventTracker;
+import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
+import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -24,6 +29,7 @@ import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 import com.iliakplv.notes.utils.ConnectivityUtils;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
 
@@ -31,6 +37,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private static final String ARG_DETAILS_SHOWN = "details_fragment_shown";
 	private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
+	private static final String ARG_SEARCH_QUERY = "search_query";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
 	public static final Integer NEW_NOTE = 0;
 
@@ -40,7 +47,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private NavigationDrawerFragment navigationDrawerFragment;
 
 	private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
-	private CharSequence title;
+	private String searchQuery;
+
+	private CharSequence actionBarTitle;
 
 
 	private boolean isDetailsShown() {
@@ -70,6 +79,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else {
 			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
 			selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
+			searchQuery = savedInstanceState.getString(ARG_SEARCH_QUERY);
 		}
 
 	}
@@ -86,36 +96,56 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateLabelSelection();
+		updateUi();
 	}
 
 	@Override
 	public void onLabelSelected(Serializable labelId) {
 		selectedLabelId = labelId;
+		searchQuery = null;
 		closeNoteDetails();
-		updateLabelSelection();
+		updateUi();
 	}
 
-	private void updateLabelSelection() {
+	private void performSearch(String searchQuery) {
+		if (!StringUtils.isBlank(searchQuery)) {
+			this.searchQuery = searchQuery.trim();
+			updateUi();
+			EventTracker.track(Event.SearchUsed);
+		}
+	}
+
+	private void updateUi() {
 		updateNotesList();
-		updateActionBarTitle();
+		updateActionBar();
 	}
 
 	private void updateNotesList() {
 		final NotesListFragment noteListFragment =
 				(NotesListFragment) getFragmentManager().findFragmentByTag(NotesListFragment.TAG);
 		if (noteListFragment != null) {
-			noteListFragment.showNotesForLabel(selectedLabelId);
+			if (searchQuery != null) {
+				noteListFragment.showNotesForQuery(searchQuery);
+			} else {
+				noteListFragment.showNotesForLabel(selectedLabelId);
+			}
 		}
 	}
 
-	private void updateActionBarTitle() {
-		if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)){
-			title = getString(R.string.labels_drawer_all_notes);
+	private void updateActionBar() {
+		if (searchQuery != null) {
+			actionBarTitle = getString(R.string.action_bar_search_results, searchQuery);
 		} else {
-			final Label label = storage.getLabel(selectedLabelId);
-			title = label != null ? NotesUtils.getTitleForLabel(label) : getString(R.string.app_name);
+			if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
+				actionBarTitle = getString(R.string.labels_drawer_all_notes);
+			} else {
+				final Label label = storage.getLabel(selectedLabelId);
+				actionBarTitle = label != null ?
+						getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)) :
+						getString(R.string.app_name);
+			}
 		}
+		restoreActionBar();
 	}
 
 	public void onNoteSelected(Serializable noteId) {
@@ -152,6 +182,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(ARG_DETAILS_SHOWN, detailsShown);
 		outState.putSerializable(ARG_SELECTED_LABEL_ID, selectedLabelId);
+		outState.putString(ARG_SEARCH_QUERY, searchQuery);
 	}
 
 	@Override
@@ -162,10 +193,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		} else if (isDetailsShown()) {
 			// 2. close note details if shown
 			closeNoteDetails();
-		} else if (!NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
-			// 3. return to all labels if any label selected
+		} else if (searchQuery != null || !NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
+			// 3. return to all labels if any label selected or search performed
 			onLabelSelected(NavigationDrawerFragment.ALL_LABELS);
-			restoreActionBar();
 		} else {
 			// 4. exit from app
 			super.onBackPressed();
@@ -184,6 +214,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		}
 	}
 
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			performSearch(intent.getStringExtra(SearchManager.QUERY));
+		}
+	}
 
 	// menu
 
@@ -193,6 +229,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			if (!isDetailsShown()) {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
 				inflateSortMenu(menu);
+				configureSearchMenu(menu);
 				updateDropboxActionTitle(menu);
 			}
 			restoreActionBar();
@@ -201,9 +238,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	private void configureSearchMenu(Menu menu) {
+		SearchManager searchManager =
+				(SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView =
+				(SearchView) menu.findItem(R.id.search).getActionView();
+		searchView.setSearchableInfo(
+				searchManager.getSearchableInfo(getComponentName()));
+	}
+
 	private void inflateSortMenu(Menu menu) {
+		final int order = 2;
 		final SubMenu sortMenu =
-				menu.addSubMenu(Menu.NONE, Menu.NONE, 1, R.string.action_sort);
+				menu.addSubMenu(Menu.NONE, Menu.NONE, order, R.string.action_sort);
 		getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
 	}
 
@@ -212,10 +259,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		if (dropboxItem !=  null) {
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
 				dropboxItem.setTitle(R.string.action_dropbox_refresh);
-				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 			} else {
 				dropboxItem.setTitle(R.string.action_dropbox_link);
-				dropboxItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 			}
 		}
 	}
@@ -224,7 +269,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(title);
+		actionBar.setTitle(actionBarTitle);
 	}
 
 	@Override
@@ -232,7 +277,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final int itemId = item.getItemId();
 		switch (itemId) {
 
-			// main menu
 			case R.id.action_add:
 				createNewNote();
 				return true;
@@ -255,16 +299,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				EventTracker.track(Event.NotesSortOrderSelect);
 				return true;
 
-			// global menu
-			case R.id.action_settings:
-				showAppSettings();
-				return true;
-
 			// dropbox
 			case R.id.action_dropbox:
 				performDropboxAction();
 				return true;
 
+			case R.id.action_settings:
+				showAppSettings();
+				return true;
+
+			case R.id.action_about:
+				AboutDialog.show(getFragmentManager());
+				EventTracker.track(Event.AboutOpening);
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -278,12 +325,16 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			} else {
 				final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
 				if (!dataTransferStarted) {
-					DropboxHelper.tryLinkAccountFromActivity(this);
+					DropboxAccountLinkingDialog.show(getFragmentManager());
 				}
 			}
 		} else {
 			Toast.makeText(this, R.string.no_connection_toast, Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	public void tryLinkDropboxAccount() {
+		DropboxHelper.tryLinkAccountFromActivity(this);
 	}
 
 	@Override

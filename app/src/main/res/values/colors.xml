@@ -3,6 +3,7 @@
 
 
 
+	<color name="note_list_item_background">#401075a3</color>
 	<color name="note_list_item_black">#ff000000</color>
 	<color name="note_list_item_grey">#ff6a6a6a</color>
 	<color name="note_list_item_placeholder">#ffa2a2a2</color>

@@ -40,7 +40,7 @@ public class NoteLabelsDialog extends AbstractItemDialog {
 
 		final NoteLabelsListAdapter labelsAdapter = new NoteLabelsListAdapter(id);
 		return new AlertDialog.Builder(activity)
-				.setTitle(NotesUtils.getTitleForNote(storage.getNote(id)))
+				.setTitle(NotesUtils.getTitleForNoteInDialog(storage.getNote(id)))
 				.setAdapter(labelsAdapter, null)
 				.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
 					@Override

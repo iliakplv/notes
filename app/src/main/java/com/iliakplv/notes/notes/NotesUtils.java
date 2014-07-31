@@ -34,32 +34,40 @@ public final class NotesUtils {
 			NotesApplication.getContext().getResources().getStringArray(R.array.label_colors_names);
 
 
-	public static String getTitleForNote(AbstractNote note) {
-		if (!isNoteTitleEmpty(note)) {
-			return note.getTitle();
-		} else if (isNoteEmpty(note)) {
+	public static String getTitleForNoteInDialog(AbstractNote note) {
+		if (isNoteBlank(note)) {
 			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+		} else if (!isNoteTitleBlank(note)) {
+			return note.getTitle().trim();
 		} else {
-			return NotesApplication.getContext().getString(R.string.empty_note_title_placeholder);
+			return note.getBody().trim();
 		}
 	}
 
-	public static boolean isNoteTitleEmpty(AbstractNote note) {
-		return StringUtils.isNullOrEmpty(note.getTitle());
+	public static String getTitleForNoteInList(AbstractNote note) {
+		if (isNoteBlank(note)) {
+			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+		} else {
+			return note.getTitle().trim();
+		}
 	}
 
-	public static boolean isNoteBodyEmpty(AbstractNote note) {
-		return StringUtils.isNullOrEmpty(note.getBody());
+	public static boolean isNoteTitleBlank(AbstractNote note) {
+		return StringUtils.isBlank(note.getTitle());
 	}
 
-	public static boolean isNoteEmpty(AbstractNote note) {
-		return isNoteTitleEmpty(note) && isNoteBodyEmpty(note);
+	public static boolean isNoteBodyBlank(AbstractNote note) {
+		return StringUtils.isBlank(note.getBody());
+	}
+
+	public static boolean isNoteBlank(AbstractNote note) {
+		return isNoteTitleBlank(note) && isNoteBodyBlank(note);
 	}
 
 
 	public static String getTitleForLabel(Label label) {
-		if (!StringUtils.isNullOrEmpty(label.getName())) {
-			return label.getName();
+		if (!StringUtils.isBlank(label.getName())) {
+			return label.getName().trim();
 		} else {
 			return "(" + COLORS_NAMES[label.getColor()] + ")";
 		}

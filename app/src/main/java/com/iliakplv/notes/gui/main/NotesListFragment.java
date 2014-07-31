@@ -3,6 +3,7 @@ package com.iliakplv.notes.gui.main;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private Serializable currentLabelId = ALL_LABELS;
 
+	private boolean showSearchResults = false;
+	private String searchQuery;
+
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -50,6 +55,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		listAdapter = new NotesListAdapter();
 		setListAdapter(listAdapter);
 		getListView().setOnItemLongClickListener(this);
+		getListView().setDivider(null);
 	}
 
 	@Override
@@ -64,9 +70,15 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		stopListeningStorage();
 	}
 
+	private List<AbstractNote> getNotesList() {
+		return showSearchResults ?
+				storage.getNotesForQuery(searchQuery) :
+				storage.getNotesForLabel(currentLabelId);
+	}
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(storage.getNotesForLabel(currentLabelId).get(position).getId());
+		mainActivity.onNoteSelected(getNotesList().get(position).getId());
 	}
 
 	@Override
@@ -75,7 +87,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	private boolean showNoteActionsDialog(int position) {
-		final Serializable noteId = storage.getNotesForLabel(currentLabelId).get(position).getId();
+		final Serializable noteId = getNotesList().get(position).getId();
 		SimpleItemDialog.show(SimpleItemDialog.DialogType.NoteActions,
 				noteId,
 				mainActivity.getFragmentManager());
@@ -91,6 +103,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 
 	public void showNotesForLabel(Serializable labelId) {
 		currentLabelId = labelId;
+		showSearchResults = false;
+		updateListView();
+	}
+
+	public void showNotesForQuery(String searchQuery) {
+		this.searchQuery = searchQuery;
+		showSearchResults = true;
 		updateListView();
 	}
 
@@ -141,13 +160,13 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		private int [] labelsColors;
 
 		public NotesListAdapter() {
-			super(mainActivity, 0, storage.getNotesForLabel(currentLabelId));
+			super(mainActivity, 0, getNotesList());
 			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
 		@Override
 		public int getCount() {
-			return storage.getNotesForLabelCount(currentLabelId);
+			return getNotesList().size();
 		}
 
 		@Override
@@ -160,27 +179,35 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			}
 
 			// texts
-			final AbstractNote note = storage.getNotesForLabel(currentLabelId).get(position);
+			final AbstractNote note = getNotesList().get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-			title.setText(NotesUtils.getTitleForNote(note));
-			if (NotesUtils.isNoteTitleEmpty(note)) {
-				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
-				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
-			} else {
+			title.setText(NotesUtils.getTitleForNoteInList(note));
+			if (!NotesUtils.isNoteTitleBlank(note)) {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_black));
+				title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_large_text_size));
 				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_grey));
+				subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_small_text_size));
+			} else {
+				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
+				title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_small_text_size));
+				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
+				subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_large_text_size));
 			}
-			subtitle.setText(note.getBody());
+			subtitle.setText(note.getBody().trim());
 
 			// labels
-			final boolean showingNotesForAllLabels = ALL_LABELS.equals(currentLabelId);
+			final boolean showOneLabel = !showSearchResults && !ALL_LABELS.equals(currentLabelId);
 			final List<Label> labels;
-			if (showingNotesForAllLabels) {
-				labels = storage.getLabelsForNote(note.getId());
-			} else {
+			if (showOneLabel) {
 				labels = new ArrayList<Label>(1);
 				labels.add(storage.getLabel(currentLabelId));
+			} else {
+				labels = storage.getLabelsForNote(note.getId());
 			}
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
@@ -196,7 +223,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			// show [...] sign
 			// if showing notes for selected label or
 			// if not enough space to show all labels
-			if (!showingNotesForAllLabels || labels.size() > LABELS_IDS.length) {
+			if (showOneLabel || labels.size() > LABELS_IDS.length) {
 				view.findViewById(R.id.more_labels).setVisibility(View.VISIBLE);
 			} else {
 				view.findViewById(R.id.more_labels).setVisibility(View.GONE);
@@ -206,7 +233,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		}
 
 		private String getLetterForLabelName(String name) {
-			return StringUtils.isNullOrEmpty(name) ? "" : name.substring(0, 1).toUpperCase();
+			return StringUtils.isBlank(name) ? "" : name.trim().substring(0, 1).toUpperCase();
 		}
 	}
 

@@ -59,7 +59,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	private Dialog createNoteActionsDialog() {
 		final AbstractNote selectedNote = storage.getNote(id);
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(selectedNote)).
+				setTitle(NotesUtils.getTitleForNoteInDialog(selectedNote)).
 				setItems(R.array.note_actions, new NoteActionDialogClickListener()).
 				setNegativeButton(R.string.common_cancel, null).
 				create();
@@ -83,15 +83,15 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		}
 
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(note)).
+				setTitle(NotesUtils.getTitleForNoteInDialog(note)).
 				setMessage(info).
-				setNegativeButton(R.string.common_ok, null).
+				setNegativeButton(R.string.common_close, null).
 				create();
 	}
 
 	private Dialog createNoteDeleteDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(storage.getNote(id))).
+				setTitle(NotesUtils.getTitleForNoteInDialog(storage.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
@@ -109,7 +109,7 @@ public class SimpleItemDialog extends AbstractItemDialog {
 
 	private Dialog createNoteNoLabelsDialog() {
 		return new AlertDialog.Builder(activity).
-				setTitle(NotesUtils.getTitleForNote(storage.getNote(id))).
+				setTitle(NotesUtils.getTitleForNoteInDialog(storage.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_no_labels_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
 				setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {

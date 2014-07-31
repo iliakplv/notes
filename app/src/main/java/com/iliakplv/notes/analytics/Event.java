@@ -16,6 +16,8 @@ public enum Event {
 	NoteCreate,
 	NoteEdit,
 	NoteDelete,
+	// tracked from search implementation
+	SearchUsed,
 
 /*	Labels */
 
@@ -41,5 +43,6 @@ public enum Event {
 	
 /*	Other */
 
-	SettingsOpening
+	SettingsOpening,
+	AboutOpening
 }

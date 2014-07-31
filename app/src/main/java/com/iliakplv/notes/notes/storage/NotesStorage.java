@@ -7,12 +7,14 @@ import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public interface NotesStorage {
 
 	public static final Integer NOTES_FOR_ALL_LABELS = 0;
+	public static final List<AbstractNote> EMPTY_NOTES_LIST = new ArrayList<AbstractNote>(0);
 
 
 	// sort
@@ -24,7 +26,7 @@ public interface NotesStorage {
 
 	public AbstractNote getNote(Serializable id);
 	public List<AbstractNote> getNotesForLabel(Serializable labelId); // for all notes use NOTES_FOR_ALL_LABELS
-	public int getNotesForLabelCount(Serializable labelId); // for all notes use NOTES_FOR_ALL_LABELS
+	public List<AbstractNote> getNotesForQuery(String searchQuery); // ignores case, spaces and empty strings
 
 	public Serializable insertNote(AbstractNote note);
 	public boolean updateNote(Serializable id, AbstractNote note);

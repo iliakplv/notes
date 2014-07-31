@@ -9,8 +9,10 @@ import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.NotesStorageListener;
 import com.iliakplv.notes.utils.AppLog;
+import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +27,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 	private List<AbstractNote> notesListCache;
 	private volatile Integer notesListCacheLabelId = INVALID_ID;
 	private volatile boolean notesListCacheActual = false;
-	private volatile int notesListCacheSize = 0;
 
 	// list sort
 	private volatile NotesUtils.NoteSortOrder notesSortOrder = NotesUtils.DEFAULT_SORT_ORDER;
@@ -38,6 +39,10 @@ public class NotesDatabaseStorage implements NotesStorage {
 	// labels cache
 	private List<Label> labelsListCache;
 	private volatile boolean labelsListCacheActual = false;
+
+	// search cache
+	private List<AbstractNote> searchListCache = new ArrayList<AbstractNote>();
+	private String lastSearchQuery = "";
 
 	// listeners
 	private List<NotesStorageListener> databaseListeners;
@@ -84,7 +89,6 @@ public class NotesDatabaseStorage implements NotesStorage {
 			notesListCache =
 					(List<AbstractNote>) performDatabaseTransaction(selectTransaction, labelId);
 			notesListCacheLabelId = labelId;
-			notesListCacheSize = notesListCache.size();
 			notesListCacheActual = true;
 		}
 	}
@@ -96,9 +100,29 @@ public class NotesDatabaseStorage implements NotesStorage {
 	}
 
 	@Override
-	public int getNotesForLabelCount(Serializable labelId) {
-		refreshNotesListCacheIfNeeded((Integer) labelId);
-		return notesListCacheSize;
+	public List<AbstractNote> getNotesForQuery(String searchQuery) {
+		if (!StringUtils.isBlank(searchQuery)) {
+			searchQuery = StringUtils.normalizeString(searchQuery);
+			if (!lastSearchQuery.equals(searchQuery)) {
+				final NotesDatabaseAdapter adapter = new NotesDatabaseAdapter();
+				adapter.open();
+				final List<AbstractNote> allNotes = adapter.getAllNotes(notesSortOrder);
+				adapter.close();
+
+				final List<AbstractNote> searchResult = new ArrayList<AbstractNote>();
+				for (AbstractNote note : allNotes) {
+					final String title = StringUtils.normalizeString(note.getTitle());
+					final String body = StringUtils.normalizeString(note.getBody());
+					if (title.contains(searchQuery) || body.contains(searchQuery)) {
+						searchResult.add(note);
+					}
+				}
+				searchListCache = searchResult;
+				lastSearchQuery = searchQuery;
+			}
+			return searchListCache;
+		}
+		return EMPTY_NOTES_LIST;
 	}
 
 	@Override
@@ -282,6 +306,7 @@ public class NotesDatabaseStorage implements NotesStorage {
 		}
 		if (databaseModificationTransaction(transactionType)) {
 			notesListCacheActual = false;
+			lastSearchQuery = "";
 			notifyListeners();
 		}
 	}
