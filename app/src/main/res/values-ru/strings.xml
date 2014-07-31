@@ -25,7 +25,7 @@
 	<string name="action_dropbox_link_failed_toast">Ошибка входа в аккаунт Dropbox!</string>
 	<string name="action_dropbox_already_linked_toast">Вход в аккаунт Dropbox выполнен</string>
 	<string name="action_settings">Настройки</string>
-	<string name="action_about">О программе</string>
+	<string name="action_about">О приложении</string>
 
 	<string name="dropbox_link_dialog_title">Аккаунт Dropbox</string>
 	<string name="dropbox_link_dialog_message">Вы можете войти в существующий аккаунт Dropbox или создать новый. После успешного входа в аккаунт все ваши заметки и метки будут перемещены в облачное хранилище Dropbox.</string>
@@ -40,8 +40,7 @@
 	<string name="action_search">Поиск</string>
 	<string name="search_hint">Поиск заметок</string>
 
-	<string name="empty_note_title_placeholder">(без заголовка)</string>
-	<string name="empty_note_placeholder">(пустая заметка)</string>
+	<string name="empty_note_placeholder">пустая заметка</string>
 	<string name="empty_note_not_saved">Пустая заметка не сохранена</string>
 	<string name="empty_note_not_shared">Эта заметка пуста</string>
 

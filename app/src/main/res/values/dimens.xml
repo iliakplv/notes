@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<dimen name="main_side_padding">6dp</dimen>
+	<dimen name="main_side_padding">4dp</dimen>
 	<dimen name="navigation_drawer_width">260dp</dimen>
 
-	<dimen name="note_list_item_side_padding">4dp</dimen>
-	<dimen name="note_list_item_vertical_padding">2dp</dimen>
+	<dimen name="note_list_item_internal_left_padding">6dp</dimen>
+	<dimen name="note_list_item_internal_right_padding">4dp</dimen>
+	<dimen name="note_list_item_internal_vertical_padding">2dp</dimen>
+	<dimen name="note_list_item_horizontal_padding">4dp</dimen>
+	<dimen name="note_list_item_vertical_padding">4dp</dimen>
 	<dimen name="note_list_item_title_bottom_margin">1dp</dimen>
-	<dimen name="note_list_item_title_text_size">22sp</dimen>
-	<dimen name="note_list_item_subtitle_text_size">18sp</dimen>
+	<dimen name="note_list_item_large_text_size">22sp</dimen>
+	<dimen name="note_list_item_small_text_size">18sp</dimen>
 	<dimen name="note_list_item_label_width">16dp</dimen>
 	<dimen name="note_list_item_label_height">16dp</dimen>
 	<dimen name="note_list_item_label_margin_left_from_title">4dp</dimen>
 	<dimen name="note_list_item_label_margin_left">1dp</dimen>
 	<dimen name="note_list_item_label_letter_text_size">14sp</dimen>
 
-	<dimen name="note_details_padding">6dp</dimen>
+	<dimen name="note_details_padding">4dp</dimen>
 	<dimen name="note_details_title_bottom_margin">4dp</dimen>
 	<dimen name="note_details_title_text_size">22sp</dimen>
 	<dimen name="note_details_body_text_size">22sp</dimen>

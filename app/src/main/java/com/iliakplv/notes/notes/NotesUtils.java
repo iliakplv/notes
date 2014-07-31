@@ -34,13 +34,21 @@ public final class NotesUtils {
 			NotesApplication.getContext().getResources().getStringArray(R.array.label_colors_names);
 
 
-	public static String getTitleForNote(AbstractNote note) {
-		if (!isNoteTitleEmpty(note)) {
-			return note.getTitle();
-		} else if (isNoteEmpty(note)) {
+	public static String getTitleForNoteInDialog(AbstractNote note) {
+		if (isNoteEmpty(note)) {
+			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
+		} else if (!isNoteTitleEmpty(note)) {
+			return note.getTitle().trim();
+		} else {
+			return note.getBody().trim();
+		}
+	}
+
+	public static String getTitleForNoteInList(AbstractNote note) {
+		if (isNoteEmpty(note)) {
 			return NotesApplication.getContext().getString(R.string.empty_note_placeholder);
 		} else {
-			return NotesApplication.getContext().getString(R.string.empty_note_title_placeholder);
+			return note.getTitle().trim();
 		}
 	}
 
@@ -59,7 +67,7 @@ public final class NotesUtils {
 
 	public static String getTitleForLabel(Label label) {
 		if (!StringUtils.isNullOrEmpty(label.getName())) {
-			return label.getName();
+			return label.getName().trim();
 		} else {
 			return "(" + COLORS_NAMES[label.getColor()] + ")";
 		}

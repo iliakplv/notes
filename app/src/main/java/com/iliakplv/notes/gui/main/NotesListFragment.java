@@ -3,6 +3,7 @@ package com.iliakplv.notes.gui.main;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		listAdapter = new NotesListAdapter();
 		setListAdapter(listAdapter);
 		getListView().setOnItemLongClickListener(this);
+		getListView().setDivider(null);
 	}
 
 	@Override
@@ -180,15 +182,23 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			final AbstractNote note = getNotesList().get(position);
 			final TextView title = (TextView) view.findViewById(R.id.title);
 			final TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-			title.setText(NotesUtils.getTitleForNote(note));
-			if (NotesUtils.isNoteTitleEmpty(note)) {
-				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
-				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
-			} else {
+			title.setText(NotesUtils.getTitleForNoteInList(note));
+			if (!NotesUtils.isNoteTitleEmpty(note)) {
 				title.setTextColor(getResources().getColor(R.color.note_list_item_black));
+				title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_large_text_size));
 				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_grey));
+				subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_small_text_size));
+			} else {
+				title.setTextColor(getResources().getColor(R.color.note_list_item_placeholder));
+				title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_small_text_size));
+				subtitle.setTextColor(getResources().getColor(R.color.note_list_item_black));
+				subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+						getResources().getDimension(R.dimen.note_list_item_large_text_size));
 			}
-			subtitle.setText(note.getBody());
+			subtitle.setText(note.getBody().trim());
 
 			// labels
 			final boolean showOneLabel = !showSearchResults && !ALL_LABELS.equals(currentLabelId);
