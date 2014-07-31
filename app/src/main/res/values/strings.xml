@@ -63,7 +63,7 @@
 	<string name="label_action_delete_confirm_dialog_text">Delete this label?</string>
 
 	<string name="label_title_hint">Label name</string>
-	<string name="label_edit_color_select">Label color</string>
+	<string name="label_edit_color_select">Select color</string>
 
 	<string name="color_default">white</string>
 	<string name="color_red">red</string>

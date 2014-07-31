@@ -62,8 +62,8 @@
 	<string name="label_action_delete">Удалить</string>
 	<string name="label_action_delete_confirm_dialog_text">Удалить эту метку?</string>
 
-	<string name="label_title_hint">Метка</string>
-	<string name="label_edit_color_select">Цвет метки</string>
+	<string name="label_title_hint">Название метки</string>
+	<string name="label_edit_color_select">Выберите цвет</string>
 
 	<string name="color_default">белый</string>
 	<string name="color_red">красный</string>
