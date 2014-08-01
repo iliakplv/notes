@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">Заметки</string>
+	<string name="app_name">Note It</string>
 
 	<string name="navigation_drawer_open">Показать навигацию</string>
 	<string name="navigation_drawer_close">Скрыть навигацию</string>
