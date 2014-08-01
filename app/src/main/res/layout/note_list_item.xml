@@ -3,12 +3,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               style="@style/NoteListItem">
 
-	<TextView
-			android:id="@+id/title"
-			style="@style/NoteListItemText.Title"/>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:paddingLeft="@dimen/note_list_item_internal_left_padding"
+		android:paddingRight="@dimen/note_list_item_internal_right_padding"
+		android:paddingTop="@dimen/note_list_item_internal_vertical_padding"
+		android:paddingBottom="@dimen/note_list_item_internal_vertical_padding"
+		android:background="@color/note_list_item_background"
+		android:orientation="vertical">
 
-	<TextView
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:animateLayoutChanges="true"
+			android:orientation="horizontal">
+
+			<TextView
+				android:id="@+id/title"
+				android:layout_weight="1"
+				style="@style/NoteListItemText.Title"/>
+
+			<TextView
+				android:id="@+id/label_4"
+				style="@style/NoteDetailsLabel"
+				android:layout_marginLeft="@dimen/note_list_item_label_margin_left_from_title"/>
+
+			<TextView
+				android:id="@+id/label_3"
+				style="@style/NoteDetailsLabel"/>
+
+			<TextView
+				android:id="@+id/label_2"
+				style="@style/NoteDetailsLabel"/>
+
+			<TextView
+				android:id="@+id/label_1"
+				style="@style/NoteDetailsLabel"/>
+
+			<TextView
+				android:id="@+id/more_labels"
+				style="@style/NoteDetailsLabel"
+				android:text="@string/more_labels"
+				android:background="@color/color_transparent"/>
+		</LinearLayout>
+
+		<TextView
 			android:id="@+id/subtitle"
 			style="@style/NoteListItemText.Subtitle"/>
+
+	</LinearLayout>
 
 </LinearLayout>

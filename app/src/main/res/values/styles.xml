@@ -10,10 +10,7 @@
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:paddingLeft">@dimen/main_side_padding</item>
 		<item name="android:paddingRight">@dimen/main_side_padding</item>
-	</style>
-
-	<style name="MainActivity.DualPane">
-		<item name="android:orientation">horizontal</item>
+		<item name="android:paddingTop">@dimen/main_side_padding</item>
 	</style>
 
 
@@ -25,34 +22,37 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:orientation">vertical</item>
-		<item name="android:paddingLeft">@dimen/note_list_item_side_padding</item>
-		<item name="android:paddingRight">@dimen/note_list_item_side_padding</item>
+		<item name="android:paddingLeft">@dimen/note_list_item_horizontal_padding</item>
+		<item name="android:paddingRight">@dimen/note_list_item_horizontal_padding</item>
 		<item name="android:paddingTop">@dimen/note_list_item_vertical_padding</item>
 		<item name="android:paddingBottom">@dimen/note_list_item_vertical_padding</item>
 	</style>
 
 	<style name="NoteListItemText" parent="android:Widget.TextView">
-		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:lines">1</item>
 	</style>
 
 	<style name="NoteListItemText.Title">
-		<item name="android:textColor">@color/note_list_item_title</item>
-		<item name="android:textSize">@dimen/note_list_item_title_text_size</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
+		<item name="android:textSize">@dimen/note_list_item_large_text_size</item>
 		<item name="android:layout_marginBottom">@dimen/note_list_item_title_bottom_margin</item>
 	</style>
 
 	<style name="NoteListItemText.Subtitle">
-		<item name="android:textColor">@color/note_list_item_subtitle</item>
-		<item name="android:textSize">@dimen/note_list_item_subtitle_text_size</item>
+		<item name="android:textColor">@color/note_list_item_grey</item>
+		<item name="android:textSize">@dimen/note_list_item_small_text_size</item>
 	</style>
 
-
-	<style name="NoteFragmentsSeparator" parent="android:Widget.TextView">
-		<item name="android:layout_width">@dimen/note_fragments_separator</item>
-		<item name="android:layout_height">match_parent</item>
-		<item name="android:background">@color/note_fragments_separator</item>
+	<style name="NoteDetailsLabel" parent="android:Widget.TextView">
+		<item name="android:gravity">center</item>
+		<item name="android:layout_width">@dimen/note_list_item_label_width</item>
+		<item name="android:layout_height">@dimen/note_list_item_label_height</item>
+		<item name="android:layout_marginLeft">@dimen/note_list_item_label_margin_left</item>
+		<item name="android:textSize">@dimen/note_list_item_label_letter_text_size</item>
+		<item name="android:textColor">@color/note_list_item_label_letter_color</item>
+		<item name="android:visibility">gone</item>
 	</style>
 
 
@@ -74,7 +74,9 @@
 	<style name="NoteDetailsText.Title">
 		<item name="android:textColor">@color/note_details_title</item>
 		<item name="android:textSize">@dimen/note_details_title_text_size</item>
+		<item name="android:textStyle">bold</item>
 		<item name="android:hint">@string/note_details_title_hint</item>
+		<item name="android:inputType">textCapSentences</item>
 		<item name="android:layout_marginBottom">@dimen/note_details_title_bottom_margin</item>
 	</style>
 
@@ -84,5 +86,35 @@
 		<item name="android:hint">@string/note_details_body_hint</item>
 	</style>
 
+
+	<!--
+		Label edit
+	-->
+
+	<style name="LabelEditTitle" parent="android:Widget.TextView">
+		<item name="android:layout_width">@dimen/label_edit_title_width</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/note_list_item_black</item>
+		<item name="android:textSize">@dimen/note_list_item_large_text_size</item>
+		<item name="android:inputType">textCapSentences</item>
+	</style>
+
+	<style name="LabelEditColorCheckBox">
+		<item name="android:layout_width">56dp</item>
+		<item name="android:layout_height">48dp</item>
+		<item name="android:layout_marginLeft">@dimen/label_edit_radio_button_side_margin</item>
+	</style>
+
+
+	<!--
+		About
+	-->
+
+	<style name="AboutText" parent="android:Widget.TextView">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textSize">@dimen/about_dialog_text_size</item>
+		<item name="android:layout_marginBottom">@dimen/about_dialog_text_margin</item>
+	</style>
 
 </resources>

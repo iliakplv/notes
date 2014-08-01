@@ -3,11 +3,11 @@ package com.iliakplv.notes.notes;
 import com.iliakplv.notes.utils.StringUtils;
 import org.joda.time.DateTime;
 
-/**
- * Author: Ilya Kopylov
- * Date:  20.08.2013
- */
+import java.io.Serializable;
+
 public abstract class AbstractNote {
+
+	private Serializable id = NotesUtils.DEFAULT_ID;
 
 	private String title;
 	private String body;
@@ -70,4 +70,11 @@ public abstract class AbstractNote {
 		changeTime = new DateTime();
 	}
 
+	public Serializable getId() {
+		return id;
+	}
+
+	public void setId(Serializable id) {
+		this.id = NotesUtils.getValidNoteId(id);
+	}
 }

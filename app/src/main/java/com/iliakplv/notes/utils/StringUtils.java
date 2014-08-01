@@ -1,10 +1,10 @@
 package com.iliakplv.notes.utils;
 
-/**
- * Autor: Ilya Kopylov
- * Date:  22.08.2013
- */
 public final class StringUtils {
+
+	private StringUtils() {
+		throw new AssertionError("Instance creation not allowed!");
+	}
 
 	public static String getNotNull(String s) {
 		return s != null ? s : "";
@@ -16,6 +16,14 @@ public final class StringUtils {
 
 	public static boolean isBlank(String s) {
 		return s == null || s.trim().length() == 0;
+	}
+
+	public static String normalizeString(String s) {
+		return s == null ? null : s.trim().toLowerCase();
+	}
+
+	public static String wrapWithEmptyLines(String string) {
+		return "\n" + string + "\n";
 	}
 
 	public static boolean equals(String s1, String s2) {

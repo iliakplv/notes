@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/action_add"
+		android:title="@string/action_bar_add"
+		android:icon="@drawable/ic_menu_add"
+		android:orderInCategory="1"
+		android:showAsAction="ifRoom"/>
+
+	<!-- Sort menu here (order = 2). See MainActivity.java -->
+
+	<item android:id="@+id/search"
+	      android:title="@string/action_search"
+	      android:orderInCategory="3"
+	      android:showAsAction="collapseActionView|never"
+	      android:actionViewClass="android.widget.SearchView"/>
+
+	<item
+		android:id="@+id/action_dropbox"
+		android:title="@string/action_dropbox_refresh"
+		android:orderInCategory="98"
+		android:showAsAction="never"/>
+
+	<item
+		android:id="@+id/action_settings"
+		android:title="@string/action_settings"
+		android:orderInCategory="99"
+		android:showAsAction="never"/>
+
+	<item
+		android:id="@+id/action_about"
+		android:title="@string/action_about"
+		android:orderInCategory="100"
+		android:showAsAction="never"/>
+
+</menu> 

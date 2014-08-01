@@ -3,48 +3,87 @@
 
 	<string name="app_name">Notes</string>
 
-
-	<!--
-		Common
-	-->
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
 
 	<string name="common_ok">OK</string>
+	<string name="common_save">Save</string>
 	<string name="common_cancel">Cancel</string>
+	<string name="common_close">Close</string>
 	<string name="common_yes">Yes</string>
 	<string name="common_no">No</string>
 
-
-	<!--
-		Action Bar
-	-->
-
 	<string name="action_bar_add">New note</string>
+	<string name="action_bar_share">Share</string>
+	<string name="action_bar_share_title">Share note</string>
+	<string name="action_bar_label_selected">Label: %s</string>
+	<string name="action_bar_search_results">Search: %s</string>
+	<string name="action_dropbox_link">Link Dropbox account</string>
+	<string name="action_dropbox_refresh">Refresh</string>
+	<string name="action_dropbox_refresh_toast">Sync has been started…</string>
+	<string name="action_dropbox_link_succeded_toast">Dropbox account has been linked</string>
+	<string name="action_dropbox_link_failed_toast">Dropbox account link failed!</string>
+	<string name="action_dropbox_already_linked_toast">Dropbox account linked</string>
+	<string name="action_settings">Settings</string>
+	<string name="action_about">About</string>
 
+	<string name="dropbox_link_dialog_title">Dropbox account</string>
+	<string name="dropbox_link_dialog_message">You can sign in to existing Dropbox account or create new one. After successful account linking all your notes and labels will be moved to Dropbox cloud storage.</string>
+	<string name="dropbox_link_dialog_yes">Continue</string>
+	<string name="dropbox_link_dialog_no">Not now</string>
 
-	<!--
-		Notes List
-	-->
+	<string name="action_sort">Sort</string>
+	<string name="action_sort_by_title">By title</string>
+	<string name="action_sort_by_create_asc">By creation (oldest first)</string>
+	<string name="action_sort_by_create_desc">By creation (newest first)</string>
+	<string name="action_sort_by_change">By last changing</string>
+	<string name="action_search">Search</string>
+	<string name="search_hint">Search note</string>
 
-	<string name="empty_note_placeholder">(empty note)</string>
+	<string name="empty_note_placeholder">empty note</string>
+	<string name="empty_note_not_saved">Empty note not saved</string>
+	<string name="empty_note_not_shared">This note is empty</string>
 
-
-	<!--
-		Note Actions
-	-->
-
+	<string name="note_action_labels">Change labels</string>
 	<string name="note_action_info">Note Info</string>
 	<string name="note_info_created">Created: %s</string>
 	<string name="note_info_modified">Modified: %s</string>
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
-
-
-	<!--
-		Note Details
-	-->
+	<string name="note_action_no_labels_dialog_text">You have no labels.\nCreate new one for this note?</string>
 
 	<string name="note_details_title_hint">Title</string>
 	<string name="note_details_body_hint">Text</string>
 
+	<string name="labels_drawer_all_notes">All notes</string>
+	<string name="labels_drawer_add_label">New label</string>
+
+	<string name="label_action_edit">Edit</string>
+	<string name="label_action_delete">Delete</string>
+	<string name="label_action_delete_confirm_dialog_text">Delete this label?</string>
+
+	<string name="label_title_hint">Label name</string>
+	<string name="label_edit_color_select">Select color</string>
+
+	<string name="color_default">white</string>
+	<string name="color_red">red</string>
+	<string name="color_orange">orange</string>
+	<string name="color_yellow">yellow</string>
+	<string name="color_green">green</string>
+	<string name="color_blue">blue</string>
+	<string name="color_purple">purple</string>
+	<string name="color_grey">grey</string>
+
+	<string name="more_labels">…</string>
+
+	<string name="settings_linkify_title">Links in note</string>
+	<string name="settings_linkify_subtitle">Make clickable links and phone numbers in note\'s text</string>
+
+	<string name="no_connection_toast">No network connection!</string>
+
+	<string name="about_version">Version: %s</string>
+	<string name="about_author">Created by Ilya Kopylov</string>
+	<string name="about_contact">For more information please contact author by email iliakplv@gmail.com</string>
+	<string name="about_sources">Source code can be found on\nhttps://github.com/iliakplv/notes</string>
 
 </resources>
