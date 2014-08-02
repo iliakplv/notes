@@ -25,6 +25,8 @@ public class StorageTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
+		Storage.init(null);
+
 		storage = Storage.getStorage();
 		notesIds = new ArrayList<Serializable>();
 		labelsIds = new ArrayList<Serializable>();
@@ -40,7 +42,6 @@ public class StorageTest extends TestCase {
 		storage.insertLabelToNote(notesIds.get(0), labelsIds.get(0));
 		storage.insertLabelToNote(notesIds.get(0), labelsIds.get(1));
 		storage.insertLabelToNote(notesIds.get(1), labelsIds.get(1));
-
 	}
 
 	public void testDatabase() {
@@ -52,7 +53,7 @@ public class StorageTest extends TestCase {
 		// title1 -- label1
 		// title2 -- (no labels)
 
-		Assert.assertEquals(notesIds.size(), storage.getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), storage.getAllLabels().size());
 
@@ -80,7 +81,7 @@ public class StorageTest extends TestCase {
 		// title1 -- (no labels)
 		// title2 -- (no labels)
 
-		Assert.assertEquals(notesIds.size(), storage.getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), storage.getAllLabels().size());
 
@@ -103,7 +104,7 @@ public class StorageTest extends TestCase {
 		// (no notes)
 		// label0
 
-		Assert.assertEquals(notesIds.size(), storage.getNotesForLabelCount(ALL_LABELS));
+		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(notesIds.size(), storage.getNotesForLabel(ALL_LABELS).size());
 		Assert.assertEquals(labelsIds.size(), storage.getAllLabels().size());
 
