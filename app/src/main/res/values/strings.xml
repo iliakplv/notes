@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="translation">english (default)</string>
 
 	<string name="app_name">Note Now</string>
 
@@ -83,7 +84,8 @@
 
 	<string name="about_version">Version: %s</string>
 	<string name="about_author">Created by Ilya Kopylov</string>
-	<string name="about_contact">For more information please contact author by email iliakplv@gmail.com</string>
+	<string name="about_contact">Contact author</string>
+	<string name="about_contact_do_not_remove">\n\n--------------------\nPlease, do not remove following technical information!\n--------------------\n</string>
 	<string name="about_sources">Source code can be found on\nhttps://github.com/iliakplv/notes</string>
 
 </resources>
