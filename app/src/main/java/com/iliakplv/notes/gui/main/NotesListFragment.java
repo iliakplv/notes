@@ -1,7 +1,7 @@
 package com.iliakplv.notes.gui.main;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -23,25 +23,30 @@ import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class NotesListFragment extends ListFragment implements AdapterView.OnItemLongClickListener,
-		NotesStorageListener {
-
+public class NotesListFragment extends Fragment implements NotesStorageListener {
 	public static final String TAG = NotesListFragment.class.getSimpleName();
 
-	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
-	private boolean listeningStorage = false;
-
-	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
-	private Serializable currentLabelId = ALL_LABELS;
-
+	private ListView listView;
+	private TextView status;
+	private int [] labelsColors;
 	private boolean showSearchResults = false;
 	private String searchQuery;
 
+	private final NotesStorage storage = Storage.getStorage();
+	private boolean listeningStorage = false;
+	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
+	private Serializable currentLabelId = ALL_LABELS;
+
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		labelsColors = getResources().getIntArray(R.array.label_colors);
+	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -50,18 +55,42 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final View view = inflater.inflate(R.layout.note_list, container, false);
+
+		listView = (ListView) view.findViewById(R.id.notes_list);
 		listAdapter = new NotesListAdapter();
-		setListAdapter(listAdapter);
-		getListView().setOnItemLongClickListener(this);
-		getListView().setDivider(null);
+		listView.setAdapter(listAdapter);
+		listView.setDivider(null);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				mainActivity.onNoteSelected(getNotesList().get(position).getId());
+			}
+		});
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+				return showNoteActionsDialog(i);
+			}
+		});
+
+		status = (TextView) view.findViewById(R.id.status);
+		status.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mainActivity.onBackPressed();
+			}
+		});
+
+		return view;
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		startListeningStorage();
+		updateStatus();
 	}
 
 	@Override
@@ -74,16 +103,6 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		return showSearchResults ?
 				storage.getNotesForQuery(searchQuery) :
 				storage.getNotesForLabel(currentLabelId);
-	}
-	
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		mainActivity.onNoteSelected(getNotesList().get(position).getId());
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		return showNoteActionsDialog(i);
 	}
 
 	private boolean showNoteActionsDialog(int position) {
@@ -105,12 +124,29 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 		currentLabelId = labelId;
 		showSearchResults = false;
 		updateListView();
+		updateStatus();
 	}
 
 	public void showNotesForQuery(String searchQuery) {
 		this.searchQuery = searchQuery;
 		showSearchResults = true;
 		updateListView();
+		updateStatus();
+	}
+
+	private void updateStatus() {
+		if (showSearchResults) {
+			status.setVisibility(View.VISIBLE);
+			status.setBackgroundColor(getResources().getColor(R.color.status_search_background));
+			status.setText(getString(R.string.action_bar_search_results, searchQuery));
+		} else if (!ALL_LABELS.equals(currentLabelId) && storage.getLabel(currentLabelId) != null) {
+			status.setVisibility(View.VISIBLE);
+			final Label label = storage.getLabel(currentLabelId);
+			status.setBackgroundColor(labelsColors[label.getColor()]);
+			status.setText(getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)));
+		} else {
+			status.setVisibility(View.GONE);
+		}
 	}
 
 	private void updateListView() {
@@ -157,11 +193,10 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 				R.id.label_3,
 				R.id.label_4};
 
-		private int [] labelsColors;
+
 
 		public NotesListAdapter() {
 			super(mainActivity, 0, getNotesList());
-			labelsColors = getResources().getIntArray(R.array.label_colors);
 		}
 
 		@Override
@@ -201,14 +236,7 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 			subtitle.setText(note.getBody().trim());
 
 			// labels
-			final boolean showOneLabel = !showSearchResults && !ALL_LABELS.equals(currentLabelId);
-			final List<Label> labels;
-			if (showOneLabel) {
-				labels = new ArrayList<Label>(1);
-				labels.add(storage.getLabel(currentLabelId));
-			} else {
-				labels = storage.getLabelsForNote(note.getId());
-			}
+			final List<Label> labels = storage.getLabelsForNote(note.getId());
 			for (int i = 0; i < LABELS_IDS.length; i++) {
 				final TextView labelView = (TextView) view.findViewById(LABELS_IDS[i]);
 				if (i < labels.size()) {
@@ -220,10 +248,8 @@ public class NotesListFragment extends ListFragment implements AdapterView.OnIte
 					labelView.setVisibility(View.GONE);
 				}
 			}
-			// show [...] sign
-			// if showing notes for selected label or
-			// if not enough space to show all labels
-			if (showOneLabel || labels.size() > LABELS_IDS.length) {
+			// show ellipsis if not enough space to show all labels
+			if (labels.size() > LABELS_IDS.length) {
 				view.findViewById(R.id.more_labels).setVisibility(View.VISIBLE);
 			} else {
 				view.findViewById(R.id.more_labels).setVisibility(View.GONE);
