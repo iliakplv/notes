@@ -25,8 +25,11 @@
 		<item name="android:textSize">@dimen/note_list_item_status_text_size</item>
 		<item name="android:gravity">center_vertical</item>
 		<item name="android:drawableLeft">@drawable/ic_menu_back</item>
-		<item name="android:drawablePadding">2dp</item>
-		<item name="android:layout_margin">4dp</item>
+		<item name="android:drawablePadding">4dp</item>
+		<item name="android:layout_marginLeft">4dp</item>
+		<item name="android:layout_marginRight">4dp</item>
+		<item name="android:layout_marginTop">8dp</item>
+		<item name="android:layout_marginBottom">8dp</item>
 	</style>
 
 	<style name="NoteListItem">
