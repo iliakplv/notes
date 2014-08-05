@@ -49,8 +49,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
 	private String searchQuery;
 
-	private CharSequence actionBarTitle;
-
 
 	private boolean isDetailsShown() {
 		return detailsShown;
@@ -117,7 +115,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	private void updateUi() {
 		updateNotesList();
-		updateActionBar();
+		restoreActionBar();
 	}
 
 	private void updateNotesList() {
@@ -130,22 +128,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				noteListFragment.showNotesForLabel(selectedLabelId);
 			}
 		}
-	}
-
-	private void updateActionBar() {
-		if (searchQuery != null) {
-			actionBarTitle = getString(R.string.action_bar_search_results, searchQuery);
-		} else {
-			if (NavigationDrawerFragment.ALL_LABELS.equals(selectedLabelId)) {
-				actionBarTitle = getString(R.string.labels_drawer_all_notes);
-			} else {
-				final Label label = storage.getLabel(selectedLabelId);
-				actionBarTitle = label != null ?
-						getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)) :
-						getString(R.string.app_name);
-			}
-		}
-		restoreActionBar();
 	}
 
 	public void onNoteSelected(Serializable noteId) {
@@ -269,7 +251,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(actionBarTitle);
 	}
 
 	@Override

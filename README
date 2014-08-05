@@ -29,3 +29,8 @@ Planned features
 
 Application core is in the <project>/app directory.
 Just use Gradle to build. Gradle Wrapper provided.
+
+----------------------------------------------------------------
+
+This app is distributed under Do What the Fuck You Want to Public License
+http://www.wtfpl.net/

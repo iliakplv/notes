@@ -17,6 +17,7 @@ import com.iliakplv.notes.R;
 import com.iliakplv.notes.notes.Label;
 
 import java.io.Serializable;
+import java.util.Random;
 
 public class LabelEditDialog extends AbstractItemDialog {
 
@@ -51,7 +52,7 @@ public class LabelEditDialog extends AbstractItemDialog {
 
 		final Label label = editMode ?
 				storage.getLabel(id) :
-				new Label("", Label.DEFAULT_COLOR_INDEX);
+				new Label("", getRandomColorIndex());
 
 		final String labelName = fromSavedInstanceState ?
 				savedInstanceState.getString(EXTRA_LABEL_NAME) :
@@ -102,6 +103,10 @@ public class LabelEditDialog extends AbstractItemDialog {
 				})
 				.setNegativeButton(R.string.common_cancel, null)
 				.create();
+	}
+
+	private static int getRandomColorIndex() {
+		return new Random().nextInt(COLORS_CHECKBOXES_IDS.length);
 	}
 
 	@Override

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:animateLayoutChanges="true">
+
+		<!-- Layout for fixing lag on list view item click during animation -->
+
+		<TextView
+			android:id="@+id/status"
+			style="@style/NoteListStatus"
+			android:visibility="gone"/>
+
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/no_notes_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_margin="28dp"
+		android:textSize="24sp"
+		android:textColor="#64404040"
+		android:text="@string/no_notes_yet"/>
+
+	<ListView
+		android:id="@+id/notes_list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+</LinearLayout>

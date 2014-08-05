@@ -18,6 +18,20 @@
 		Notes List
 	-->
 
+	<style name="NoteListStatus" parent="android:Widget.TextView">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:lines">1</item>
+		<item name="android:textSize">@dimen/note_list_item_status_text_size</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:drawableLeft">@drawable/ic_menu_back</item>
+		<item name="android:drawablePadding">4dp</item>
+		<item name="android:layout_marginLeft">4dp</item>
+		<item name="android:layout_marginRight">4dp</item>
+		<item name="android:layout_marginTop">8dp</item>
+		<item name="android:layout_marginBottom">8dp</item>
+	</style>
+
 	<style name="NoteListItem">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>

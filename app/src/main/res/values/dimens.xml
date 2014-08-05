@@ -10,6 +10,7 @@
 	<dimen name="note_list_item_horizontal_padding">4dp</dimen>
 	<dimen name="note_list_item_vertical_padding">4dp</dimen>
 	<dimen name="note_list_item_title_bottom_margin">1dp</dimen>
+	<dimen name="note_list_item_status_text_size">18sp</dimen>
 	<dimen name="note_list_item_large_text_size">22sp</dimen>
 	<dimen name="note_list_item_small_text_size">18sp</dimen>
 	<dimen name="note_list_item_label_width">16dp</dimen>

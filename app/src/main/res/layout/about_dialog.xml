@@ -20,7 +20,12 @@
 			android:id="@+id/author"
 			android:text="@string/about_author"/>
 
-		<TextView
+		<Button
+			style="@style/AboutText"
+			android:id="@+id/google_play"
+			android:text="@string/about_google_play"/>
+
+		<Button
 			style="@style/AboutText"
 			android:id="@+id/contact"
 			android:text="@string/about_contact"/>
