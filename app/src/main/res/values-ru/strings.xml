@@ -14,6 +14,10 @@
 	<string name="common_yes">Да</string>
 	<string name="common_no">Нет</string>
 
+	<string name="no_notes_yet">У вас пока нет заметок.\nСоздать новую?</string>
+	<string name="no_notes_for_label">Нет заметок с этой меткой</string>
+	<string name="no_notes_for_search">Ой! Ничего не найдено</string>
+
 	<string name="action_bar_add">Новая заметка</string>
 	<string name="action_bar_share">Отправить</string>
 	<string name="action_bar_share_title">Отправить заметку</string>
@@ -30,7 +34,7 @@
 
 	<string name="dropbox_link_dialog_title">Аккаунт Dropbox</string>
 	<string name="dropbox_link_dialog_message">Вы можете войти в существующий аккаунт Dropbox или создать новый. После успешного входа в аккаунт все ваши заметки и метки будут перемещены в облачное хранилище Dropbox.</string>
-	<string name="dropbox_link_dialog_yes">Продолжаем</string>
+	<string name="dropbox_link_dialog_yes">Продолжить</string>
 	<string name="dropbox_link_dialog_no">Не сейчас</string>
 
 	<string name="action_sort">Сортировка</string>

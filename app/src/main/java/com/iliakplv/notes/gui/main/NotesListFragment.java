@@ -30,15 +30,14 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 
 	private MainActivity mainActivity;
 	private NotesListAdapter listAdapter;
-	private ListView listView;
 	private TextView status;
+	private TextView noNotesText;
 	private int [] labelsColors;
 	private boolean showSearchResults = false;
 	private String searchQuery;
 
-	private final NotesStorage storage = Storage.getStorage();
-	private boolean listeningStorage = false;
 	private static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
+	private final NotesStorage storage = Storage.getStorage();
 	private Serializable currentLabelId = ALL_LABELS;
 
 
@@ -58,7 +57,8 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.note_list, container, false);
 
-		listView = (ListView) view.findViewById(R.id.notes_list);
+		// list
+		final ListView listView = (ListView) view.findViewById(R.id.notes_list);
 		listAdapter = new NotesListAdapter();
 		listView.setAdapter(listAdapter);
 		listView.setDivider(null);
@@ -75,11 +75,21 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 			}
 		});
 
+		// status
 		status = (TextView) view.findViewById(R.id.status);
 		status.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mainActivity.onBackPressed();
+			}
+		});
+
+		// no notes text
+		noNotesText = (TextView) view.findViewById(R.id.no_notes_text);
+		noNotesText.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mainActivity.createNewNote();
 			}
 		});
 
@@ -90,7 +100,7 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	public void onResume() {
 		super.onResume();
 		startListeningStorage();
-		updateStatus();
+		updateUi();
 	}
 
 	@Override
@@ -115,65 +125,89 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 
 	@Override
 	public void onContentChanged() {
-		if (listeningStorage) {
-			updateListView();
-		}
+		updateUiFromBackgroundThread();
 	}
 
 	public void showNotesForLabel(Serializable labelId) {
 		currentLabelId = labelId;
 		showSearchResults = false;
-		updateListView();
-		updateStatus();
+		updateUi();
 	}
 
 	public void showNotesForQuery(String searchQuery) {
 		this.searchQuery = searchQuery;
 		showSearchResults = true;
-		updateListView();
-		updateStatus();
+		updateUi();
 	}
 
-	private void updateStatus() {
-		if (showSearchResults) {
-			status.setVisibility(View.VISIBLE);
-			status.setBackgroundColor(getResources().getColor(R.color.status_search_background));
-			status.setText(getString(R.string.action_bar_search_results, searchQuery));
-		} else if (!ALL_LABELS.equals(currentLabelId) && storage.getLabel(currentLabelId) != null) {
-			status.setVisibility(View.VISIBLE);
-			final Label label = storage.getLabel(currentLabelId);
-			status.setBackgroundColor(labelsColors[label.getColor()]);
-			status.setText(getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)));
-		} else {
-			status.setVisibility(View.GONE);
+
+	private void updateListView() {
+		if (listAdapter != null) {
+			listAdapter.notifyDataSetChanged();
 		}
 	}
 
-	private void updateListView() {
+	private void updateStatus() {
+		if (status != null) {
+			if (showSearchResults) {
+				status.setVisibility(View.VISIBLE);
+				status.setBackgroundColor(getResources().getColor(R.color.status_search_background));
+				status.setText(getString(R.string.action_bar_search_results, searchQuery));
+			} else if (!ALL_LABELS.equals(currentLabelId) && storage.getLabel(currentLabelId) != null) {
+				status.setVisibility(View.VISIBLE);
+				final Label label = storage.getLabel(currentLabelId);
+				status.setBackgroundColor(labelsColors[label.getColor()]);
+				status.setText(getString(R.string.action_bar_label_selected, NotesUtils.getTitleForLabel(label)));
+			} else {
+				status.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	private void updateNoNotesText() {
+		if (noNotesText != null) {
+			if (getNotesList().isEmpty()) {
+				noNotesText.setVisibility(View.VISIBLE);
+				if (showSearchResults) {
+					noNotesText.setText(R.string.no_notes_for_search);
+					noNotesText.setClickable(false);
+				} else if (!ALL_LABELS.equals(currentLabelId)) {
+					noNotesText.setText(R.string.no_notes_for_label);
+					noNotesText.setClickable(false);
+				} else {
+					noNotesText.setText(R.string.no_notes_yet);
+					noNotesText.setClickable(true);
+				}
+			} else {
+				noNotesText.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	private void updateUiFromBackgroundThread() {
 		if (mainActivity != null) {
 			mainActivity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (listAdapter != null) {
-						listAdapter.notifyDataSetChanged();
-					}
+					updateUi();
 				}
 			});
 		}
 	}
 
+	private void updateUi() {
+		updateListView();
+		updateStatus();
+		updateNoNotesText();
+	}
+
+
 	private void startListeningStorage() {
-		if (!listeningStorage) {
-			storage.addStorageListener(this);
-			listeningStorage = true;
-		}
+		storage.addStorageListener(this);
 	}
 
 	private void stopListeningStorage() {
-		if (listeningStorage) {
-			storage.removeStorageListener(this);
-			listeningStorage = false;
-		}
+		storage.removeStorageListener(this);
 	}
 
 
