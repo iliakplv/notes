@@ -106,7 +106,7 @@ public class NoteDetailsFragment extends Fragment {
 					note.setBody(bodyText);
 					note.updateChangeTime();
 					final boolean updated = storage.updateNote(noteId, note);
-					AppLog.d(TAG, LOG_PREFIX + "Note data changed. Database "
+					AppLog.d(TAG, LOG_PREFIX + "Note data changed. Storage "
 							+ (updated ? "" : "NOT (!!!) ") + "updated.");
 				} else {
 					AppLog.d(TAG, LOG_PREFIX + "Note data not changed.");
