@@ -29,10 +29,12 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	public static final String TAG = NotesListFragment.class.getSimpleName();
 
 	private MainActivity mainActivity;
+	private int [] labelsColors;
+	private boolean isUiVisible = false;
 	private NotesListAdapter listAdapter;
 	private TextView status;
 	private TextView noNotesText;
-	private int [] labelsColors;
+
 	private boolean showSearchResults = false;
 	private String searchQuery;
 
@@ -99,6 +101,7 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	@Override
 	public void onResume() {
 		super.onResume();
+		isUiVisible = true;
 		startListeningStorage();
 		updateUi();
 	}
@@ -106,6 +109,7 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	@Override
 	public void onPause() {
 		super.onPause();
+		isUiVisible = false;
 		stopListeningStorage();
 	}
 
@@ -142,13 +146,13 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 
 
 	private void updateListView() {
-		if (listAdapter != null) {
+		if (isUiVisible && listAdapter != null) {
 			listAdapter.notifyDataSetChanged();
 		}
 	}
 
 	private void updateStatus() {
-		if (status != null) {
+		if (isUiVisible && status != null) {
 			if (showSearchResults) {
 				status.setVisibility(View.VISIBLE);
 				status.setBackgroundColor(getResources().getColor(R.color.status_search_background));
@@ -165,7 +169,7 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 	}
 
 	private void updateNoNotesText() {
-		if (noNotesText != null) {
+		if (isUiVisible && noNotesText != null) {
 			if (getNotesList().isEmpty()) {
 				noNotesText.setVisibility(View.VISIBLE);
 				if (showSearchResults) {
