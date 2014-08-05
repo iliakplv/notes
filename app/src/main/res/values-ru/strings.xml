@@ -88,6 +88,7 @@
 
 	<string name="about_version">Версия: %s</string>
 	<string name="about_author">Разработчик Илья Копылов</string>
+	<string name="about_google_play">Оценить в Google Play</string>
 	<string name="about_contact">Написать разработчику</string>
 	<string name="about_contact_do_not_remove">\n\n--------------------\nПожалуйста, не удаляйте следующую техническую информацию!\n--------------------\n</string>
 	<string name="about_sources">Исходный код приложения:\nhttps://github.com/iliakplv/notes</string>

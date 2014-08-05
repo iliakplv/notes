@@ -38,11 +38,20 @@ public class AboutDialog extends DialogFragment {
 		((TextView) view.findViewById(R.id.version))
 				.setText(context.getString(R.string.about_version, appVersion));
 
+		// google play
+		view.findViewById(R.id.google_play).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openGooglePlay();
+			}
+		});
+
+
 		// email
 		view.findViewById(R.id.contact).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sendFeedback(context, appVersion);
+				sendFeedback();
 			}
 		});
 
@@ -53,7 +62,14 @@ public class AboutDialog extends DialogFragment {
 		return view;
 	}
 
-	private void sendFeedback(Context context, String version) {
+	private void openGooglePlay() {
+		final Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+				Uri.parse("https://play.google.com/store/apps/details?id=" + getActivity().getPackageName()));
+		startActivity(browserIntent);
+	}
+
+	private void sendFeedback() {
+		final Context context = getActivity();
 		final Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
 				Uri.fromParts("mailto", "iliakplv@gmail.com", null));
 		final String subject = context.getString(R.string.app_name) + " feedback";
