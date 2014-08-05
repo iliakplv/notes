@@ -6,8 +6,6 @@ import java.io.Serializable;
 
 public class Label {
 
-	public static final int DEFAULT_COLOR_INDEX = 0;
-
 	private Serializable id = NotesUtils.DEFAULT_ID;
 
 	private String name;
@@ -17,10 +15,6 @@ public class Label {
 	public Label(String name, int color) {
 		setName(name);
 		setColor(color);
-	}
-
-	public Label(String name) {
-		this(name, DEFAULT_COLOR_INDEX);
 	}
 
 
