@@ -49,8 +49,8 @@
 	<string name="empty_note_not_saved">Empty note not saved</string>
 	<string name="empty_note_not_shared">This note is empty</string>
 
-	<string name="note_action_labels">Change labels</string>
-	<string name="note_action_info">Note Info</string>
+	<string name="note_action_labels">Labels</string>
+	<string name="note_action_info">Info</string>
 	<string name="note_info_created">Created: %s</string>
 	<string name="note_info_modified">Modified: %s</string>
 	<string name="note_action_delete">Delete</string>

@@ -25,6 +25,8 @@ public class NoteDetailsFragment extends Fragment {
 
 	public static final String TAG = NoteDetailsFragment.class.getSimpleName();
 	public final static String ARG_NOTE_ID = "note_id";
+	public final static String ARG_TITLE = "title";
+	public final static String ARG_TEXT = "text";
 
 	private final static String PREFS_KEY_LINKIFY = "linkify_note_text";
 	private final static int LINKIFY_MASK = Linkify.WEB_URLS |
@@ -39,6 +41,8 @@ public class NoteDetailsFragment extends Fragment {
 	private EditText title;
 	private EditText body;
 
+	private String titleFromArgs;
+	private String textFromArgs;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class NoteDetailsFragment extends Fragment {
 		setHasOptionsMenu(true);
 		noteId  = getArguments().getSerializable(ARG_NOTE_ID);
 		newNoteCreationMode = MainActivity.NEW_NOTE.equals(noteId);
+		titleFromArgs = getArguments().getString(ARG_TITLE);
+		textFromArgs = getArguments().getString(ARG_TEXT);
 		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
 	}
 
@@ -56,11 +62,17 @@ public class NoteDetailsFragment extends Fragment {
 		body = (EditText) view.findViewById(R.id.note_body);
 
 		final boolean fromSaveInstanceState = savedInstanceState != null;
-		if (!newNoteCreationMode && !fromSaveInstanceState) {
-			final AbstractNote note = storage.getNote(noteId);
-			if (note != null) {
-				title.setText(note.getTitle());
-				body.setText(note.getBody());
+
+		if (!fromSaveInstanceState) {
+			if (newNoteCreationMode) {
+				title.setText(titleFromArgs);
+				body.setText(textFromArgs);
+			} else {
+				final AbstractNote note = storage.getNote(noteId);
+				if (note != null) {
+					title.setText(note.getTitle());
+					body.setText(note.getBody());
+				}
 			}
 		}
 

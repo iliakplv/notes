@@ -49,7 +49,7 @@
 	<string name="empty_note_not_saved">Пустая заметка не сохранена</string>
 	<string name="empty_note_not_shared">Эта заметка пуста</string>
 
-	<string name="note_action_labels">Изменить метки</string>
+	<string name="note_action_labels">Метки</string>
 	<string name="note_action_info">Свойства</string>
 	<string name="note_info_created">Создана: %s</string>
 	<string name="note_info_modified">Изменена: %s</string>
