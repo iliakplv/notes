@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
 	compileSdkVersion 19
@@ -16,6 +16,16 @@ android {
 		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
 	}
 
+	signingConfigs {
+		release {
+//          TODO [on release] Replace with actual values
+			keyAlias 'KEY_ALIAS'
+			keyPassword 'KEY_PASSWORD'
+			storeFile file('KEYSTORE_FILE')
+			storePassword 'KEYSTORE_PASSWORD'
+		}
+	}
+
 	buildTypes {
 		debug {
 			runProguard false
@@ -25,24 +35,14 @@ android {
 		release {
 			runProguard true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-			zipAlign false
+			zipAlign true
 			debuggable false
-//			signingConfig release
+			signingConfig release
 		}
 	}
 
 	testOptions {
 		resultsDir = "$project.buildDir/tests"
-	}
-
-	signingConfigs {
-		release {
-//          TODO [on release] Replace with actual values
-			keyAlias 'KEY_ALIAS'
-			keyPassword 'KEY_PASSWORD'
-			storeFile file('KEYSTORE_FILE')
-			storePassword 'KEYSTORE_PASSWORD'
-		}
 	}
 }
 
