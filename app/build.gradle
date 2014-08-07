@@ -25,7 +25,7 @@ android {
 		release {
 			runProguard true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-			zipAlign true
+			zipAlign false
 			debuggable false
 //			signingConfig release
 		}
