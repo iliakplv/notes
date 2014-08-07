@@ -22,7 +22,6 @@ import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
-import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
@@ -68,18 +67,25 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		restoreNotesSortOrder();
 		setupNavigationDrawer();
 
-		if (savedInstanceState == null) {
+		boolean fromSaveInstanceState = savedInstanceState != null;
+		if (fromSaveInstanceState) {
+			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
+			selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
+			searchQuery = savedInstanceState.getString(ARG_SEARCH_QUERY);
+		} else {
 			final NotesListFragment notesListFragment = new NotesListFragment();
 			notesListFragment.setArguments(getIntent().getExtras());
 			final FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.add(R.id.fragment_container, notesListFragment, NotesListFragment.TAG);
 			ft.commit();
-		} else {
-			setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
-			selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
-			searchQuery = savedInstanceState.getString(ARG_SEARCH_QUERY);
-		}
 
+			final Intent intent = getIntent();
+			if (Intent.ACTION_SEND.equals(intent.getAction())) {
+				if ("text/plain".equals(intent.getType())) {
+					onShareIntent(intent);
+				}
+			}
+		}
 	}
 
 	private void setupNavigationDrawer() {
@@ -131,11 +137,24 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	public void onNoteSelected(Serializable noteId) {
+		showNoteDetails(noteId, null, null);
+	}
+
+	private void onShareIntent(Intent intent) {
+		showNoteDetails(NEW_NOTE,
+				StringUtils.getNotNull(intent.getStringExtra(Intent.EXTRA_SUBJECT)),
+				StringUtils.getNotNull(intent.getStringExtra(Intent.EXTRA_TEXT)));
+	}
+
+	// set text and/or title from share intent
+	private void showNoteDetails(Serializable noteId, String title, String text) {
 		setDetailsShown(true);
 
 		final NoteDetailsFragment noteDetailsFragment = new NoteDetailsFragment();
 		final Bundle args = new Bundle();
 		args.putSerializable(NoteDetailsFragment.ARG_NOTE_ID, noteId);
+		args.putSerializable(NoteDetailsFragment.ARG_TITLE, title);
+		args.putSerializable(NoteDetailsFragment.ARG_TEXT, text);
 		noteDetailsFragment.setArguments(args);
 
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -145,7 +164,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		ft.commit();
 
 		if (NEW_NOTE.equals(noteId)) {
-			EventTracker.track(Event.NoteCreateClick);
+			if (title != null || text != null){
+				EventTracker.track(Event.ShareIntentReceived);
+			} else {
+				EventTracker.track(Event.NoteCreateClick);
+			}
 		} else {
 			EventTracker.track(Event.NoteShow);
 		}

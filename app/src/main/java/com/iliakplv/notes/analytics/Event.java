@@ -6,25 +6,24 @@ public enum Event {
 
 /*	Notes */
 
-	// tracked from UI
 	NoteCreateClick,
 	NoteShow,
 	NoteInfoShow,
 	NoteShareDialogShow,
 	NotesSortOrderSelect,
-	// tracked from storage
+	ShareIntentReceived,
+
 	NoteCreate,
 	NoteEdit,
 	NoteDelete,
-	// tracked from search implementation
+
 	SearchUsed,
 
 /*	Labels */
 
-	// tracked from UI
 	LabelCreateClick,
 	LabelSelect,
-	// tracked from storage
+
 	LabelCreate,
 	LabelEdit,
 	LabelDelete,
@@ -33,12 +32,11 @@ public enum Event {
 
 /*	Dropbox */
 
-	// tracked from dropbox class
 	DropboxLinkAttempt,
 	DropboxLinkSuccess,
 	DropboxLinkFail,
 	DropboxSyncAuto,
-	// tracked from UI
+
 	DropboxSyncManual,
 	
 /*	Other */
