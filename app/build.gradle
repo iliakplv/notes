@@ -9,8 +9,8 @@ android {
 		targetSdkVersion 19
 
 //      TODO [on release] Update version
-		versionCode 6
-		versionName '2.2'
+		versionCode 7
+		versionName '2.3'
 
 		testPackageName 'com.iliakplv.notes.tests'
 		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
