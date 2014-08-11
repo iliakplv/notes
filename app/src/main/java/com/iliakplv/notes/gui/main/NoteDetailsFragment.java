@@ -1,11 +1,15 @@
 package com.iliakplv.notes.gui.main;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -44,6 +48,8 @@ public class NoteDetailsFragment extends Fragment {
 	private String titleFromArgs;
 	private String textFromArgs;
 
+	private MainActivity mainActivity;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +59,12 @@ public class NoteDetailsFragment extends Fragment {
 		titleFromArgs = getArguments().getString(ARG_TITLE);
 		textFromArgs = getArguments().getString(ARG_TEXT);
 		AppLog.d(TAG, "onCreate() call. Note id = " + noteId);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mainActivity = (MainActivity) activity;
 	}
 
 	@Override
@@ -88,6 +100,41 @@ public class NoteDetailsFragment extends Fragment {
 			Linkify.addLinks(body, LINKIFY_MASK);
 		}
 	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		if (!mainActivity.isDrawerOpened()) {
+			inflater.inflate(R.menu.note_menu, menu);
+		} else {
+			super.onCreateOptionsMenu(menu, inflater);
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.action_save_changes:
+				mainActivity.onBackPressed();
+				return true;
+
+			case R.id.action_discard_changes:
+				if (newNoteCreationMode) {
+					title.setText(titleFromArgs);
+					body.setText(textFromArgs);
+				} else {
+					final AbstractNote note = storage.getNote(noteId);
+					if (note != null) {
+						title.setText(note.getTitle());
+						body.setText(note.getBody());
+					}
+				}
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 
 	public void onBackPressed() {
 		saveNote();

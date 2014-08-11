@@ -198,7 +198,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public void onBackPressed() {
-		if (navigationDrawerFragment.isDrawerOpen()) {
+		if (isDrawerOpened()) {
 			// 1. close drawer if opened
 			navigationDrawerFragment.closeDrawer();
 		} else if (isDetailsShown()) {
@@ -211,6 +211,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			// 4. exit from app
 			super.onBackPressed();
 		}
+	}
+
+	public boolean isDrawerOpened() {
+		return navigationDrawerFragment != null && navigationDrawerFragment.isDrawerOpen();
 	}
 
 	private void closeNoteDetails() {
@@ -236,7 +240,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!navigationDrawerFragment.isDrawerOpen()) {
+		if (!isDrawerOpened()) {
 			if (!isDetailsShown()) {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
 				inflateSortMenu(menu);

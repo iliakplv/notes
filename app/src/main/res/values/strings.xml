@@ -58,6 +58,8 @@
 	<string name="note_action_delete">Delete</string>
 	<string name="note_action_delete_confirm_dialog_text">Delete this note?</string>
 	<string name="note_action_no_labels_dialog_text">You have no labels.\nCreate new one for this note?</string>
+	<string name="note_action_save_changes">Done</string>
+	<string name="note_action_discard_changes">Discard changes</string>
 
 	<string name="note_details_title_hint">Title</string>
 	<string name="note_details_body_hint">Text</string>
