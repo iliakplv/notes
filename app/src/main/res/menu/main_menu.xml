@@ -7,11 +7,18 @@
 		android:orderInCategory="1"
 		android:showAsAction="ifRoom"/>
 
-	<!-- Sort menu here (order = 2). See MainActivity.java -->
+	<item
+		android:id="@+id/action_speak"
+		android:title="@string/action_bar_speak"
+		android:icon="@drawable/ic_speak"
+		android:orderInCategory="2"
+		android:showAsAction="ifRoom"/>
+
+	<!-- Sort menu here (order = 3). See MainActivity.java -->
 
 	<item android:id="@+id/search"
 	      android:title="@string/action_search"
-	      android:orderInCategory="3"
+	      android:orderInCategory="4"
 	      android:showAsAction="collapseActionView|never"
 	      android:actionViewClass="android.widget.SearchView"/>
 

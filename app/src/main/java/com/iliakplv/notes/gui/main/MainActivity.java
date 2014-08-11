@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import com.iliakplv.notes.utils.ConnectivityUtils;
 import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerListener {
 
@@ -38,6 +40,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
 	private static final String ARG_SEARCH_QUERY = "search_query";
 	private static final String PREFS_KEY_SORT_ORDER = "sort_order";
+	private static final int RESULT_DROPBOX_LINK = DropboxHelper.REQUEST_LINK_TO_DBX;
+	private static final int RESULT_SPEECH_TO_TEXT = 42;
+
 	public static final Integer NEW_NOTE = 0;
 
 	private final NotesStorage storage = Storage.getStorage();
@@ -146,7 +151,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 				StringUtils.getNotNull(intent.getStringExtra(Intent.EXTRA_TEXT)));
 	}
 
-	// set text and/or title from share intent
+	// set text and/or title from external intent
 	private void showNoteDetails(Serializable noteId, String title, String text) {
 		setDetailsShown(true);
 
@@ -165,6 +170,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 		if (NEW_NOTE.equals(noteId)) {
 			if (title != null || text != null){
+				// todo fix event tracking
 				EventTracker.track(Event.ShareIntentReceived);
 			} else {
 				EventTracker.track(Event.NoteCreateClick);
@@ -192,7 +198,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public void onBackPressed() {
-		if (navigationDrawerFragment.isDrawerOpen()) {
+		if (isDrawerOpened()) {
 			// 1. close drawer if opened
 			navigationDrawerFragment.closeDrawer();
 		} else if (isDetailsShown()) {
@@ -205,6 +211,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			// 4. exit from app
 			super.onBackPressed();
 		}
+	}
+
+	public boolean isDrawerOpened() {
+		return navigationDrawerFragment != null && navigationDrawerFragment.isDrawerOpen();
 	}
 
 	private void closeNoteDetails() {
@@ -230,7 +240,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!navigationDrawerFragment.isDrawerOpen()) {
+		if (!isDrawerOpened()) {
 			if (!isDetailsShown()) {
 				getMenuInflater().inflate(R.menu.main_menu, menu);
 				inflateSortMenu(menu);
@@ -253,7 +263,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void inflateSortMenu(Menu menu) {
-		final int order = 2;
+		final int order = 3;
 		final SubMenu sortMenu =
 				menu.addSubMenu(Menu.NONE, Menu.NONE, order, R.string.action_sort);
 		getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
@@ -284,6 +294,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 			case R.id.action_add:
 				createNewNote();
 				return true;
+
+			case R.id.action_speak:
+				startVoiceInput();
+				break;
 
 			// sort menu
 			case R.id.sort_by_title:
@@ -320,6 +334,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void startVoiceInput() {
+		final Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.action_bar_speak_prompt));
+		startActivityForResult(speechIntent, RESULT_SPEECH_TO_TEXT);
+	}
+
 	private void performDropboxAction() {
 		if (ConnectivityUtils.isNetworkConnected()) {
 			if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
@@ -344,8 +366,21 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
-		startDataTransferToDropboxIfNeeded();
+
+		switch (requestCode) {
+			case RESULT_DROPBOX_LINK:
+				DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
+				startDataTransferToDropboxIfNeeded();
+				break;
+
+			case RESULT_SPEECH_TO_TEXT:
+				if (resultCode == RESULT_OK) {
+					ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+					if (!matches.isEmpty()) {
+						showNoteDetails(NEW_NOTE, "", matches.get(0));
+					}
+				}
+		}
 	}
 
 	public void showAppSettings() {
