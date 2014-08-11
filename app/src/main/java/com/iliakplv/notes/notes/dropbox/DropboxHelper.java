@@ -25,7 +25,7 @@ import com.iliakplv.notes.notes.storage.Storage;
 
 public final class DropboxHelper {
 
-	private static final int REQUEST_LINK_TO_DBX = 242424;
+	public static final int REQUEST_LINK_TO_DBX = 242424;
 	private static final String APP_KEY = "cyla6oz3c3vuje3";
 	private static final String APP_SECRET = "blt7jatmxpojwiz";
 

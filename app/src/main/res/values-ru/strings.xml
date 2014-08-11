@@ -19,6 +19,8 @@
 	<string name="no_notes_for_search">Ой! Ничего не найдено</string>
 
 	<string name="action_bar_add">Новая заметка</string>
+	<string name="action_bar_speak">Голосовой ввод</string>
+	<string name="action_bar_speak_prompt">Говорите</string>
 	<string name="action_bar_share">Отправить</string>
 	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_bar_label_selected">Метка: %s</string>

@@ -19,6 +19,8 @@
 	<string name="no_notes_for_search">Oops! No notes found</string>
 
 	<string name="action_bar_add">New note</string>
+	<string name="action_bar_speak">Voice input</string>
+	<string name="action_bar_speak_prompt">Speak now</string>
 	<string name="action_bar_share">Share</string>
 	<string name="action_bar_share_title">Share note</string>
 	<string name="action_bar_label_selected">Label: %s</string>
