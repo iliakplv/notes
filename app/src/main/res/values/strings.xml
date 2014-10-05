@@ -90,6 +90,9 @@
 
 	<string name="no_connection_toast">No network connection!</string>
 
+	<string name="no_voice_search_dialog_text">No voice recognition app found on your device. Would you like to install it from Google Play?</string>
+	<string name="no_voice_search_dialog_install">Install</string>
+
 	<string name="about_version">Version: %s</string>
 	<string name="about_author">Created by Ilya Kopylov</string>
 	<string name="about_google_play">Rate in Google Play</string>

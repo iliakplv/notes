@@ -90,6 +90,9 @@
 
 	<string name="no_connection_toast">Нет подключения к сети!</string>
 
+	<string name="no_voice_search_dialog_text">Приложение для распознавания голоса не найдено на вашем устройстве. Желаете установить из Google Play?</string>
+	<string name="no_voice_search_dialog_install">Установить</string>
+
 	<string name="about_version">Версия: %s</string>
 	<string name="about_author">Разработчик Илья Копылов</string>
 	<string name="about_google_play">Оценить в Google Play</string>
