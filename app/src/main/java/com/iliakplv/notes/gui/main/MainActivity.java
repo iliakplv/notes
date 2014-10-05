@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import com.iliakplv.notes.analytics.Event;
 import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
+import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
 import com.iliakplv.notes.notes.dropbox.DropboxHelper;
@@ -335,11 +337,15 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 	}
 
 	private void startVoiceInput() {
-		final Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.action_bar_speak_prompt));
-		startActivityForResult(speechIntent, RESULT_SPEECH_TO_TEXT);
+		try {
+			final Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+			speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+					RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+			speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.action_bar_speak_prompt));
+			startActivityForResult(speechIntent, RESULT_SPEECH_TO_TEXT);
+		} catch(ActivityNotFoundException e) {
+			VoiceSearchInstallDialog.show(getFragmentManager());
+		}
 	}
 
 	private void performDropboxAction() {
