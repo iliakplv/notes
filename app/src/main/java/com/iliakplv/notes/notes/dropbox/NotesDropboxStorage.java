@@ -91,7 +91,7 @@ public class NotesDropboxStorage implements NotesStorage {
 	private String lastSearchQuery = "";
 
 	// listeners
-	private List<NotesStorageListener> storageListeners;
+	private final List<NotesStorageListener> storageListeners = new LinkedList<NotesStorageListener>();
 
 
 	public NotesDropboxStorage() {
@@ -610,16 +610,16 @@ public class NotesDropboxStorage implements NotesStorage {
 	// Listeners
 
 	private void notifyListeners() {
-		if (storageListeners != null) {
-			NotesApplication.executeInBackground(new Runnable() {
-				@Override
-				public void run() {
+		NotesApplication.executeInBackground(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (storageListeners) {
 					for (NotesStorageListener listener : storageListeners) {
 						listener.onContentChanged();
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 
 	@Override
@@ -627,39 +627,36 @@ public class NotesDropboxStorage implements NotesStorage {
 		if (listener == null) {
 			throw new NullPointerException();
 		}
-		if (storageListeners == null) {
-			storageListeners = new LinkedList<NotesStorageListener>();
+		synchronized (storageListeners) {
+			return storageListeners.add(listener);
 		}
-		return storageListeners.add(listener);
 	}
 
 	@Override
 	public boolean removeStorageListener(NotesStorageListener listener) {
-		if (storageListeners != null) {
+		if (listener == null) {
+			throw new NullPointerException();
+		}
+		synchronized (storageListeners) {
 			return storageListeners.remove(listener);
 		}
-		return false;
 	}
 
 	@Override
 	public List<NotesStorageListener> detachAllListeners() {
-		if (storageListeners == null) {
-			storageListeners = new LinkedList<NotesStorageListener>();
+		synchronized (storageListeners){
+			final List<NotesStorageListener> listeners =
+					new LinkedList<NotesStorageListener>(storageListeners);
+			storageListeners.clear();
+			return listeners;
 		}
-		final List<NotesStorageListener> listeners = storageListeners;
-		storageListeners = null;
-		return listeners;
 	}
 
 	@Override
 	public void attachListeners(List<NotesStorageListener> listeners) {
-		if (listeners == null) {
-			throw new NullPointerException();
+		synchronized (storageListeners) {
+			storageListeners.addAll(listeners);
 		}
-		if (storageListeners == null) {
-			storageListeners = new LinkedList<NotesStorageListener>();
-		}
-		storageListeners.addAll(listeners);
 		notifyListeners();
 	}
 }
