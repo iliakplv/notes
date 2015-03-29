@@ -1,19 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
-	compileSdkVersion 19
-	buildToolsVersion '19.1.0'
+	compileSdkVersion 21
+	buildToolsVersion "21.1.2"
 
 	defaultConfig {
 		minSdkVersion 14
-		targetSdkVersion 19
+		targetSdkVersion 21
 
 //      TODO [on release] Update version
 		versionCode 9
 		versionName '2.5'
 
-		testPackageName 'com.iliakplv.notes.tests'
+		applicationId 'com.iliakplv.notes'
+		testApplicationId 'com.iliakplv.notes.tests'
 		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+	}
+
+	productFlavors {
+		x86 {
+			ndk {
+				abiFilter "x86"
+			}
+		}
+		arm {
+			ndk {
+				abiFilter "armeabi"
+			}
+		}
 	}
 
 	signingConfigs {
@@ -28,14 +42,14 @@ android {
 
 	buildTypes {
 		debug {
-			runProguard false
-			zipAlign true
+			minifyEnabled false
+			zipAlignEnabled true
 			debuggable true
 		}
 		release {
-			runProguard true
+			minifyEnabled true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-			zipAlign true
+			zipAlignEnabled true
 			debuggable false
 			signingConfig signingConfigs.release
 		}
@@ -46,22 +60,8 @@ android {
 	}
 }
 
-task nativeLibsToJar(type: Zip) {
-	destinationDir file("$buildDir/native-libs")
-	baseName 'native-libs'
-	extension 'jar'
-	from fileTree(dir: 'libs', include: '**/*.so')
-	into 'lib/'
-}
-
-tasks.withType(Compile) {
-	compileTask -> compileTask.dependsOn(nativeLibsToJar)
-}
-
 dependencies {
-	compile 'com.android.support:support-v4:20.+'
+	compile 'com.android.support:support-v4:22.0.0'
 	compile 'joda-time:joda-time:2.3'
-
 	compile files('libs/dropbox-sync-sdk-android.jar')
-	compile files("$buildDir/native-libs/native-libs.jar")
 }
