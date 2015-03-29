@@ -6,7 +6,7 @@ android {
 
 	defaultConfig {
 		minSdkVersion 14
-		targetSdkVersion 21
+		targetSdkVersion 22
 
 //      TODO [on release] Update version
 		versionCode 9
@@ -17,19 +17,6 @@ android {
 		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
 	}
 
-	productFlavors {
-		x86 {
-			ndk {
-				abiFilter "x86"
-			}
-		}
-		arm {
-			ndk {
-				abiFilter "armeabi"
-			}
-		}
-	}
-
 	signingConfigs {
 		release {
 //          TODO [on release] Replace with actual values
@@ -37,6 +24,14 @@ android {
 			keyPassword 'KEY_PASSWORD'
 			storeFile file('KEYSTORE_FILE')
 			storePassword 'KEYSTORE_PASSWORD'
+		}
+	}
+
+	android {
+		sourceSets {
+			main {
+				jniLibs.srcDirs = ['libs']
+			}
 		}
 	}
 
