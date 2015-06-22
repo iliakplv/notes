@@ -9,8 +9,8 @@ android {
 		targetSdkVersion 22
 
 //      TODO [on release] Update version
-		versionCode 9
-		versionName '2.5'
+		versionCode 10
+		versionName '2.6'
 
 		applicationId 'com.iliakplv.notes'
 		testApplicationId 'com.iliakplv.notes.tests'
