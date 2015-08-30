@@ -1,0 +1,39 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+app/manifest-merger-release-report.txt
+/build
+
+**/.idea/**
+**/target/**
+**/out/**
+**/gen-external-apklibs/**
+*.iml
+
+# built application files
+*.apk
+*.ap_
+*.iml
+*.zip
+*.tar
+*.gz
+*.rar
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+.classpath
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+out
+.idea
