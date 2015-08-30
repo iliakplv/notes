@@ -9,8 +9,6 @@ import android.os.Bundle;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.MainActivity;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
@@ -206,7 +204,6 @@ public class SimpleItemDialog extends AbstractItemDialog {
 					break;
 				case INFO_INDEX:
 					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteInfo);
-					EventTracker.track(Event.NoteInfoShow);
 					break;
 				case DELETE_INDEX:
 					showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteDelete);

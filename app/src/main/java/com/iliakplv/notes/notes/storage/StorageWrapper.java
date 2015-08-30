@@ -3,8 +3,6 @@ package com.iliakplv.notes.notes.storage;
 
 import android.util.Pair;
 
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.notes.AbstractNote;
 import com.iliakplv.notes.notes.Label;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -43,17 +41,14 @@ import java.util.Set;
 	}
 
 	public Serializable insertNote(AbstractNote note) {
-		EventTracker.track(Event.NoteCreate);
 		return target.insertNote(note);
 	}
 
 	public boolean updateNote(Serializable id, AbstractNote note) {
-		EventTracker.track(Event.NoteEdit);
 		return target.updateNote(id, note);
 	}
 
 	public boolean deleteNote(Serializable id) {
-		EventTracker.track(Event.NoteDelete);
 		return target.deleteNote(id);
 	}
 
@@ -68,17 +63,14 @@ import java.util.Set;
 	}
 
 	public Serializable insertLabel(Label label) {
-		EventTracker.track(Event.LabelCreate);
 		return target.insertLabel(label);
 	}
 
 	public boolean updateLabel(Serializable id, Label label) {
-		EventTracker.track(Event.LabelEdit);
 		return target.updateLabel(id, label);
 	}
 
 	public boolean deleteLabel(Serializable id) {
-		EventTracker.track(Event.LabelDelete);
 		return target.deleteLabel(id);
 	}
 
@@ -97,12 +89,10 @@ import java.util.Set;
 	}
 
 	public Serializable insertLabelToNote(Serializable noteId, Serializable labelId) {
-		EventTracker.track(Event.LabelAddToNote);
 		return target.insertLabelToNote(noteId,labelId);
 	}
 
 	public boolean deleteLabelFromNote(Serializable noteId, Serializable labelId) {
-		EventTracker.track(Event.LabelRemoveFromNote);
 		return target.deleteLabelFromNote(noteId, labelId);
 	}
 

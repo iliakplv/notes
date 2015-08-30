@@ -19,8 +19,6 @@ import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
 import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
@@ -127,7 +125,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (!StringUtils.isBlank(searchQuery)) {
             this.searchQuery = searchQuery.trim();
             updateUi();
-            EventTracker.track(Event.SearchUsed);
         }
     }
 
@@ -174,17 +171,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
-
-        if (NEW_NOTE.equals(noteId)) {
-            if (title != null || text != null) {
-                // todo fix event tracking
-                EventTracker.track(Event.ShareIntentReceived);
-            } else {
-                EventTracker.track(Event.NoteCreateClick);
-            }
-        } else {
-            EventTracker.track(Event.NoteShow);
-        }
     }
 
     public void createNewNote() {
@@ -309,19 +295,15 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             // sort menu
             case R.id.sort_by_title:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_create_asc:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_create_desc:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_change:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
 
             // dropbox
@@ -335,7 +317,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
             case R.id.action_about:
                 AboutDialog.show(getFragmentManager());
-                EventTracker.track(Event.AboutOpening);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -358,7 +339,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
                 syncStorage();
                 Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
-                EventTracker.track(Event.DropboxSyncManual);
             } else {
                 final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
                 if (!dataTransferStarted) {
@@ -397,7 +377,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public void showAppSettings() {
         final Intent settingsIntent = new Intent(this, SettingsActivity.class);
         startActivity(settingsIntent);
-        EventTracker.track(Event.SettingsOpening);
     }
 
     private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
