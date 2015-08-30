@@ -19,16 +19,6 @@ Current features
 
   - Voice input
 
-
-Planned features
-
-  - Notes encryption (optional)
-
-  - Archive and Trash
-
-  - Reminders
-
-
 ----------------------------------------------------------------
 
 Application core is in the <project>/app directory.
