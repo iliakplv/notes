@@ -23,8 +23,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.LabelEditDialog;
 import com.iliakplv.notes.gui.main.dialogs.SimpleItemDialog;
 import com.iliakplv.notes.notes.Label;
@@ -217,14 +215,11 @@ public class NavigationDrawerFragment extends Fragment implements
 			}
 
 			mainActivity.onLabelSelected(labelId);
-
-			EventTracker.track(Event.LabelSelect);
 		}
 	}
 
 	private void createNewLabel() {
 		showLabelEditDialog(LabelEditDialog.NEW_LABEL);
-		EventTracker.track(Event.LabelCreateClick);
 	}
 
 	public void showLabelEditDialog(Serializable labelId) {

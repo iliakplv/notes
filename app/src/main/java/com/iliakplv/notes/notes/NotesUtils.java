@@ -6,8 +6,6 @@ import android.widget.Toast;
 
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.utils.StringUtils;
 
 import java.io.Serializable;
@@ -90,7 +88,6 @@ public final class NotesUtils {
 			intent.putExtra(Intent.EXTRA_SUBJECT, subject);
 			intent.putExtra(Intent.EXTRA_TEXT, text);
 			context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_bar_share_title)));
-			EventTracker.track(Event.NoteShareDialogShow);
 		} else if (showToastIfEmpty) {
 			Toast.makeText(context, R.string.empty_note_not_shared, Toast.LENGTH_SHORT).show();
 		}
