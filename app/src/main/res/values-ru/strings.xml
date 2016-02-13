@@ -25,7 +25,6 @@
 	<string name="action_bar_share_title">Отправить заметку</string>
 	<string name="action_bar_label_selected">Метка: %s</string>
 	<string name="action_bar_search_results">Поиск: %s</string>
-	<string name="action_dropbox_link">Привязать аккаунт Dropbox</string>
 	<string name="action_dropbox_refresh">Обновить</string>
 	<string name="action_dropbox_refresh_toast">Синхронизация…</string>
 	<string name="action_dropbox_link_succeded_toast">Вход в аккаунт Dropbox выполнен</string>
@@ -33,11 +32,6 @@
 	<string name="action_dropbox_already_linked_toast">Вход в аккаунт Dropbox выполнен</string>
 	<string name="action_settings">Настройки</string>
 	<string name="action_about">О приложении</string>
-
-	<string name="dropbox_link_dialog_title">Аккаунт Dropbox</string>
-	<string name="dropbox_link_dialog_message">Вы можете войти в существующий аккаунт Dropbox или создать новый. После успешного входа в аккаунт все ваши заметки и метки будут перемещены в облачное хранилище Dropbox.</string>
-	<string name="dropbox_link_dialog_yes">Продолжить</string>
-	<string name="dropbox_link_dialog_no">Не сейчас</string>
 
 	<string name="action_sort">Сортировка</string>
 	<string name="action_sort_by_title">По заголовку</string>
@@ -101,5 +95,7 @@
 	<string name="about_sources">Исходный код приложения:\nhttps://github.com/iliakplv/notes</string>
 
     <string name="db_announcement">Объявление!</string>
+    <string name="db_announcement_title">Title</string>
+    <string name="db_announcement_text">Announcement text template</string>
 
 </resources>

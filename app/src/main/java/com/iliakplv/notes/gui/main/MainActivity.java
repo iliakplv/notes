@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
+import com.iliakplv.notes.gui.main.dialogs.DropboxAnnouncementDialog;
 import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -276,7 +277,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case R.id.action_add:
                 createNewNote();
                 return true;
-
             case R.id.action_speak:
                 startVoiceInput();
                 break;
@@ -295,17 +295,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
                 return true;
 
+            case R.id.action_settings:
+                showAppSettings();
+                return true;
+            case R.id.action_about:
+                AboutDialog.show(getFragmentManager());
+                return true;
+
             // dropbox
             case R.id.action_dropbox:
                 performDropboxAction();
                 return true;
-
-            case R.id.action_settings:
-                showAppSettings();
-                return true;
-
-            case R.id.action_about:
-                AboutDialog.show(getFragmentManager());
+            case R.id.action_dropbox_close:
+                DropboxAnnouncementDialog.show(getFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);
