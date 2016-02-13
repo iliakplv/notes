@@ -1,16 +1,14 @@
 package com.iliakplv.notes.gui.main;
 
-import android.app.Activity;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,7 +37,6 @@ public class NavigationDrawerFragment extends Fragment implements
 
 	public static final Integer ALL_LABELS = NotesStorage.NOTES_FOR_ALL_LABELS;
 	private static final int ALL_LABELS_HEADER_POSITION = 0;
-	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	private final NotesStorage storage = Storage.getStorage();
 	private MainActivity mainActivity;
@@ -50,17 +47,6 @@ public class NavigationDrawerFragment extends Fragment implements
 	private ListView labelsListView;
 	private LabelsListAdapter labelsListAdapter;
 
-	private boolean fromSavedInstanceState;
-	private boolean userLearnedDrawer;
-
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		fromSavedInstanceState = savedInstanceState != null;
-		userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -161,16 +147,9 @@ public class NavigationDrawerFragment extends Fragment implements
 				if (!isAdded()) {
 					return;
 				}
-				if (!userLearnedDrawer) {
-					setUserLearnedDrawer();
-				}
 				getActivity().invalidateOptionsMenu();
 			}
 		};
-
-		if (!userLearnedDrawer && !fromSavedInstanceState) {
-			this.drawerLayout.openDrawer(fragmentContainerView);
-		}
 
 		this.drawerLayout.post(new Runnable() {
 			@Override
@@ -179,13 +158,6 @@ public class NavigationDrawerFragment extends Fragment implements
 			}
 		});
 		this.drawerLayout.setDrawerListener(drawerToggle);
-	}
-
-	private void setUserLearnedDrawer() {
-		userLearnedDrawer = true;
-		final SharedPreferences sp = PreferenceManager
-				.getDefaultSharedPreferences(getActivity());
-		sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
 	}
 
 	public boolean isDrawerOpen() {
