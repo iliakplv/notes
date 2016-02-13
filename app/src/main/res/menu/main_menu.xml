@@ -23,12 +23,6 @@
 	      android:actionViewClass="android.widget.SearchView"/>
 
 	<item
-		android:id="@+id/action_dropbox"
-		android:title="@string/action_dropbox_refresh"
-		android:orderInCategory="98"
-		android:showAsAction="never"/>
-
-	<item
 		android:id="@+id/action_settings"
 		android:title="@string/action_settings"
 		android:orderInCategory="99"

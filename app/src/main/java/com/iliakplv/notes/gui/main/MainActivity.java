@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
-import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
 import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
@@ -235,10 +234,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!isDrawerOpened()) {
             if (!isDetailsShown()) {
-                getMenuInflater().inflate(R.menu.main_menu, menu);
+                final int menuId = Storage.getCurrentStorageType() == Storage.Type.Dropbox ?
+                        R.menu.main_menu_db : R.menu.main_menu;
+                getMenuInflater().inflate(menuId, menu);
                 inflateSortMenu(menu);
                 configureSearchMenu(menu);
-                updateDropboxActionTitle(menu);
             }
             restoreActionBar();
             return true;
@@ -260,17 +260,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         final SubMenu sortMenu =
                 menu.addSubMenu(Menu.NONE, Menu.NONE, order, R.string.action_sort);
         getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
-    }
-
-    private void updateDropboxActionTitle(Menu menu) {
-        final MenuItem dropboxItem = menu.findItem(R.id.action_dropbox);
-        if (dropboxItem != null) {
-            if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
-                dropboxItem.setTitle(R.string.action_dropbox_refresh);
-            } else {
-                dropboxItem.setTitle(R.string.action_dropbox_link);
-            }
-        }
     }
 
     private void restoreActionBar() {
@@ -336,15 +325,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     private void performDropboxAction() {
         if (ConnectivityUtils.isNetworkConnected()) {
-            if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
-                syncStorage();
-                Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
-            } else {
-                final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
-                if (!dataTransferStarted) {
-                    DropboxAccountLinkingDialog.show(getFragmentManager());
-                }
-            }
+            syncStorage();
+            Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, R.string.no_connection_toast, Toast.LENGTH_SHORT).show();
         }

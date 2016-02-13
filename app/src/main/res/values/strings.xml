@@ -100,4 +100,6 @@
 	<string name="about_contact_do_not_remove">\n\n--------------------\nPlease, do not remove following technical information!\n--------------------\n</string>
 	<string name="about_sources">Source code can be found on\nhttps://github.com/iliakplv/notes</string>
 
+	<string name="db_announcement">Announcement!</string>
+
 </resources>
