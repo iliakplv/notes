@@ -40,7 +40,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
     private static final String ARG_SEARCH_QUERY = "search_query";
     private static final String PREFS_KEY_SORT_ORDER = "sort_order";
-    private static final int RESULT_DROPBOX_LINK = DropboxHelper.REQUEST_LINK_TO_DBX;
     private static final int RESULT_SPEECH_TO_TEXT = 42;
 
     public static final Integer NEW_NOTE = 0;
@@ -334,27 +333,17 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         }
     }
 
-    public void tryLinkDropboxAccount() {
-        DropboxHelper.tryLinkAccountFromActivity(this);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case RESULT_DROPBOX_LINK:
-                DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
-                startDataTransferToDropboxIfNeeded();
-                break;
-
-            case RESULT_SPEECH_TO_TEXT:
-                if (resultCode == RESULT_OK) {
-                    ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    if (!matches.isEmpty()) {
-                        showNoteDetails(NEW_NOTE, "", matches.get(0));
-                    }
+        if (requestCode == RESULT_SPEECH_TO_TEXT) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (!matches.isEmpty()) {
+                    showNoteDetails(NEW_NOTE, "", matches.get(0));
                 }
+            }
         }
     }
 
