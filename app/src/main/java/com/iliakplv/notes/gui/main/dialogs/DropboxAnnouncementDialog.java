@@ -14,7 +14,6 @@ public class DropboxAnnouncementDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		return new AlertDialog.Builder(getActivity())
-				.setTitle(R.string.db_announcement_title)
 				.setMessage(R.string.db_announcement_text)
 				.setNegativeButton(R.string.common_ok, null)
 				.create();

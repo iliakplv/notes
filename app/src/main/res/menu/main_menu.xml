@@ -34,4 +34,10 @@
 		android:orderInCategory="100"
 		android:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_dropbox_close"
+        android:title="@string/db_announcement"
+        android:orderInCategory="101"
+        android:showAsAction="never"/>
+
 </menu> 

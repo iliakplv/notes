@@ -95,7 +95,6 @@
 	<string name="about_sources">Source code can be found on\nhttps://github.com/iliakplv/notes</string>
 
 	<string name="db_announcement">Announcement!</string>
-	<string name="db_announcement_title">Title</string>
-	<string name="db_announcement_text">Announcement text template</string>
+	<string name="db_announcement_text">Unfortunately in April 2016 Dropbox closing third party apps data storage used in Note Now (Datastore API). Linking your Dropbox account to the app is no longer available. If you were not using this those changes will not affect you. Your existing notes will be kept on your device.\n\nIf you have linked your Dropbox account your data will be kept as well. Only the synchronization will be turned off.\n\nThank you for using Note Now!</string>
 
 </resources>
