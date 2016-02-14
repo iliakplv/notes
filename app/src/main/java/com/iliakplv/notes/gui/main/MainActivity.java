@@ -17,19 +17,14 @@ import android.view.SubMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
-import com.iliakplv.notes.analytics.Event;
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
-import com.iliakplv.notes.gui.main.dialogs.DropboxAccountLinkingDialog;
+import com.iliakplv.notes.gui.main.dialogs.DropboxAnnouncementDialog;
 import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
-import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 import com.iliakplv.notes.utils.ConnectivityUtils;
 import com.iliakplv.notes.utils.StringUtils;
 
@@ -42,12 +37,13 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
     private static final String ARG_SEARCH_QUERY = "search_query";
     private static final String PREFS_KEY_SORT_ORDER = "sort_order";
-    private static final int RESULT_DROPBOX_LINK = DropboxHelper.REQUEST_LINK_TO_DBX;
+    private static final String PREFS_KEY_SHOW_ANNOUNCEMENT = "announcement";
     private static final int RESULT_SPEECH_TO_TEXT = 42;
 
     public static final Integer NEW_NOTE = 0;
 
     private final NotesStorage storage = Storage.getStorage();
+    private boolean isDropboxLinked = false;
 
     private volatile boolean detailsShown = false;
     private NavigationDrawerFragment navigationDrawerFragment;
@@ -71,10 +67,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        isDropboxLinked = Storage.getCurrentStorageType() == Storage.Type.Dropbox;
+
         restoreNotesSortOrder();
         setupNavigationDrawer();
 
-        boolean fromSaveInstanceState = savedInstanceState != null;
+        final boolean fromSaveInstanceState = savedInstanceState != null;
         if (fromSaveInstanceState) {
             setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
             selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
@@ -90,6 +88,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             if (Intent.ACTION_SEND.equals(intent.getAction())) {
                 if ("text/plain".equals(intent.getType())) {
                     onShareIntent(intent);
+                }
+            } else if (isDropboxLinked) {
+                final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+                if (prefs.getBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, true)) {
+                    DropboxAnnouncementDialog.show(getFragmentManager());
+                    prefs.edit().putBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, false).apply();
                 }
             }
         }
@@ -127,7 +131,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (!StringUtils.isBlank(searchQuery)) {
             this.searchQuery = searchQuery.trim();
             updateUi();
-            EventTracker.track(Event.SearchUsed);
         }
     }
 
@@ -174,17 +177,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
-
-        if (NEW_NOTE.equals(noteId)) {
-            if (title != null || text != null) {
-                // todo fix event tracking
-                EventTracker.track(Event.ShareIntentReceived);
-            } else {
-                EventTracker.track(Event.NoteCreateClick);
-            }
-        } else {
-            EventTracker.track(Event.NoteShow);
-        }
     }
 
     public void createNewNote() {
@@ -249,10 +241,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!isDrawerOpened()) {
             if (!isDetailsShown()) {
-                getMenuInflater().inflate(R.menu.main_menu, menu);
+                final int menuId = isDropboxLinked ? R.menu.main_menu_db : R.menu.main_menu;
+                getMenuInflater().inflate(menuId, menu);
                 inflateSortMenu(menu);
                 configureSearchMenu(menu);
-                updateDropboxActionTitle(menu);
             }
             restoreActionBar();
             return true;
@@ -276,17 +268,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         getMenuInflater().inflate(R.menu.main_sort_menu, sortMenu);
     }
 
-    private void updateDropboxActionTitle(Menu menu) {
-        final MenuItem dropboxItem = menu.findItem(R.id.action_dropbox);
-        if (dropboxItem != null) {
-            if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
-                dropboxItem.setTitle(R.string.action_dropbox_refresh);
-            } else {
-                dropboxItem.setTitle(R.string.action_dropbox_link);
-            }
-        }
-    }
-
     private void restoreActionBar() {
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -301,7 +282,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case R.id.action_add:
                 createNewNote();
                 return true;
-
             case R.id.action_speak:
                 startVoiceInput();
                 break;
@@ -309,33 +289,30 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             // sort menu
             case R.id.sort_by_title:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_create_asc:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_create_desc:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
-                EventTracker.track(Event.NotesSortOrderSelect);
                 return true;
             case R.id.sort_by_change:
                 setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
-                EventTracker.track(Event.NotesSortOrderSelect);
+                return true;
+
+            case R.id.action_settings:
+                showAppSettings();
+                return true;
+            case R.id.action_about:
+                AboutDialog.show(getFragmentManager());
                 return true;
 
             // dropbox
             case R.id.action_dropbox:
                 performDropboxAction();
                 return true;
-
-            case R.id.action_settings:
-                showAppSettings();
-                return true;
-
-            case R.id.action_about:
-                AboutDialog.show(getFragmentManager());
-                EventTracker.track(Event.AboutOpening);
+            case R.id.action_dropbox_close:
+                DropboxAnnouncementDialog.show(getFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -355,49 +332,30 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     private void performDropboxAction() {
         if (ConnectivityUtils.isNetworkConnected()) {
-            if (Storage.getCurrentStorageType() == Storage.Type.Dropbox) {
-                syncStorage();
-                Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
-                EventTracker.track(Event.DropboxSyncManual);
-            } else {
-                final boolean dataTransferStarted = startDataTransferToDropboxIfNeeded();
-                if (!dataTransferStarted) {
-                    DropboxAccountLinkingDialog.show(getFragmentManager());
-                }
-            }
+            syncStorage();
+            Toast.makeText(this, R.string.action_dropbox_refresh_toast, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, R.string.no_connection_toast, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void tryLinkDropboxAccount() {
-        DropboxHelper.tryLinkAccountFromActivity(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case RESULT_DROPBOX_LINK:
-                DropboxHelper.onAccountLinkActivityResult(this, requestCode, resultCode, data);
-                startDataTransferToDropboxIfNeeded();
-                break;
-
-            case RESULT_SPEECH_TO_TEXT:
-                if (resultCode == RESULT_OK) {
-                    ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    if (!matches.isEmpty()) {
-                        showNoteDetails(NEW_NOTE, "", matches.get(0));
-                    }
+        if (requestCode == RESULT_SPEECH_TO_TEXT) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (!matches.isEmpty()) {
+                    showNoteDetails(NEW_NOTE, "", matches.get(0));
                 }
+            }
         }
     }
 
     public void showAppSettings() {
         final Intent settingsIntent = new Intent(this, SettingsActivity.class);
         startActivity(settingsIntent);
-        EventTracker.track(Event.SettingsOpening);
     }
 
     private void setNotesSortOrder(NotesUtils.NoteSortOrder order) {
@@ -414,30 +372,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (orderOrdinal != -1) {
             setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
         }
-    }
-
-    private boolean startDataTransferToDropboxIfNeeded() {
-        boolean startDataTransfer =
-                Storage.getCurrentStorageType() == Storage.Type.Database &&
-                        DropboxHelper.hasLinkedAccount();
-
-        if (startDataTransfer) {
-            NotesApplication.executeInBackground(new Runnable() {
-                @Override
-                public void run() {
-                    StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
-                    DropboxHelper.initSynchronization();
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            invalidateOptionsMenu();
-                        }
-                    });
-                }
-            });
-        }
-
-        return startDataTransfer;
     }
 
 }

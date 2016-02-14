@@ -3,7 +3,6 @@ package com.iliakplv.notes;
 import android.app.Application;
 import android.content.Context;
 
-import com.iliakplv.notes.analytics.EventTracker;
 import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.Storage;
 import com.iliakplv.notes.utils.AppLog;
@@ -27,7 +26,6 @@ public class NotesApplication extends Application {
 
 		context = getApplicationContext();
 		initThreadPool();
-		EventTracker.setEnabled(false);
 		initStorage();
 	}
 
