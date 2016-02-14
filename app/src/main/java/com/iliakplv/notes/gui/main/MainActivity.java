@@ -37,11 +37,13 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private static final String ARG_SELECTED_LABEL_ID = "selected_label_id";
     private static final String ARG_SEARCH_QUERY = "search_query";
     private static final String PREFS_KEY_SORT_ORDER = "sort_order";
+    private static final String PREFS_KEY_SHOW_ANNOUNCEMENT = "announcement";
     private static final int RESULT_SPEECH_TO_TEXT = 42;
 
     public static final Integer NEW_NOTE = 0;
 
     private final NotesStorage storage = Storage.getStorage();
+    private boolean isDropboxLinked = false;
 
     private volatile boolean detailsShown = false;
     private NavigationDrawerFragment navigationDrawerFragment;
@@ -65,10 +67,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        isDropboxLinked = Storage.getCurrentStorageType() == Storage.Type.Dropbox;
+
         restoreNotesSortOrder();
         setupNavigationDrawer();
 
-        boolean fromSaveInstanceState = savedInstanceState != null;
+        final boolean fromSaveInstanceState = savedInstanceState != null;
         if (fromSaveInstanceState) {
             setDetailsShown(savedInstanceState.getBoolean(ARG_DETAILS_SHOWN));
             selectedLabelId = savedInstanceState.getSerializable(ARG_SELECTED_LABEL_ID);
@@ -84,6 +88,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             if (Intent.ACTION_SEND.equals(intent.getAction())) {
                 if ("text/plain".equals(intent.getType())) {
                     onShareIntent(intent);
+                }
+            } else if (isDropboxLinked) {
+                final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+                if (prefs.getBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, true)) {
+                    DropboxAnnouncementDialog.show(getFragmentManager());
+                    prefs.edit().putBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, false).apply();
                 }
             }
         }
@@ -231,8 +241,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!isDrawerOpened()) {
             if (!isDetailsShown()) {
-                final int menuId = Storage.getCurrentStorageType() == Storage.Type.Dropbox ?
-                        R.menu.main_menu_db : R.menu.main_menu;
+                final int menuId = isDropboxLinked ? R.menu.main_menu_db : R.menu.main_menu;
                 getMenuInflater().inflate(menuId, menu);
                 inflateSortMenu(menu);
                 configureSearchMenu(menu);
