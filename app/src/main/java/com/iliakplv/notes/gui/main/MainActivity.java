@@ -17,17 +17,14 @@ import android.view.SubMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.iliakplv.notes.NotesApplication;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAnnouncementDialog;
 import com.iliakplv.notes.gui.main.dialogs.VoiceSearchInstallDialog;
 import com.iliakplv.notes.gui.settings.SettingsActivity;
 import com.iliakplv.notes.notes.NotesUtils;
-import com.iliakplv.notes.notes.dropbox.DropboxHelper;
 import com.iliakplv.notes.notes.storage.NotesStorage;
 import com.iliakplv.notes.notes.storage.Storage;
-import com.iliakplv.notes.notes.storage.StorageDataTransfer;
 import com.iliakplv.notes.utils.ConnectivityUtils;
 import com.iliakplv.notes.utils.StringUtils;
 
@@ -366,30 +363,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (orderOrdinal != -1) {
             setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
         }
-    }
-
-    private boolean startDataTransferToDropboxIfNeeded() {
-        boolean startDataTransfer =
-                Storage.getCurrentStorageType() == Storage.Type.Database &&
-                        DropboxHelper.hasLinkedAccount();
-
-        if (startDataTransfer) {
-            NotesApplication.executeInBackground(new Runnable() {
-                @Override
-                public void run() {
-                    StorageDataTransfer.changeStorageType(Storage.Type.Dropbox, true);
-                    DropboxHelper.initSynchronization();
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            invalidateOptionsMenu();
-                        }
-                    });
-                }
-            });
-        }
-
-        return startDataTransfer;
     }
 
 }
