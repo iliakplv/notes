@@ -78,8 +78,8 @@
 
     <string name="more_labels">…</string>
 
-    <string name="settings_linkify_title">Links in note</string>
-    <string name="settings_linkify_subtitle">Make clickable links and phone numbers in note\'s text</string>
+    <string name="settings_linkify_title">Links in notes</string>
+    <string name="settings_linkify_subtitle">Make links and phone numbers clickable</string>
 
     <string name="no_connection_toast">No network connection!</string>
 

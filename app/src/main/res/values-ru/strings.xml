@@ -79,8 +79,8 @@
 
     <string name="more_labels">…</string>
 
-    <string name="settings_linkify_title">Ссылки в заметке</string>
-    <string name="settings_linkify_subtitle">Делать кликабельными ссылки и телефонные номера в тексте заметки</string>
+    <string name="settings_linkify_title">Ссылки в заметках</string>
+    <string name="settings_linkify_subtitle">Делать кликабельными ссылки и телефонные номера</string>
 
     <string name="no_connection_toast">Нет подключения к сети!</string>
 
