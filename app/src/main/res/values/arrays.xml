@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="note_actions">
+        <item>@string/note_action_labels</item>
+        <item>@string/action_bar_share</item>
+        <item>@string/note_action_info</item>
+        <item>@string/note_action_delete</item>
+    </array>
+
+    <array name="label_actions">
+        <item>@string/label_action_edit</item>
+        <item>@string/label_action_delete</item>
+    </array>
+
+
+    <!--
+        NB! Sizes of next two arrays must be equal!
+    -->
+
+    <array name="label_colors">
+        <item>@color/label_color_default</item>
+        <item>@color/label_color_red</item>
+        <item>@color/label_color_orange</item>
+        <item>@color/label_color_yellow</item>
+        <item>@color/label_color_green</item>
+        <item>@color/label_color_blue</item>
+        <item>@color/label_color_purple</item>
+        <item>@color/label_color_grey</item>
+    </array>
+
+    <array name="label_colors_names">
+        <item>@string/color_default</item>
+        <item>@string/color_red</item>
+        <item>@string/color_orange</item>
+        <item>@string/color_yellow</item>
+        <item>@string/color_green</item>
+        <item>@string/color_blue</item>
+        <item>@string/color_purple</item>
+        <item>@string/color_grey</item>
+    </array>
+
+</resources>
