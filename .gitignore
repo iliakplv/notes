@@ -37,3 +37,6 @@ local.properties
 
 out
 .idea
+
+build
+app/build
