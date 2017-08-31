@@ -115,11 +115,13 @@ public class NoteDetailsFragment extends Fragment {
 		final int itemId = item.getItemId();
 		switch (itemId) {
 			case R.id.action_save_changes:
-				mainActivity.onBackPressed();
+                mainActivity.logEvent("note_details_save");
+                mainActivity.onBackPressed();
 				return true;
 
 			case R.id.action_discard_changes:
-				if (newNoteCreationMode) {
+                mainActivity.logEvent("note_details_discard");
+                if (newNoteCreationMode) {
 					title.setText(titleFromArgs);
 					body.setText(textFromArgs);
 				} else {
@@ -137,7 +139,8 @@ public class NoteDetailsFragment extends Fragment {
 
 
 	public void onBackPressed() {
-		saveNote();
+        mainActivity.logEvent("note_details_back");
+        saveNote();
 	}
 
 	private void saveNote() {

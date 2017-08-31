@@ -80,6 +80,8 @@ public class SimpleItemDialog extends AbstractItemDialog {
 			info += StringUtils.wrapWithEmptyLines(getString(R.string.note_info_modified, changedString));
 		}
 
+        ((MainActivity) activity).logEvent("note_options_info");
+
 		return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForNoteInDialog(note)).
 				setMessage(info).
@@ -88,7 +90,8 @@ public class SimpleItemDialog extends AbstractItemDialog {
 	}
 
 	private Dialog createNoteDeleteDialog() {
-		return new AlertDialog.Builder(activity).
+        ((MainActivity) activity).logEvent("note_options_delete_confirm");
+        return new AlertDialog.Builder(activity).
 				setTitle(NotesUtils.getTitleForNoteInDialog(storage.getNote(id))).
 				setMessage(StringUtils.wrapWithEmptyLines(getString(R.string.note_action_delete_confirm_dialog_text))).
 				setNegativeButton(R.string.common_no, null).
@@ -98,7 +101,8 @@ public class SimpleItemDialog extends AbstractItemDialog {
 						NotesApplication.executeInBackground(new Runnable() {
 							@Override
 							public void run() {
-								storage.deleteNote(id);
+                                ((MainActivity) activity).logEvent("note_deleted");
+                                storage.deleteNote(id);
 							}
 						});
 					}
@@ -214,14 +218,17 @@ public class SimpleItemDialog extends AbstractItemDialog {
 		private void showNoteLabelsDialog() {
 			final boolean noLabelsCreated = storage.getAllLabels().isEmpty();
 			if(noLabelsCreated) {
-				showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteNoLabels);
+                ((MainActivity) activity).logEvent("note_options_labels_first");
+                showSimpleDialogForCurrentItem(SimpleItemDialog.DialogType.NoteNoLabels);
 			} else {
-				NoteLabelsDialog.show(activity.getFragmentManager(), id);
+                ((MainActivity) activity).logEvent("note_options_labels");
+                NoteLabelsDialog.show(activity.getFragmentManager(), id);
 			}
 		}
 
 		private void shareNote() {
-			NotesUtils.shareNote(activity, storage.getNote(id), true);
+            ((MainActivity) activity).logEvent("note_options_share");
+            NotesUtils.shareNote(activity, storage.getNote(id), true);
 		}
 	}
 

@@ -67,13 +67,15 @@ public class NotesListFragment extends Fragment implements NotesStorageListener 
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				mainActivity.onNoteSelected(getNotesList().get(position).getId());
+                mainActivity.logEvent("note_list_note_clicked");
+                mainActivity.onNoteSelected(getNotesList().get(position).getId());
 			}
 		});
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-				return showNoteActionsDialog(i);
+                mainActivity.logEvent("note_list_note_actions");
+                return showNoteActionsDialog(i);
 			}
 		});
 

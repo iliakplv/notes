@@ -17,6 +17,7 @@ import android.view.SubMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAnnouncementDialog;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
     private String searchQuery;
 
+    private FirebaseAnalytics firebaseAnalytics;
 
     private boolean isDetailsShown() {
         return detailsShown;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         setContentView(R.layout.main);
 
         isDropboxLinked = Storage.getCurrentStorageType() == Storage.Type.Dropbox;
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         restoreNotesSortOrder();
         setupNavigationDrawer();
@@ -92,6 +95,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             } else if (isDropboxLinked) {
                 final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
                 if (prefs.getBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, true)) {
+                    logEvent("dropbox_announcement_first");
                     DropboxAnnouncementDialog.show(getFragmentManager());
                     prefs.edit().putBoolean(PREFS_KEY_SHOW_ANNOUNCEMENT, false).apply();
                 }
@@ -121,6 +125,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     @Override
     public void onLabelSelected(Serializable labelId) {
+        logEvent("label_selected");
         selectedLabelId = labelId;
         searchQuery = null;
         closeNoteDetails();
@@ -129,6 +134,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     private void performSearch(String searchQuery) {
         if (!StringUtils.isBlank(searchQuery)) {
+            logEvent("note_search");
             this.searchQuery = searchQuery.trim();
             updateUi();
         }
@@ -156,6 +162,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     }
 
     private void onShareIntent(Intent intent) {
+        logEvent("share_intent_received");
         showNoteDetails(NEW_NOTE,
                 StringUtils.getNotNull(intent.getStringExtra(Intent.EXTRA_SUBJECT)),
                 StringUtils.getNotNull(intent.getStringExtra(Intent.EXTRA_TEXT)));
@@ -180,6 +187,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     }
 
     public void createNewNote() {
+        logEvent("note_create_clicked");
         onNoteSelected(NEW_NOTE);
     }
 
@@ -288,30 +296,38 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
             // sort menu
             case R.id.sort_by_title:
+                logEvent("sort_by_title");
                 setNotesSortOrder(NotesUtils.NoteSortOrder.Title);
                 return true;
             case R.id.sort_by_create_asc:
+                logEvent("sort_by_create_asc");
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateAscending);
                 return true;
             case R.id.sort_by_create_desc:
+                logEvent("sort_by_create_desc");
                 setNotesSortOrder(NotesUtils.NoteSortOrder.CreateDateDescending);
                 return true;
             case R.id.sort_by_change:
+                logEvent("sort_by_change");
                 setNotesSortOrder(NotesUtils.NoteSortOrder.ChangeDate);
                 return true;
 
             case R.id.action_settings:
+                logEvent("show_settings");
                 showAppSettings();
                 return true;
             case R.id.action_about:
+                logEvent("show_about");
                 AboutDialog.show(getFragmentManager());
                 return true;
 
             // dropbox
             case R.id.action_dropbox:
+                logEvent("dropbox_action");
                 performDropboxAction();
                 return true;
             case R.id.action_dropbox_close:
+                logEvent("dropbox_announcement");
                 DropboxAnnouncementDialog.show(getFragmentManager());
                 return true;
         }
@@ -320,6 +336,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     private void startVoiceInput() {
         try {
+            logEvent("voice_input");
             final Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -372,6 +389,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (orderOrdinal != -1) {
             setNotesSortOrder(NotesUtils.NoteSortOrder.values()[orderOrdinal]);
         }
+    }
+
+    public void logEvent(String event) {
+        firebaseAnalytics.logEvent(event, null);
     }
 
 }
