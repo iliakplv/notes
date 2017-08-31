@@ -17,6 +17,7 @@ import android.view.SubMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.iliakplv.notes.R;
 import com.iliakplv.notes.gui.main.dialogs.AboutDialog;
 import com.iliakplv.notes.gui.main.dialogs.DropboxAnnouncementDialog;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private Serializable selectedLabelId = NavigationDrawerFragment.ALL_LABELS;
     private String searchQuery;
 
+    private FirebaseAnalytics firebaseAnalytics;
 
     private boolean isDetailsShown() {
         return detailsShown;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         setContentView(R.layout.main);
 
         isDropboxLinked = Storage.getCurrentStorageType() == Storage.Type.Dropbox;
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         restoreNotesSortOrder();
         setupNavigationDrawer();

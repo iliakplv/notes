@@ -1,62 +1,66 @@
 apply plugin: 'com.android.application'
 
 android {
-	compileSdkVersion 25
-	buildToolsVersion '25.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
-	defaultConfig {
-		minSdkVersion 14
-		targetSdkVersion 25
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 25
 
 //      TODO [on release] Update version
-		versionCode 12
-		versionName '2.8'
+        versionCode 12
+        versionName '2.8'
 
-		applicationId 'com.iliakplv.notes'
-		testApplicationId 'com.iliakplv.notes.tests'
-		testInstrumentationRunner 'android.test.InstrumentationTestRunner'
-	}
+        applicationId 'com.iliakplv.notes'
+        testApplicationId 'com.iliakplv.notes.tests'
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
 
-	signingConfigs {
-		release {
+    signingConfigs {
+        release {
 //          TODO [on release] Replace with actual values
-			keyAlias 'KEY_ALIAS'
-			keyPassword 'KEY_PASSWORD'
-			storeFile file('KEYSTORE_FILE')
-			storePassword 'KEYSTORE_PASSWORD'
-		}
-	}
+            keyAlias 'KEY_ALIAS'
+            keyPassword 'KEY_PASSWORD'
+            storeFile file('KEYSTORE_FILE')
+            storePassword 'KEYSTORE_PASSWORD'
+        }
+    }
 
-	android {
-		sourceSets {
-			main {
-				jniLibs.srcDirs = ['libs']
-			}
-		}
-	}
+    android {
+        sourceSets {
+            main {
+                jniLibs.srcDirs = ['libs']
+            }
+        }
+    }
 
-	buildTypes {
-		debug {
-			minifyEnabled false
-			zipAlignEnabled true
-			debuggable true
-		}
-		release {
-			minifyEnabled true
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-			zipAlignEnabled true
-			debuggable false
-			signingConfig signingConfigs.release
-		}
-	}
+    buildTypes {
+        debug {
+            minifyEnabled false
+            zipAlignEnabled true
+            debuggable true
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            zipAlignEnabled true
+            debuggable false
+            signingConfig signingConfigs.release
+        }
+    }
 
-	testOptions {
-		resultsDir = "$project.buildDir/tests"
-	}
+    testOptions {
+        resultsDir = "$project.buildDir/tests"
+    }
 }
 
 dependencies {
-	compile 'com.android.support:support-v4:25.3.1'
-	compile 'joda-time:joda-time:2.3'
-	compile files('libs/dropbox-sync-sdk-android.jar')
+    compile files('libs/dropbox-sync-sdk-android.jar')
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'joda-time:joda-time:2.3'
+    compile 'com.google.firebase:firebase-core:10.0.1'
 }
+
+
+apply plugin: 'com.google.gms.google-services'
